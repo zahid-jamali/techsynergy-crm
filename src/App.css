@@ -1,4 +1,18 @@
-.App {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.input {
+  @apply w-full bg-gray-800 border border-gray-700 rounded px-3 py-2;
+}
+.btn-primary {
+  @apply px-5 py-2 bg-red-600 rounded;
+}
+.btn-secondary {
+  @apply px-4 py-2 border border-gray-600 rounded;
+}
+
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +49,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
