@@ -21,6 +21,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
     currency: "USD",
     description: "",
     isGstApplied: false,
+    otherTax: [], // ✅ NEW
     products: [
       {
         productName: "",
@@ -69,6 +70,24 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
     const updated = [...formData.products];
     updated[index][field] = value;
     setFormData({ ...formData, products: updated });
+  };
+
+  const addOtherTax = () => {
+    setFormData({
+      ...formData,
+      otherTax: [...formData.otherTax, { tax: "", percent: 0 }],
+    });
+  };
+
+  const updateOtherTax = (index, field, value) => {
+    const updated = [...formData.otherTax];
+    updated[index][field] = value;
+    setFormData({ ...formData, otherTax: updated });
+  };
+
+  const removeOtherTax = (index) => {
+    const updated = formData.otherTax.filter((_, i) => i !== index);
+    setFormData({ ...formData, otherTax: updated });
   };
 
   const addProduct = () => {
@@ -121,7 +140,14 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
   }, [formData.products]);
 
   const gstAmount = formData.isGstApplied ? subtotal * 0.18 : 0;
-  const finalTotal = subtotal + gstAmount;
+
+  const otherTaxAmount = useMemo(() => {
+    return formData.otherTax.reduce((acc, t) => {
+      return acc + (subtotal * Number(t.percent || 0)) / 100;
+    }, 0);
+  }, [subtotal, formData.otherTax]);
+
+  const finalTotal = subtotal + gstAmount + otherTaxAmount;
 
   /* ===============================
      SUBMIT
@@ -200,13 +226,6 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                   onSelect={(d) => {
                     setSelectedDeal(d);
                     setDealQuery(d.dealName);
-
-                    // if (d.contact) {
-                    //   setSelectedContact(d.contact);
-                    //   setContactQuery(
-                    //     `${d.contact.firstName} ${d.contact.lastName}`
-                    //   );
-                    // }
                   }}
                 />
               </div>
@@ -333,6 +352,8 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                 </div>
               </div>
 
+              {/* OTHER TAX SECTION */}
+
               {/* SUMMARY */}
               <div className="col-span-1">
                 <div className="sticky top-6 bg-[#0f172a] border border-gray-800 rounded-xl p-5 space-y-4">
@@ -368,6 +389,73 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                       </span>
                     </div>
                   )}
+
+                  <div className="border-t border-gray-700 pt-3 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-400">Other Taxes</span>
+                      <button
+                        type="button"
+                        onClick={addOtherTax}
+                        className="text-xs text-red-500"
+                      >
+                        + Add
+                      </button>
+                    </div>
+
+                    {formData.otherTax.map((t, i) => (
+                      <div key={i} className="space-y-1">
+                        <div className="flex gap-2">
+                          <input
+                            placeholder="Tax Name"
+                            value={t.tax}
+                            onChange={(e) =>
+                              updateOtherTax(i, "tax", e.target.value)
+                            }
+                            className="input text-xs"
+                          />
+
+                          <input
+                            type="number"
+                            placeholder="%"
+                            value={t.percent}
+                            onChange={(e) =>
+                              updateOtherTax(i, "percent", e.target.value)
+                            }
+                            className="input text-xs w-20 text-center"
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => removeOtherTax(i)}
+                            className="text-red-500 text-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+
+                        {t.percent > 0 && (
+                          <div className="flex justify-between text-xs text-gray-400">
+                            <span>
+                              {t.tax || "Tax"} ({t.percent}%)
+                            </span>
+                            <span>
+                              {formData.currency}.{" "}
+                              {((subtotal * t.percent) / 100).toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {otherTaxAmount > 0 && (
+                      <div className="flex justify-between text-sm text-gray-400">
+                        <span>Total Other Tax</span>
+                        <span>
+                          {formData.currency}. {otherTaxAmount.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="border-t border-gray-700 pt-3 flex justify-between text-lg font-bold">
                     <span>Total</span>

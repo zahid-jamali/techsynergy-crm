@@ -35,7 +35,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showContactDropdown, setShowContactDropdown] = useState(false);
 
-  /* ---------------- Fetch data ONCE ---------------- */
+  /* ---------------- Fetch data ---------------- */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,12 +61,9 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
     fetchData();
   }, [token]);
 
-  /* ---------------- Client-side search ---------------- */
+  /* ---------------- Search Logic ---------------- */
   useEffect(() => {
-    if (!accountQuery) {
-      setFilteredAccounts([]);
-      return;
-    }
+    if (!accountQuery) return setFilteredAccounts([]);
 
     setFilteredAccounts(
       accounts.filter((a) =>
@@ -76,10 +73,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
   }, [accountQuery, accounts]);
 
   useEffect(() => {
-    if (!contactQuery) {
-      setFilteredContacts([]);
-      return;
-    }
+    if (!contactQuery) return setFilteredContacts([]);
 
     setFilteredContacts(
       contacts.filter((c) =>
@@ -91,9 +85,8 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
   }, [contactQuery, contacts]);
 
   /* ---------------- Handlers ---------------- */
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,158 +122,182 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
   };
 
   /* ---------------- UI ---------------- */
+
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
-      <div className="flex justify-center px-4 py-8">
-        <div className="bg-black border border-gray-800 rounded-lg w-full max-w-2xl text-white">
-          {/* Header */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-red-500">Edit Deal</h2>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto">
+      <div className="flex justify-center px-6 py-10">
+        <div className="bg-[#0f172a] border border-gray-800 rounded-2xl w-full max-w-3xl text-white shadow-2xl">
+          {/* HEADER */}
+          <div className="flex justify-between items-center px-8 py-6 border-b border-gray-800">
+            <div>
+              <h2 className="text-2xl font-semibold text-red-500">Edit Deal</h2>
+              <p className="text-sm text-gray-400 mt-1">
+                Update opportunity details and pipeline information
+              </p>
+            </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white"
+              className="text-gray-400 hover:text-white transition text-lg"
             >
               ✕
             </button>
           </div>
 
+          {/* FORM */}
           <form
             onSubmit={handleSubmit}
-            className="p-6 space-y-4 max-h-[75vh] overflow-y-auto"
+            className="p-8 space-y-8 max-h-[80vh] overflow-y-auto"
           >
-            <input
-              name="dealName"
-              value={formData.dealName}
-              onChange={handleChange}
-              className="input"
-              placeholder="Deal Name"
-            />
+            {/* BASIC INFO */}
+            <div className="space-y-5">
+              <h3 className="section-title">Basic Information</h3>
 
-            {/* Account Search */}
-            <div className="relative">
               <input
-                placeholder="Search Account..."
-                value={accountQuery}
-                onFocus={() => setShowAccountDropdown(true)}
-                onChange={(e) => setAccountQuery(e.target.value)}
+                name="dealName"
+                value={formData.dealName}
+                onChange={handleChange}
                 className="input"
+                placeholder="Deal Name"
               />
 
-              {showAccountDropdown && filteredAccounts.length > 0 && (
-                <div className="dropdown">
-                  {filteredAccounts.slice(0, 6).map((a) => (
-                    <div
-                      key={a._id}
-                      onClick={() => {
-                        setSelectedAccount(a);
-                        setAccountQuery(a.accountName);
-                        setShowAccountDropdown(false);
-                      }}
-                      className="dropdown-item"
-                    >
-                      {a.accountName}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* ACCOUNT SEARCH */}
+              <div className="relative">
+                <input
+                  placeholder="Search Account..."
+                  value={accountQuery}
+                  onFocus={() => setShowAccountDropdown(true)}
+                  onChange={(e) => setAccountQuery(e.target.value)}
+                  className="input"
+                />
+                {showAccountDropdown && filteredAccounts.length > 0 && (
+                  <div className="dropdown">
+                    {filteredAccounts.slice(0, 6).map((a) => (
+                      <div
+                        key={a._id}
+                        onClick={() => {
+                          setSelectedAccount(a);
+                          setAccountQuery(a.accountName);
+                          setShowAccountDropdown(false);
+                        }}
+                        className="dropdown-item"
+                      >
+                        {a.accountName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* CONTACT SEARCH */}
+              <div className="relative">
+                <input
+                  placeholder="Search Contact..."
+                  value={contactQuery}
+                  onFocus={() => setShowContactDropdown(true)}
+                  onChange={(e) => setContactQuery(e.target.value)}
+                  className="input"
+                />
+                {showContactDropdown && filteredContacts.length > 0 && (
+                  <div className="dropdown">
+                    {filteredContacts.slice(0, 6).map((c) => (
+                      <div
+                        key={c._id}
+                        onClick={() => {
+                          setSelectedContact(c);
+                          setContactQuery(`${c.firstName} ${c.lastName}`);
+                          setShowContactDropdown(false);
+                        }}
+                        className="dropdown-item"
+                      >
+                        {c.firstName} {c.lastName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Contact Search */}
-            <div className="relative">
-              <input
-                placeholder="Search Contact..."
-                value={contactQuery}
-                onFocus={() => setShowContactDropdown(true)}
-                onChange={(e) => setContactQuery(e.target.value)}
+            {/* PIPELINE DETAILS */}
+            <div className="space-y-5">
+              <h3 className="section-title">Pipeline Details</h3>
+
+              <div className="grid grid-cols-2 gap-6">
+                <select
+                  name="stage"
+                  value={formData.stage}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  {[
+                    "Qualification",
+                    "Needs Analysis",
+                    "Value Proposition",
+                    "Identify Decision Makers",
+                    "Proposal/Price Quote",
+                    "Negotiation/Review",
+                    "Closed Won",
+                    "Closed Lost",
+                    "Closed Lost to Competition",
+                  ].map((s) => (
+                    <option key={s}>{s}</option>
+                  ))}
+                </select>
+
+                <input
+                  name="closingDate"
+                  type="date"
+                  value={formData.closingDate}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <input
+                  name="amount"
+                  type="number"
+                  placeholder="Deal Amount"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  className="input"
+                />
+
+                <input
+                  name="probability"
+                  type="number"
+                  placeholder="Win Probability (%)"
+                  value={formData.probability}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
+            </div>
+
+            {/* DESCRIPTION */}
+            <div className="space-y-4">
+              <h3 className="section-title">Additional Notes</h3>
+              <textarea
+                name="description"
+                rows="4"
+                value={formData.description}
+                onChange={handleChange}
                 className="input"
+                placeholder="Add relevant notes about this opportunity..."
               />
-
-              {showContactDropdown && filteredContacts.length > 0 && (
-                <div className="dropdown">
-                  {filteredContacts.slice(0, 6).map((c) => (
-                    <div
-                      key={c._id}
-                      onClick={() => {
-                        setSelectedContact(c);
-                        setContactQuery(`${c.firstName} ${c.lastName}`);
-                        setShowContactDropdown(false);
-                      }}
-                      className="dropdown-item"
-                    >
-                      {c.firstName} {c.lastName}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
-            <select
-              name="stage"
-              value={formData.stage}
-              onChange={handleChange}
-              className="input"
-            >
-              {[
-                "Qualification",
-                "Needs Analysis",
-                "Value Proposition",
-                "Identify Decision Makers",
-                "Proposal/Price Quote",
-                "Negotiation/Review",
-                "Closed Won",
-                "Closed Lost",
-                "Closed Lost to Competition",
-              ].map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-
-            <input
-              name="amount"
-              type="number"
-              placeholder="Amount"
-              value={formData.amount}
-              onChange={handleChange}
-              className="input"
-            />
-
-            <input
-              name="probability"
-              type="number"
-              placeholder="Probability (%)"
-              value={formData.probability}
-              onChange={handleChange}
-              className="input"
-            />
-
-            <input
-              name="closingDate"
-              type="date"
-              value={formData.closingDate}
-              onChange={handleChange}
-              className="input"
-            />
-
-            <textarea
-              name="description"
-              placeholder="Description"
-              rows="3"
-              value={formData.description}
-              onChange={handleChange}
-              className="input"
-            />
-
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+            {/* ACTIONS */}
+            <div className="flex justify-end gap-4 pt-6 border-t border-gray-800">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-700 rounded"
+                className="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-lg transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+                className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-medium transition"
               >
                 Save Changes
               </button>
@@ -294,26 +311,40 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
           width: 100%;
           background: #111827;
           border: 1px solid #374151;
-          padding: 8px 10px;
-          border-radius: 6px;
+          padding: 10px 12px;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+        }
+        .input:focus {
+          outline: none;
+          border-color: #dc2626;
+          box-shadow: 0 0 0 1px #dc2626;
         }
         .dropdown {
           position: absolute;
           width: 100%;
-          background: #111827;
+          background: #0f172a;
           border: 1px solid #374151;
-          border-radius: 6px;
-          margin-top: 4px;
-          max-height: 160px;
+          border-radius: 8px;
+          margin-top: 6px;
+          max-height: 200px;
           overflow-y: auto;
           z-index: 20;
         }
         .dropdown-item {
-          padding: 8px 10px;
+          padding: 10px 12px;
           cursor: pointer;
+          transition: background 0.2s;
         }
         .dropdown-item:hover {
           background: #1f2937;
+        }
+        .section-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: #d1d5db;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
       `}</style>
     </div>

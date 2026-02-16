@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
-import ViewDealModal from "../components/staff/ViewDealModal";
+import ViewDealModal from "../components/staff/deals/ViewDealModal";
 
 const AdminDealsPage = () => {
   const token = sessionStorage.getItem("token");
