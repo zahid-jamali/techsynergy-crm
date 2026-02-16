@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddPOToVendorModal from "../components/admin/AddPOToVendorModal";
 import ViewPOToVendorModal from "../components/admin/ViewPOToVendorModal";
 import EditPOToVendorModal from "../components/admin/EditPOToVendorModal";
@@ -15,7 +15,7 @@ const AdminPOToVendorPage = () => {
   const [editPO, setEditPO] = useState(null);
   const [deletePO, setDeletePO] = useState(null);
 
-  const fetchPOs = async () => {
+  const fetchPOs = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(
@@ -29,11 +29,11 @@ const AdminPOToVendorPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchPOs();
-  }, []);
+  }, [fetchPOs]);
 
   return (
     <div className="p-6 text-white">

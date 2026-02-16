@@ -26,7 +26,7 @@ export default function StaffUpdateProfile() {
         password: "",
       });
     }
-  }, []);
+  }, [user]);
 
   // Handle input
   const handleChange = (e) => {

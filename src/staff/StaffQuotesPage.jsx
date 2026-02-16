@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import AddQuoteModal from "./AddQuoteModal";
 // import ViewQuoteModal from "./ViewQuoteModal";
 // import EditQuoteModal from "./EditQuoteModal";
@@ -25,7 +25,7 @@ const StaffQuotePage = () => {
   const [stageFilter, setStageFilter] = useState("all");
   const [showAll, setShowAll] = useState(false);
 
-  const fetchQuotes = async () => {
+  const fetchQuotes = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}quotes/my`, {
@@ -39,11 +39,11 @@ const StaffQuotePage = () => {
       setLoading(false);
       setShowModal("");
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchQuotes();
-  }, []);
+  }, [fetchQuotes]);
 
   const View = (q) => {
     setShowModal("View");

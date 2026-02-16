@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddVendorModal from "../components/admin/AddVendorModal";
 import EditVendorModal from "../components/admin/EditVendorModal";
 import DeleteVendorModal from "../components/admin/DeleteVendorModal";
@@ -13,7 +13,7 @@ const AdminVendorsPage = () => {
   const [editVendor, setEditVendor] = useState(null);
   const [deleteVendor, setDeleteVendor] = useState(null);
 
-  const fetchVendors = async () => {
+  const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(
@@ -29,11 +29,11 @@ const AdminVendorsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchVendors();
-  }, []);
+  }, [fetchVendors]);
 
   return (
     <div className="p-6 text-white">

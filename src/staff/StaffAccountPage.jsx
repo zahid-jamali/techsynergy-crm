@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddAccountModal from "../components/staff/account/AddAccountModal";
 import EditAccountModal from "../components/staff/account/EditAccountModal";
 import DeleteAccountModal from "../components/staff/account/DeleteAccountModal";
@@ -11,9 +11,8 @@ const StaffAccountsPage = () => {
   const [showModal, setShowModal] = useState("");
 
   const token = sessionStorage.getItem("token");
-  const users = sessionStorage.getItem("user");
 
-  const fetchAccounts = async () => {
+  const fetchAccounts = useCallback(async () => {
     try {
       setLoading(true);
       const url = process.env.REACT_APP_BACKEND_URL;
@@ -30,18 +29,17 @@ const StaffAccountsPage = () => {
       }
 
       setAccounts(data);
-      console.log(users);
     } catch (err) {
       // setError(err.message);
       console.log(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchAccounts();
-  }, []);
+  }, [fetchAccounts]);
 
   const View = (account) => {
     setShowModal("Edit");

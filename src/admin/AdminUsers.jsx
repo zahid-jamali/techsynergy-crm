@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import EditUserModal from "../components/admin/EditUserModal";
 
 export default function AdminUsers() {
@@ -13,7 +13,7 @@ export default function AdminUsers() {
   const token = sessionStorage.getItem("token");
 
   // Fetch users
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`${BACKEND_URL}user/all`, {
@@ -29,17 +29,16 @@ export default function AdminUsers() {
       }
 
       setUsers(data);
-      console.log(users);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, BACKEND_URL]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleSaveUser = async (updatedUser, submit = false) => {
     setSelectedUser(updatedUser);

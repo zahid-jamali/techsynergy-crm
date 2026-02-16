@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
@@ -14,7 +14,7 @@ const AdminDealsPage = () => {
   const [stageFilter, setStageFilter] = useState("all");
   const [ownerFilter, setOwnerFilter] = useState("all");
 
-  const fetchDeals = async () => {
+  const fetchDeals = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}deals/all`, {
@@ -30,11 +30,11 @@ const AdminDealsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchDeals();
-  }, []);
+  }, [fetchDeals]);
   const filteredDeals = deals.filter((deal) => {
     const matchesSearch =
       deal.dealName?.toLowerCase().includes(search.toLowerCase()) ||

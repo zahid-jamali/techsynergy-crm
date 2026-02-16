@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal";
 import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
-import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
+// import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
 import { Search, Plus, BarChart3 } from "lucide-react";
 import UpdateQuoteStageModal from "../components/staff/quote/UpdateQuoteStageModal";
@@ -23,7 +23,7 @@ const StaffDealsPage = () => {
 
   /* ================= FETCH DEALS ================= */
 
-  const fetchDeals = async () => {
+  const fetchDeals = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}deals/my`, {
@@ -37,11 +37,11 @@ const StaffDealsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   /* ================= FETCH USD RATE ================= */
 
-  const fetchUsdRate = async () => {
+  const fetchUsdRate = useCallback(async () => {
     try {
       const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
       const data = await res.json();
@@ -49,12 +49,12 @@ const StaffDealsPage = () => {
     } catch (err) {
       console.error("Failed to fetch USD rate");
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchDeals();
     fetchUsdRate();
-  }, []);
+  }, [fetchDeals, fetchUsdRate]);
 
   /* ================= FILTERING ================= */
 

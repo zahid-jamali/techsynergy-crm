@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
 import ApproveSOModal from "../components/admin/ApproveSOModal";
@@ -11,7 +11,7 @@ const AdminSellOrderPage = () => {
   const [viewOrder, setViewOrder] = useState(null);
   const [showApproveSO, setShowApproveSO] = useState(null);
 
-  const fetchSellOrders = async () => {
+  const fetchSellOrders = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(
@@ -28,11 +28,11 @@ const AdminSellOrderPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchSellOrders();
-  }, []);
+  }, [fetchSellOrders]);
 
   const confirmedQuotes = sellOrders.filter(
     (q) => q.quoteStage === "Confirmed"

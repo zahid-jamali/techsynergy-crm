@@ -13,7 +13,7 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -42,6 +42,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
       setIsLoadingRate(true);
       try {
         // Using a free exchange rate API
+        setShowCurrencyBreakdown(true);
         const response = await fetch(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
@@ -88,11 +89,15 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
   };
 
   // Convert USD to PKR
-  const convertToPKR = (amount, currency) => {
-    if (currency === "PKR") return amount;
-    if (currency === "USD") return amount * exchangeRate;
-    return amount; // Default fallback
-  };
+  const convertToPKR = useCallback(
+    (amount, currency) => {
+      if (currency === "PKR") return amount;
+      if (currency === "USD") return amount * exchangeRate;
+      return amount; // Default fallback
+    },
+
+    [exchangeRate]
+  );
 
   // Process deals with currency conversion for PKR primary view
   const processedDeals = useMemo(() => {
@@ -112,7 +117,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
         deal.currency
       ),
     }));
-  }, [deals, exchangeRate]);
+  }, [deals, convertToPKR]);
 
   // Filter deals by currency
   const filteredDeals = useMemo(() => {

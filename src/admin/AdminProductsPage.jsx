@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const AdminProductsPage = () => {
   const token = sessionStorage.getItem("token");
@@ -12,7 +12,7 @@ const AdminProductsPage = () => {
   const [error, setError] = useState("");
 
   // 🔄 Fetch products
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(
@@ -28,11 +28,11 @@ const AdminProductsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
   // ➕ Create product
   const handleCreate = async (e) => {

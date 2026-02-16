@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import UpsertTargetModal from "./modals/UpsertTargetModal";
 // import DeleteTargetModal from "./modals/DeleteTargetModal";
 
@@ -18,14 +18,12 @@ const SalesTargetPage = () => {
     totalForecast: 0,
   });
 
-  const [loading, setLoading] = useState(false);
-
   const [selectedTarget, setSelectedTarget] = useState(null);
   const [showUpsertModal, setShowUpsertModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* ================= FETCH TEAM SUMMARY ================= */
-  const fetchTeamSummary = async () => {
+  const fetchTeamSummary = useCallback(async () => {
     const res = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}sales-target/team-summary?month=${month}&year=${year}`,
       { headers: { authorization: `Bearer ${token}` } }
@@ -33,12 +31,10 @@ const SalesTargetPage = () => {
 
     const data = await res.json();
     if (data.success) setTeamSummary(data.data);
-  };
+  }, [token, month, year]);
 
   /* ================= FETCH ALL TARGETS FOR MONTH ================= */
-  const fetchTargets = async () => {
-    setLoading(true);
-
+  const fetchTargets = useCallback(async () => {
     const res = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}sales-target/get?month=${month}&year=${year}`,
       { headers: { authorization: `Bearer ${token}` } }
@@ -50,14 +46,12 @@ const SalesTargetPage = () => {
       // We need user-wise data — better create route if needed
       setTargets(data.data || []);
     }
-
-    setLoading(false);
-  };
+  }, [token, month, year]);
 
   useEffect(() => {
     fetchTeamSummary();
     fetchTargets();
-  }, [month, year]);
+  }, [fetchTargets, fetchTeamSummary]);
 
   /* ================= CALCULATIONS ================= */
 

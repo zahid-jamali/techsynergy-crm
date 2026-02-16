@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import AddAccountModal from "../components/staff/account/AddAccountModal";
 
 const AdminAccountsPage = () => {
@@ -7,9 +7,8 @@ const AdminAccountsPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   const token = sessionStorage.getItem("token");
-  const users = sessionStorage.getItem("user");
 
-  const fetchAccounts = async () => {
+  const fetchAccounts = useCallback(async () => {
     try {
       setLoading(true);
       const url = process.env.REACT_APP_BACKEND_URL;
@@ -32,11 +31,11 @@ const AdminAccountsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchAccounts();
-  }, []);
+  }, [fetchAccounts]);
 
   return (
     <div className="p-6 text-white">

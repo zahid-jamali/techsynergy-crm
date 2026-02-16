@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import AddAccountModal from "../components/staff/AddAccountModal";
 import AddContactModal from "../components/staff/contact/AddContactModal";
 import DeleteContactModal from "../components/staff/contact/DeleteContactModal";
@@ -13,7 +13,7 @@ const StaffContactsPage = () => {
 
   const token = sessionStorage.getItem("token");
 
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(
@@ -32,11 +32,11 @@ const StaffContactsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [fetchContacts]);
 
   const View = (c) => {
     setShowModal("View");

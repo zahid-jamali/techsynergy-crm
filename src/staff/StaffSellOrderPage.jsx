@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // import ViewSellOrderModal from "../components/staff/ViewSellOrderModal";
 // import EditSellOrderModal from "../components/staff/EditSellOrderModal";
@@ -12,12 +12,9 @@ const StaffSellOrderPage = () => {
   const [sellOrders, setSellOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [showAdd, setShowAdd] = useState(false);
   const [viewOrder, setViewOrder] = useState(null);
-  const [editOrder, setEditOrder] = useState(null);
-  const [statusModal, setStatusModal] = useState(null);
 
-  const fetchSellOrders = async () => {
+  const fetchSellOrders = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}quotes/my`, {
@@ -31,11 +28,11 @@ const StaffSellOrderPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchSellOrders();
-  }, []);
+  }, [fetchSellOrders]);
 
   const confirmedQuotes = sellOrders.filter(
     (q) => q.quoteStage === "Confirmed"

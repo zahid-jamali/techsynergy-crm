@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import CreateInvoiceModal from "../components/admin/CreateInvoiceModal";
 import EditInvoiceModal from "../components/admin/EditInvoiceModal";
@@ -14,17 +14,17 @@ const AdminInvoicePage = () => {
 
   const token = sessionStorage.getItem("token");
 
-  const fetchInvoices = async () => {
+  const fetchInvoices = useCallback(async () => {
     const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}invoice/get`, {
       headers: { authorization: `Bearer ${token}` },
     });
     const data = await res.json();
     setInvoices(data.data || []);
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchInvoices();
-  }, []);
+  }, [fetchInvoices]);
 
   const statusBadge = (status) => {
     if (status === "Issued") return "bg-green-600/20 text-green-400";

@@ -1,5 +1,3 @@
-import { queryByTitle } from "@testing-library/dom";
-
 const ViewQuoteModal = ({ quote, onClose }) => {
   if (!quote) return null;
 

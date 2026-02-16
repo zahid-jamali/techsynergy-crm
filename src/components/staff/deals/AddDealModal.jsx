@@ -55,7 +55,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
   /* -------- Client-side search -------- */
   useEffect(() => {

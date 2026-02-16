@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import AddQuoteModal from "./AddQuoteModal";
 // import ViewQuoteModal from "./ViewQuoteModal";
 // import EditQuoteModal from "./EditQuoteModal";
@@ -22,7 +22,7 @@ const AdminQuotesPage = () => {
   const [stageFilter, setStageFilter] = useState("all");
   const [ownerFilter, setOwnerFilter] = useState("all");
 
-  const fetchQuotes = async () => {
+  const fetchQuotes = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(
@@ -38,11 +38,11 @@ const AdminQuotesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchQuotes();
-  }, []);
+  }, [fetchQuotes]);
 
   const filteredQuotes = quotes.filter((q) => {
     if (q.quoteStage === "Confirmed") {
