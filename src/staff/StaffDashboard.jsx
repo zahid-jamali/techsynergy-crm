@@ -71,7 +71,6 @@ const AdminDashboard = () => {
     <div className="bg-black min-h-screen p-8 text-white">
       <h1 className="text-3xl font-bold mb-8">Staff Dashboard</h1>
 
-      {/* ================= KPI CARDS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
         <KpiCard title="Contacts" value={summaryStats.contacts} />
         <KpiCard title="Accounts" value={summaryStats.accounts} />
@@ -81,7 +80,6 @@ const AdminDashboard = () => {
         <KpiCard title="Conversion %" value={summaryStats.conversionRate} />
       </div>
 
-      {/* ================= CHARTS ================= */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Monthly Revenue */}
         <ChartCard title="Monthly Revenue">
@@ -193,8 +191,6 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
-/* ================= COMPONENTS ================= */
 
 const KpiCard = ({ title, value }) => (
   <div className="bg-[#111] border border-white/10 rounded-2xl p-6">

@@ -1,0 +1,25 @@
+name: Deploy React App
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Go to project folder
+        run: cd D:\crm\techsynergy-crm
+
+      - name: Pull latest code
+        run: git pull origin main
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Restart PM2 server
+        run: serve -s build -l 80
