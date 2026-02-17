@@ -32,6 +32,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
         suggestedPrice: null,
       },
     ],
+    termsAndConditions: [],
   });
 
   /* ===============================
@@ -104,6 +105,28 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
         },
       ],
     });
+  };
+
+  /* ===============================
+   TERMS & CONDITIONS
+================================= */
+
+  const addTerm = () => {
+    setFormData({
+      ...formData,
+      termsAndConditions: [...formData.termsAndConditions, ""],
+    });
+  };
+
+  const updateTerm = (index, value) => {
+    const updated = [...formData.termsAndConditions];
+    updated[index] = value;
+    setFormData({ ...formData, termsAndConditions: updated });
+  };
+
+  const removeTerm = (index) => {
+    const updated = formData.termsAndConditions.filter((_, i) => i !== index);
+    setFormData({ ...formData, termsAndConditions: updated });
   };
 
   const removeProduct = (index) => {
@@ -327,15 +350,6 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                         className="input col-span-2 text-center"
                       />
 
-                      <input
-                        type="number"
-                        value={p.discount}
-                        onChange={(e) =>
-                          updateProduct(i, "discount", e.target.value)
-                        }
-                        className="input col-span-2 text-center"
-                      />
-
                       <div className="col-span-1 text-center font-semibold">
                         {formData.currency}. {calculateLineTotal(p).toFixed(2)}
                       </div>
@@ -464,6 +478,49 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* ================= TERMS & CONDITIONS ================= */}
+            <div className="border-t border-gray-800 pt-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-gray-300 font-semibold">
+                  Terms & Conditions
+                </h3>
+
+                <button
+                  type="button"
+                  onClick={addTerm}
+                  className="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm"
+                >
+                  + Add Term
+                </button>
+              </div>
+
+              {formData.termsAndConditions.length === 0 && (
+                <p className="text-gray-500 text-sm">No terms added yet.</p>
+              )}
+
+              <div className="space-y-3">
+                {formData.termsAndConditions.map((term, i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <textarea
+                      value={term}
+                      onChange={(e) => updateTerm(i, e.target.value)}
+                      placeholder={`Term ${i + 1}`}
+                      rows={2}
+                      className="input flex-1 resize-none"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => removeTerm(i)}
+                      className="text-red-500 mt-2"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
 

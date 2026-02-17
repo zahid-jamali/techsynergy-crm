@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -14,75 +15,75 @@ import {
 } from "recharts";
 
 const AdminDashboard = () => {
-  // ==============================
-  // Dummy Data (Replace Later)
-  // ==============================
+  const token = sessionStorage.getItem("token");
 
-  const summaryStats = {
-    contacts: 148,
-    accounts: 72,
-    dealsPipeline: 34,
-    quotations: 19,
-    sellApproved: 12,
-    sellNotApproved: 7,
-    totalSell: 1850000,
-    expectedRevenue: 950000,
-    targetedRevenue: 2500000,
+  const [dashboard, setDashboard] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}dashboard/staff`,
+        {
+          headers: { authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json();
+      setDashboard(data);
+    } catch (err) {
+      console.error("Dashboard fetch error", err);
+    }
   };
 
-  const remainingTarget = summaryStats.targetedRevenue - summaryStats.totalSell;
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const monthlyRevenue = [
-    { month: "Jan", revenue: 120000 },
-    { month: "Feb", revenue: 210000 },
-    { month: "Mar", revenue: 180000 },
-    { month: "Apr", revenue: 300000 },
-    { month: "May", revenue: 250000 },
-    { month: "Jun", revenue: 350000 },
-  ];
+  if (!dashboard) {
+    return <div className="text-white p-10">Loading...</div>;
+  }
 
-  const pipelineData = [
-    { stage: "Prospecting", count: 10 },
-    { stage: "Qualified", count: 8 },
-    { stage: "Proposal", count: 9 },
-    { stage: "Negotiation", count: 7 },
-  ];
+  const {
+    summaryStats,
+    monthlyRevenue,
+    pipelineData,
+    quoteStageData,
+    topDeals,
+    recentQuotes,
+  } = dashboard;
+
+  const remainingTarget =
+    (summaryStats.targetedRevenue || 0) - summaryStats.totalSell;
 
   const sellStatusData = [
-    { name: "Approved", value: summaryStats.sellApproved },
-    { name: "Not Approved", value: summaryStats.sellNotApproved },
+    { name: "Approved", value: summaryStats.approvedQuotes },
+    { name: "Confirmed", value: summaryStats.confirmedQuotes },
   ];
 
   const kpiData = [
     { name: "Contacts", value: summaryStats.contacts },
     { name: "Accounts", value: summaryStats.accounts },
-    { name: "Deals", value: summaryStats.dealsPipeline },
-    { name: "Quotations", value: summaryStats.quotations },
+    { name: "Deals", value: summaryStats.totalDeals },
+    { name: "Quotes", value: summaryStats.totalQuotes },
   ];
-
-  // ==============================
-  // UI
-  // ==============================
 
   return (
     <div className="bg-black min-h-screen p-8 text-white">
-      <h1 className="text-3xl font-bold mb-8 tracking-wide">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">Staff Dashboard</h1>
 
-      {/* ================= KPI Cards ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6 mb-10">
-        <KpiCard title="Total Contacts" value={summaryStats.contacts} />
-        <KpiCard title="Total Accounts" value={summaryStats.accounts} />
-        <KpiCard title="Deals in Pipeline" value={summaryStats.dealsPipeline} />
-        <KpiCard title="Total Quotations" value={summaryStats.quotations} />
-        <KpiCard
-          title="Total Sell Orders"
-          value={summaryStats.sellApproved + summaryStats.sellNotApproved}
-        />
+      {/* ================= KPI CARDS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
+        <KpiCard title="Contacts" value={summaryStats.contacts} />
+        <KpiCard title="Accounts" value={summaryStats.accounts} />
+        <KpiCard title="Deals" value={summaryStats.totalDeals} />
+        <KpiCard title="Quotes" value={summaryStats.totalQuotes} />
+        <KpiCard title="Win Rate %" value={summaryStats.winRate} />
+        <KpiCard title="Conversion %" value={summaryStats.conversionRate} />
       </div>
 
-      {/* ================= Charts Grid ================= */}
+      {/* ================= CHARTS ================= */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Revenue Line Chart */}
+        {/* Monthly Revenue */}
         <ChartCard title="Monthly Revenue">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthlyRevenue}>
@@ -100,12 +101,12 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* Deals Pipeline Bar Chart */}
-        <ChartCard title="Deals Pipeline Stages">
+        {/* Pipeline */}
+        <ChartCard title="Deal Pipeline">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={pipelineData}>
               <CartesianGrid stroke="#222" />
-              <XAxis dataKey="stage" stroke="#aaa" />
+              <XAxis dataKey="_id" stroke="#aaa" />
               <YAxis stroke="#aaa" />
               <Tooltip />
               <Bar dataKey="count" fill="#ef4444" />
@@ -113,25 +114,26 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* Sell Order Status Pie */}
-        <ChartCard title="Sell Orders Status">
+        {/* Quote Stage */}
+        <ChartCard title="Quote Stage Distribution">
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Tooltip />
               <Pie
-                data={sellStatusData}
-                dataKey="value"
-                nameKey="name"
+                data={quoteStageData}
+                dataKey="count"
+                nameKey="_id"
                 outerRadius={110}
               >
-                <Cell fill="#ef4444" />
-                <Cell fill="#444" />
+                {quoteStageData.map((_, i) => (
+                  <Cell key={i} fill={i % 2 === 0 ? "#ef4444" : "#444"} />
+                ))}
               </Pie>
             </PieChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* KPI Bar Chart */}
+        {/* Core Metrics */}
         <ChartCard title="Core CRM Metrics">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={kpiData}>
@@ -149,12 +151,8 @@ const AdminDashboard = () => {
           <div className="space-y-4 text-sm">
             <RevenueItem label="Total Sell" value={summaryStats.totalSell} />
             <RevenueItem
-              label="Expected Revenue"
-              value={summaryStats.expectedRevenue}
-            />
-            <RevenueItem
-              label="Targeted Revenue"
-              value={summaryStats.targetedRevenue}
+              label="Weighted Expected Revenue"
+              value={summaryStats.weightedExpectedRevenue}
             />
             <RevenueItem
               label="Remaining Target"
@@ -163,6 +161,32 @@ const AdminDashboard = () => {
             />
           </div>
         </ChartCard>
+
+        {/* Top Deals */}
+        <ChartCard title="Top Deals">
+          {topDeals.map((deal) => (
+            <div
+              key={deal._id}
+              className="flex justify-between py-2 border-b border-white/10"
+            >
+              <span>{deal.dealName}</span>
+              <span className="text-red-500">Rs {deal.amount}</span>
+            </div>
+          ))}
+        </ChartCard>
+
+        {/* Recent Quotes */}
+        <ChartCard title="Recent Quotes">
+          {recentQuotes.map((quote) => (
+            <div
+              key={quote._id}
+              className="flex justify-between py-2 border-b border-white/10"
+            >
+              <span>{quote.subject}</span>
+              <span className="text-gray-400">{quote.quoteStage}</span>
+            </div>
+          ))}
+        </ChartCard>
       </div>
     </div>
   );
@@ -170,20 +194,18 @@ const AdminDashboard = () => {
 
 export default AdminDashboard;
 
-// =====================================
-// Reusable Components
-// =====================================
+/* ================= COMPONENTS ================= */
 
 const KpiCard = ({ title, value }) => (
-  <div className="bg-[#111] border border-white/10 rounded-2xl p-6 shadow-lg hover:border-red-500/40 transition">
+  <div className="bg-[#111] border border-white/10 rounded-2xl p-6">
     <p className="text-gray-400 text-sm">{title}</p>
     <h2 className="text-2xl font-bold mt-2 text-red-500">{value}</h2>
   </div>
 );
 
 const ChartCard = ({ title, children }) => (
-  <div className="bg-[#111] border border-white/10 rounded-2xl p-6 shadow-xl">
-    <h3 className="text-lg font-semibold mb-4 text-white">{title}</h3>
+  <div className="bg-[#111] border border-white/10 rounded-2xl p-6">
+    <h3 className="text-lg font-semibold mb-4">{title}</h3>
     {children}
   </div>
 );
@@ -194,7 +216,7 @@ const RevenueItem = ({ label, value, highlight }) => (
     <span
       className={`font-semibold ${highlight ? "text-red-500" : "text-white"}`}
     >
-      Rs {value.toLocaleString()}
+      Rs {Number(value || 0).toLocaleString()}
     </span>
   </div>
 );
