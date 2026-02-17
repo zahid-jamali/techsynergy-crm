@@ -14,18 +14,25 @@ export default function StaffUpdateProfile() {
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const token = sessionStorage.getItem("token");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const [user, setUser] = useState(null);
 
   // Prefill user data
   useEffect(() => {
-    if (user) {
-      setForm({
-        name: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        password: "",
-      });
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setForm({
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      password: "",
+    });
   }, [user]);
 
   // Handle input
