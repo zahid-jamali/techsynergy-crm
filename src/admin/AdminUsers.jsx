@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import CreateUserModal from "../components/admin/CreateUserModal";
 import EditUserModal from "../components/admin/EditUserModal";
 
 export default function AdminUsers() {
@@ -7,6 +8,7 @@ export default function AdminUsers() {
   const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -86,8 +88,15 @@ export default function AdminUsers() {
 
   return (
     <div className="text-white">
-      <h1 className="text-2xl font-bold mb-6">Users Management</h1>
-
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-red-500">User Management</h1>
+        <button
+          onClick={() => setShowModal("Add")}
+          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
+        >
+          + Add Users
+        </button>
+      </div>
       <div className="overflow-x-auto rounded-lg border border-zinc-800">
         <table className="w-full text-sm text-left">
           <thead className="bg-zinc-900 text-gray-300">
@@ -168,6 +177,12 @@ export default function AdminUsers() {
           loading={saving}
           onClose={() => setSelectedUser(null)}
           onSave={handleSaveUser}
+        />
+      )}
+      {showModal && (
+        <CreateUserModal
+          onClose={() => setShowModal(false)}
+          onSuccess={fetchUsers}
         />
       )}
     </div>
