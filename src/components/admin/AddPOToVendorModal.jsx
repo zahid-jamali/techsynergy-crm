@@ -6,28 +6,28 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
 
-  /* ---------- Vendor ---------- */
+  
   const [vendors, setVendors] = useState([]);
   const [vendorSearch, setVendorSearch] = useState("");
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [showVendorList, setShowVendorList] = useState(false);
 
-  /* ---------- GST ---------- */
+  
   const [isGstApplied, setIsGstApplied] = useState(false);
   const [gstRate, setGstRate] = useState(18);
 
-  /* ---------- Products ---------- */
+  
   const [products, setProducts] = useState([
     { productName: "", quantity: 1, listPrice: 0 },
   ]);
 
-  /* ---------- Terms ---------- */
+  
   const [terms, setTerms] = useState([""]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /* ---------------- Fetch Vendors ---------------- */
+  
   useEffect(() => {
     const fetchVendors = async () => {
       try {

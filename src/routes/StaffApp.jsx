@@ -9,17 +9,15 @@ import StaffUpdateProfile from "../staff/StaffUpdateProfile";
 
 export default function StaffApp() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Navigate to="dashboard" />} />
-        <Route path="dashboard" element={<StaffDashbaord />} />
-        <Route path="profile" element={<StaffUpdateProfile />} />
-        <Route path="account" element={<StaffAccountsPage />} />
-        <Route path="contacts" element={<StaffContactsPage />} />
-        <Route path="deals" element={<StaffDealsPage />} />
-        <Route path="quotes" element={<StaffQuotePage />} />
-        <Route path="s-order" element={<StaffSellOrderPage />} />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/" element={<Navigate to="dashboard" />} />
+      <Route path="dashboard" element={<StaffDashbaord />} />
+      <Route path="profile" element={<StaffUpdateProfile />} />
+      <Route path="account" element={<StaffAccountsPage />} />
+      <Route path="contacts" element={<StaffContactsPage />} />
+      <Route path="deals" element={<StaffDealsPage />} />
+      <Route path="quotes" element={<StaffQuotePage />} />
+      <Route path="s-order" element={<StaffSellOrderPage />} />
+    </Routes>
   );
 }

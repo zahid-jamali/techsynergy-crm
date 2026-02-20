@@ -165,7 +165,8 @@ const AdminDealsPage = () => {
                   <td className="px-4 py-3">{deal.amount?.toLocaleString()}</td>
 
                   <td className="px-4 py-3">
-                    {deal.contact.firstName} {deal.contact.lastName}
+                    {deal.contact?.firstName || ""}{" "}
+                    {deal.contact?.lastName || ""}
                   </td>
                   <td className="px-4 py-3">
                     {deal.closingDate

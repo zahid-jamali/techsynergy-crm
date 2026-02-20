@@ -168,7 +168,9 @@ const AdminDashboard = () => {
               className="flex justify-between py-2 border-b border-white/10"
             >
               <span>{deal.dealName}</span>
-              <span className="text-red-500">Rs {deal.amount}</span>
+              <span className="text-red-500">
+                {deal.currency === "USD" ? "$" : "Rs."} {deal.amount}
+              </span>
             </div>
           ))}
         </ChartCard>
