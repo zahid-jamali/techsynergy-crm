@@ -21,23 +21,22 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
     currency: "USD",
     description: "",
     isGstApplied: false,
-    otherTax: [], // ✅ NEW
+    otherTax: [],
     products: [
       {
         productName: "",
         quantity: 1,
         description: "",
+        pricingMode: "direct", // "direct" | "margin"
         listPrice: 0,
+        purchasePrice: 0,
+        margin: 0,
         discount: 0,
         suggestedPrice: null,
       },
     ],
     termsAndConditions: [],
   });
-
-  /* ===============================
-     FETCH DATA
-  ================================= */
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +69,16 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
   const updateProduct = (index, field, value) => {
     const updated = [...formData.products];
     updated[index][field] = value;
+
+    const p = updated[index];
+
+    // If margin mode → auto calculate list price
+    if (p.pricingMode === "margin") {
+      const cost = Number(p.purchasePrice) || 0;
+      const margin = Number(p.margin) || 0;
+      p.listPrice = cost + (cost * margin) / 100;
+    }
+
     setFormData({ ...formData, products: updated });
   };
 
@@ -308,59 +317,153 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                   {formData.products.map((p, i) => (
                     <div
                       key={i}
-                      className="grid grid-cols-12 gap-3 items-center"
+                      className="border border-gray-800 rounded-lg p-4 bg-[#0f172a]"
                     >
-                      <div className="col-span-4">
-                        <input
-                          value={p.productName}
-                          onChange={(e) =>
-                            handleProductNameChange(i, e.target.value)
-                          }
-                          placeholder="Product"
-                          className="input"
-                        />
+                      {/* TOP ROW */}
+                      <div className="grid grid-cols-12 gap-3 mb-3">
+                        <div className="col-span-3">
+                          <input
+                            value={p.productName}
+                            onChange={(e) =>
+                              handleProductNameChange(i, e.target.value)
+                            }
+                            placeholder="Product Name"
+                            className="input"
+                          />
+                        </div>
+
+                        <div className="col-span-3">
+                          <input
+                            value={p.description}
+                            onChange={(e) =>
+                              updateProduct(i, "description", e.target.value)
+                            }
+                            placeholder="Description"
+                            className="input"
+                          />
+                        </div>
+
+                        <div className="col-span-2">
+                          <input
+                            type="number"
+                            value={p.quantity}
+                            onChange={(e) =>
+                              updateProduct(i, "quantity", e.target.value)
+                            }
+                            placeholder="Qty"
+                            className="input text-center"
+                          />
+                        </div>
+
+                        {/* PRICING MODE TOGGLE */}
+                        <div className="col-span-2 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateProduct(i, "pricingMode", "direct")
+                            }
+                            className={`px-2 py-1 text-xs rounded ${
+                              p.pricingMode === "direct"
+                                ? "bg-red-600"
+                                : "bg-gray-700"
+                            }`}
+                          >
+                            Direct
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateProduct(i, "pricingMode", "margin")
+                            }
+                            className={`px-2 py-1 text-xs rounded ${
+                              p.pricingMode === "margin"
+                                ? "bg-red-600"
+                                : "bg-gray-700"
+                            }`}
+                          >
+                            Margin
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => removeProduct(i)}
+                          className="col-span-1 text-red-500"
+                        >
+                          ✕
+                        </button>
                       </div>
 
-                      <div className="col-span-4">
-                        <input
-                          value={p.description}
-                          onChange={(e) =>
-                            updateProduct(i, "description", e.target.value)
-                          }
-                          placeholder="Description"
-                          className="input"
-                        />
-                      </div>
+                      {/* PRICING SECTION */}
+                      {p.pricingMode === "direct" ? (
+                        <div className="grid grid-cols-4 gap-3 items-center">
+                          <input
+                            type="number"
+                            value={p.listPrice}
+                            onChange={(e) =>
+                              updateProduct(i, "listPrice", e.target.value)
+                            }
+                            placeholder="List Price"
+                            className="input"
+                          />
 
-                      <input
-                        type="number"
-                        value={p.quantity}
-                        onChange={(e) =>
-                          updateProduct(i, "quantity", e.target.value)
-                        }
-                        className="input col-span-2 text-center"
-                      />
+                          <input
+                            type="number"
+                            value={p.discount}
+                            onChange={(e) =>
+                              updateProduct(i, "discount", e.target.value)
+                            }
+                            placeholder="Discount"
+                            className="input"
+                          />
 
-                      <input
-                        type="number"
-                        value={p.listPrice}
-                        onChange={(e) =>
-                          updateProduct(i, "listPrice", e.target.value)
-                        }
-                        className="input col-span-2 text-center"
-                      />
+                          <div className="text-sm text-gray-400">
+                            Line Total
+                          </div>
 
-                      <div className="col-span-1 text-center font-semibold">
-                        {formData.currency}. {calculateLineTotal(p).toFixed(2)}
-                      </div>
+                          <div className="text-red-400 font-semibold">
+                            {formData.currency}.{" "}
+                            {calculateLineTotal(p).toFixed(2)}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-6 gap-3 items-center">
+                          <input
+                            type="number"
+                            value={p.purchasePrice}
+                            onChange={(e) =>
+                              updateProduct(i, "purchasePrice", e.target.value)
+                            }
+                            placeholder="Purchase Price"
+                            className="input"
+                          />
 
-                      <button
-                        type="button"
-                        onClick={() => removeProduct(i)}
-                        className="col-span-1 text-red-500"
-                      >
-                        ✕
-                      </button>
+                          <input
+                            type="number"
+                            value={p.margin}
+                            onChange={(e) =>
+                              updateProduct(i, "margin", e.target.value)
+                            }
+                            placeholder="Margin %"
+                            className="input"
+                          />
+
+                          <div className="col-span-2 text-sm text-gray-400">
+                            Auto List Price
+                          </div>
+
+                          <div className="col-span-2 text-green-400 font-semibold">
+                            {formData.currency}.{" "}
+                            {Number(p.listPrice || 0).toFixed(2)}
+                          </div>
+
+                          <div className="col-span-6 text-xs text-gray-500">
+                            Profit per unit:{" "}
+                            {(p.listPrice - p.purchasePrice || 0).toFixed(2)}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
