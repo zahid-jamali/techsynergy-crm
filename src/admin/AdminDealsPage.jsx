@@ -3,6 +3,9 @@ import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
+import { BarChart3 } from "lucide-react";
+import { Plus } from "lucide-react";
+import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal";
 
 const AdminDealsPage = () => {
   const token = sessionStorage.getItem("token");
@@ -51,19 +54,33 @@ const AdminDealsPage = () => {
     return matchesSearch && matchesStage && matchesOwner;
   });
 
+  const View = (deal) => {
+    setSelectedDeal(deal);
+    setShowModal("View");
+  };
+
   return (
     <div className="p-6 text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-red-500">Deals</h1>
-        {/* <button
-          onClick={() => {
-            setShowModal("Add");
-          }}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
-        >
-          + Add Deal
-        </button> */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowModal("Analytics")}
+            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg border border-gray-700"
+          >
+            <BarChart3 size={16} />
+            Analytics
+          </button>
+
+          <button
+            onClick={() => setShowModal("Add")}
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold"
+          >
+            <Plus size={16} />
+            Add Deal
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -157,32 +174,36 @@ const AdminDealsPage = () => {
                   key={deal._id}
                   className="border-t border-gray-800 hover:bg-gray-900"
                 >
-                  <td className="px-4 py-3">{deal.dealName}</td>
-                  <td className="px-4 py-3">
+                  <td onClick={() => View(deal)} className="px-4 py-3">
+                    {deal.dealName}
+                  </td>
+                  <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.account?.accountName || "-"}
                   </td>
-                  <td className="px-4 py-3">{deal.stage}</td>
-                  <td className="px-4 py-3">{deal.amount?.toLocaleString()}</td>
+                  <td onClick={() => View(deal)} className="px-4 py-3">
+                    {deal.stage}
+                  </td>
+                  <td onClick={() => View(deal)} className="px-4 py-3">
+                    {deal.amount?.toLocaleString()}
+                  </td>
 
                   <td className="px-4 py-3">
                     {deal.contact?.firstName || ""}{" "}
                     {deal.contact?.lastName || ""}
                   </td>
-                  <td className="px-4 py-3">
+                  <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.closingDate
                       ? new Date(deal.closingDate).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td className="px-4 py-3">{deal.probability}</td>
-                  <td className="px-4 py-3">{deal.dealOwner.name}</td>
+                  <td onClick={() => View(deal)} className="px-4 py-3">
+                    {deal.probability}
+                  </td>
+                  <td onClick={() => View(deal)} className="px-4 py-3">
+                    {deal.dealOwner.name}
+                  </td>
                   <td className="px-4 py-3 flex gap-3">
-                    <button
-                      onClick={() => {
-                        setSelectedDeal(deal);
-                        setShowModal("View");
-                      }}
-                      className="text-blue-400 hover:underline"
-                    >
+                    <button className="text-blue-400 hover:underline">
                       View
                     </button>
 
@@ -220,6 +241,10 @@ const AdminDealsPage = () => {
           }}
           onSuccess={fetchDeals}
         />
+      )}
+
+      {showModal === "Analytics" && (
+        <DealsAnalyticsModal deals={deals} onClose={() => setShowModal("")} />
       )}
       {showModal === "View" && (
         <ViewDealModal

@@ -132,7 +132,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
     e.preventDefault();
 
     await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}quotes/${quote._id}/update`,
+      `${process.env.REACT_APP_BACKEND_URL}quotes/update/${quote._id}/`,
       {
         method: "PUT",
         headers: {

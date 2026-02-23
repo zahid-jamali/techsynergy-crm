@@ -264,7 +264,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
 
               <div className="space-y-4">
                 <EntitySelect
-                  label="Contact"
+                  label="POC"
                   value={contactQuery}
                   disabled={!selectedDeal}
                   onChange={setContactQuery}
