@@ -147,6 +147,7 @@ const AdminDealsPage = () => {
               <th className="px-4 py-3 text-left">Account</th>
               <th className="px-4 py-3 text-left">Stage</th>
               <th className="px-4 py-3 text-left">Amount</th>
+              <th className="px-4 py-3 text-left">Currency</th>
               <th className="px-4 py-3 text-left">POS</th>
               <th className="px-4 py-3 text-left">Closing Date</th>
               <th className="px-4 py-3 text-left">Probability</th>
@@ -185,6 +186,10 @@ const AdminDealsPage = () => {
                   </td>
                   <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.amount?.toLocaleString()}
+                  </td>
+
+                  <td onClick={() => View(deal)} className="px-4 py-3">
+                    {deal.currencry || "-"}
                   </td>
 
                   <td className="px-4 py-3">
@@ -244,7 +249,10 @@ const AdminDealsPage = () => {
       )}
 
       {showModal === "Analytics" && (
-        <DealsAnalyticsModal deals={deals} onClose={() => setShowModal("")} />
+        <DealsAnalyticsModal
+          deals={filteredDeals}
+          onClose={() => setShowModal("")}
+        />
       )}
       {showModal === "View" && (
         <ViewDealModal

@@ -6,6 +6,7 @@ import EditDealModal from "../components/staff/deals/EditDealModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
 import { Search, Plus, BarChart3 } from "lucide-react";
 import UpdateQuoteStageModal from "../components/staff/quote/UpdateQuoteStageModal";
+import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
 
 const StaffDealsPage = () => {
   const token = sessionStorage.getItem("token");
@@ -229,6 +230,7 @@ const StaffDealsPage = () => {
               <th className="px-6 py-4 text-left">Deal</th>
               <th className="px-6 py-4 text-left">Stage</th>
               <th className="px-6 py-4 text-left">Amount</th>
+              <th className="px-6 py-4 text-left">Currencry</th>
               <th className="px-6 py-4 text-left">Probability</th>
               <th className="px-6 py-4 text-left">Closing Date</th>
 
@@ -271,6 +273,10 @@ const StaffDealsPage = () => {
 
                   <td onClick={() => View(deal)} className="px-6 py-4">
                     {formatMoney(deal)}
+                  </td>
+
+                  <td onClick={() => View(deal)} className="px-6 py-4">
+                    {deal.currency || "-"}
                   </td>
 
                   <td onClick={() => View(deal)} className="px-6 py-4">
@@ -331,7 +337,7 @@ const StaffDealsPage = () => {
       )}
 
       {showModal === "updateStage" && (
-        <UpdateQuoteStageModal
+        <StageUpdateModal
           deal={selectedDeal}
           onClose={() => {
             setShowModal("");

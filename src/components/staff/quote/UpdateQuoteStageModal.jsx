@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const QUOTE_STAGES = [
   "Draft",
@@ -25,6 +25,10 @@ const UpdateQuoteStageModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    console.log(currentStage);
+  }, []);
+
   const handleUpdate = async () => {
     setError("");
 
@@ -42,6 +46,10 @@ const UpdateQuoteStageModal = ({
 
       if (quoteStage === "Confirmed") {
         formData.append("purchaseOrder", purchaseOrder);
+      }
+
+      if (quoteStage === "Delivered") {
+        formData.append("probability", probability);
       }
 
       const res = await fetch(
@@ -91,25 +99,36 @@ const UpdateQuoteStageModal = ({
               value={quoteStage}
               onChange={(e) => {
                 setQuoteStage(e.target.value);
-                setPurchaseOrder(null); // reset PO if stage changes
+                setPurchaseOrder(null);
               }}
-              className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
             >
-              {QUOTE_STAGES.map((stage) => (
-                <>
-                  {stage === "Closed Won" ? (
-                    <>
-                      <option key={stage} disabled>
-                        {stage}
-                      </option>
-                    </>
-                  ) : (
-                    <option key={stage} value={stage}>
-                      {stage}
-                    </option>
-                  )}
-                </>
-              ))}
+              {QUOTE_STAGES.map((stage) => {
+                let isDisabled = false;
+
+                // Rule 1: Closed Won always disabled
+                if (stage === "Closed Won") {
+                  isDisabled = true;
+                }
+
+                // Rule 2: If already Delivered, cannot go back
+                if (
+                  currentStage === "Delivered" &&
+                  (stage === "Draft" || stage === "Negotiation")
+                ) {
+                  isDisabled = true;
+                }
+
+                if (currentStage === "On Hold") {
+                  isDisabled = true;
+                }
+
+                return (
+                  <option key={stage} value={stage} disabled={isDisabled}>
+                    {stage}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
