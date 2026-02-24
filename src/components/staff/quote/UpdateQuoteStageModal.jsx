@@ -13,12 +13,14 @@ const QUOTE_STAGES = [
 const UpdateQuoteStageModal = ({
   quoteId,
   currentStage,
+  deal,
   onClose,
   onSuccess,
 }) => {
   const token = sessionStorage.getItem("token");
 
   const [quoteStage, setQuoteStage] = useState(currentStage);
+  const [probability, setProbability] = useState(deal.probability);
   const [purchaseOrder, setPurchaseOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -131,6 +133,91 @@ const UpdateQuoteStageModal = ({
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
         </div>
+
+        {quoteStage === "Delivered" && (
+          <div className="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-red-500/20 rounded-2xl p-6 space-y-6 shadow-lg">
+            {/* Header */}
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-gray-400 text-sm">Deal Probability</p>
+                <h3 className="text-2xl font-bold text-white">
+                  {probability}%
+                </h3>
+              </div>
+
+              {/* Dynamic Status */}
+              <div
+                className={`px-3 py-1 rounded-full text-xs font-medium
+          ${
+            probability >= 70
+              ? "bg-green-500/20 text-green-400"
+              : probability >= 40
+              ? "bg-yellow-500/20 text-yellow-400"
+              : "bg-red-500/20 text-red-400"
+          }`}
+              >
+                {probability >= 70
+                  ? "High Chance"
+                  : probability >= 40
+                  ? "Medium Chance"
+                  : "Low Chance"}
+              </div>
+            </div>
+
+            {/* Modern Slider */}
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              value={probability}
+              onChange={(e) => setProbability(Number(e.target.value))}
+              className="w-full appearance-none h-2 rounded-lg bg-gray-800
+                 [&::-webkit-slider-thumb]:appearance-none
+                 [&::-webkit-slider-thumb]:h-5
+                 [&::-webkit-slider-thumb]:w-5
+                 [&::-webkit-slider-thumb]:rounded-full
+                 [&::-webkit-slider-thumb]:bg-red-600
+                 [&::-webkit-slider-thumb]:cursor-pointer
+                 [&::-webkit-slider-thumb]:shadow-lg"
+            />
+
+            {/* Animated Progress Bar */}
+            <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+              <div
+                className="h-full transition-all duration-500 ease-out rounded-full"
+                style={{
+                  width: `${probability}%`,
+                  background:
+                    probability >= 70
+                      ? "linear-gradient(to right, #22c55e, #16a34a)"
+                      : probability >= 40
+                      ? "linear-gradient(to right, #eab308, #ca8a04)"
+                      : "linear-gradient(to right, #ef4444, #b91c1c)",
+                }}
+              />
+            </div>
+
+            {/* Preset Buttons */}
+            <div className="flex gap-2 flex-wrap">
+              {[25, 50, 75, 100].map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setProbability(p)}
+                  className={`px-4 py-1 rounded-lg text-sm transition-all
+            ${
+              probability === p
+                ? "bg-red-600 text-white shadow-lg"
+                : "bg-[#1a1a1a] text-gray-400 hover:border hover:border-red-500"
+            }`}
+                >
+                  {p}%
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-800">

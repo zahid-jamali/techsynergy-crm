@@ -38,7 +38,7 @@ const EditContactModal = ({ contact, accounts = [], onClose, onSuccess }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}contact/${contact._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}contact/update/${contact._id}`,
         {
           method: "PUT",
           headers: {

@@ -254,6 +254,7 @@ const StaffQuotePage = () => {
         <UpdateQuoteStageModal
           quoteId={selectedQuote._id}
           currentStage={selectedQuote.stage}
+          deal={selectedQuote.deal}
           onClose={() => {
             setSelectedQuote(null);
             setShowModal("");

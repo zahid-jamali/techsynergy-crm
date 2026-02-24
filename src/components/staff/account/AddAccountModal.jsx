@@ -250,7 +250,7 @@ const AddAccountModal = ({ onClose, onSuccess }) => {
 
             {/* ADDRESSES */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {["billingAddress", "shippingAddress"].map((type) => (
+              {["billingAddress"].map((type) => (
                 <Section
                   key={type}
                   title={
