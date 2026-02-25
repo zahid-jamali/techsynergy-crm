@@ -73,6 +73,7 @@ const AdminDashboard = () => {
     contactAnalytics,
     userAnalytics,
     relationshipOverview,
+    USD_RATE,
   } = data;
   const { quoteStatus } = data;
 
@@ -90,8 +91,8 @@ const AdminDashboard = () => {
           <h1 className="text-3xl font-bold text-red-500">
             Admin Control Panel
           </h1>
-          <p className="text-gray-400 mt-2">
-            Complete business performance overview
+          <p className="text-gray-400 text-sm">
+            Primary Currency: PKR | Live USD Rate: {USD_RATE || "-"}
           </p>
         </div>
 
@@ -640,9 +641,27 @@ const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={dealsByAmount}>
               <CartesianGrid stroke="#222" />
-              <XAxis dataKey="dealName" hide />
+              <XAxis
+                dataKey="dealName"
+                stroke="#aaa"
+                tick={{ fill: "#aaa", fontSize: 12 }}
+                interval={0}
+                angle={-20}
+                textAnchor="end"
+              />
               <YAxis stroke="#aaa" />
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#111827",
+                  border: "1px solid #374151",
+                  borderRadius: "8px",
+                }}
+                labelStyle={{ color: "#ef4444", fontWeight: 600 }}
+                formatter={(value) => [
+                  `PKR ${value.toLocaleString()}`,
+                  "Amount",
+                ]}
+              />
               <Line
                 type="monotone"
                 dataKey="amount"

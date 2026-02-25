@@ -176,7 +176,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
 
             {/* CONTACT SELECT */}
             <div className="relative">
-              <label className="label">Contact</label>
+              <label className="label">POC</label>
               <input
                 placeholder="Search Contact..."
                 value={contactQuery}
