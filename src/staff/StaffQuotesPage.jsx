@@ -183,25 +183,31 @@ const StaffQuotePage = () => {
                       View
                     </button> */}
 
-                    <button
-                      onClick={() => {
-                        setShowModal("Edit");
-                        setSelectedQuote(q);
-                      }}
-                      className="text-yellow-400 hover:underline"
-                    >
-                      Edit
-                    </button>
+                    {q.quoteStage !== "On Hold" ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            setShowModal("Edit");
+                            setSelectedQuote(q);
+                          }}
+                          className="text-yellow-400 hover:underline"
+                        >
+                          Edit
+                        </button>
 
-                    <button
-                      onClick={() => {
-                        setShowModal("stage");
-                        setSelectedQuote(q);
-                      }}
-                      className="text-blue-400 hover:underline"
-                    >
-                      Update-stage
-                    </button>
+                        <button
+                          onClick={() => {
+                            setShowModal("stage");
+                            setSelectedQuote(q);
+                          }}
+                          className="text-blue-400 hover:underline"
+                        >
+                          Update-stage
+                        </button>
+                      </>
+                    ) : (
+                      <></>
+                    )}
 
                     {/* <button
                       onClick={}

@@ -19,6 +19,7 @@ const AddContactModal = ({ onClose, onSuccess }) => {
     phone: "",
     mobile: "",
     description: "",
+    designation: "",
   });
 
   /* ---------------- Fetch accounts ONCE ---------------- */
@@ -148,6 +149,13 @@ const AddContactModal = ({ onClose, onSuccess }) => {
               name="email"
               placeholder="Email"
               value={formData.email}
+              onChange={handleChange}
+              className="input"
+            />
+            <input
+              name="designation"
+              placeholder="Designation"
+              value={formData.designation}
               onChange={handleChange}
               className="input"
             />

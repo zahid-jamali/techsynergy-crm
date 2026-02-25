@@ -40,10 +40,10 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
     const fetchData = async () => {
       try {
         const [accRes, conRes] = await Promise.all([
-          fetch(`${process.env.REACT_APP_BACKEND_URL}/account/my`, {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}account/my`, {
             headers: { authorization: `Bearer ${token}` },
           }),
-          fetch(`${process.env.REACT_APP_BACKEND_URL}/contact/my`, {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}contact/my`, {
             headers: { authorization: `Bearer ${token}` },
           }),
         ]);
@@ -51,8 +51,8 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
         const accData = await accRes.json();
         const conData = await conRes.json();
 
-        setAccounts(accData.data || []);
-        setContacts(conData.data || []);
+        setAccounts(accData || []);
+        setContacts(conData || []);
       } catch (err) {
         console.error("Failed to fetch accounts/contacts", err);
       }
@@ -101,7 +101,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/deals/${deal._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}deals/update/${deal._id}`,
         {
           method: "PUT",
           headers: {
@@ -120,6 +120,18 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
       console.error("Update deal failed", err);
     }
   };
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (!e.target.closest(".relative")) {
+        setShowAccountDropdown(false);
+        setShowContactDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   /* ---------------- UI ---------------- */
 
@@ -162,56 +174,90 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
 
               {/* ACCOUNT SEARCH */}
               <div className="relative">
+                <label className="label">Account</label>
+
                 <input
                   placeholder="Search Account..."
                   value={accountQuery}
                   onFocus={() => setShowAccountDropdown(true)}
-                  onChange={(e) => setAccountQuery(e.target.value)}
+                  onChange={(e) => {
+                    setAccountQuery(e.target.value);
+                    setShowAccountDropdown(true);
+                  }}
                   className="input"
                 />
-                {showAccountDropdown && filteredAccounts.length > 0 && (
+
+                {showAccountDropdown && (
                   <div className="dropdown">
-                    {filteredAccounts.slice(0, 6).map((a) => (
-                      <div
-                        key={a._id}
-                        onClick={() => {
-                          setSelectedAccount(a);
-                          setAccountQuery(a.accountName);
-                          setShowAccountDropdown(false);
-                        }}
-                        className="dropdown-item"
-                      >
-                        {a.accountName}
+                    {filteredAccounts.length > 0 ? (
+                      filteredAccounts.slice(0, 6).map((a) => (
+                        <div
+                          key={a._id}
+                          onClick={() => {
+                            setSelectedAccount(a);
+                            setAccountQuery(a.accountName);
+                            setShowAccountDropdown(false);
+
+                            // Clear contact if account changes
+                            setSelectedContact(null);
+                            setContactQuery("");
+                          }}
+                          className="dropdown-item"
+                        >
+                          <div className="font-medium">{a.accountName}</div>
+                          <div className="text-xs text-gray-400">
+                            {a.industry || "No Industry"}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-3 text-gray-500 text-sm">
+                        No accounts found
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
 
               {/* CONTACT SEARCH */}
               <div className="relative">
+                <label className="label">Contact</label>
+
                 <input
                   placeholder="Search Contact..."
                   value={contactQuery}
                   onFocus={() => setShowContactDropdown(true)}
-                  onChange={(e) => setContactQuery(e.target.value)}
+                  onChange={(e) => {
+                    setContactQuery(e.target.value);
+                    setShowContactDropdown(true);
+                  }}
                   className="input"
                 />
-                {showContactDropdown && filteredContacts.length > 0 && (
+
+                {showContactDropdown && (
                   <div className="dropdown">
-                    {filteredContacts.slice(0, 6).map((c) => (
-                      <div
-                        key={c._id}
-                        onClick={() => {
-                          setSelectedContact(c);
-                          setContactQuery(`${c.firstName} ${c.lastName}`);
-                          setShowContactDropdown(false);
-                        }}
-                        className="dropdown-item"
-                      >
-                        {c.firstName} {c.lastName}
+                    {filteredContacts.length > 0 ? (
+                      filteredContacts.slice(0, 6).map((c) => (
+                        <div
+                          key={c._id}
+                          onClick={() => {
+                            setSelectedContact(c);
+                            setContactQuery(`${c.firstName} ${c.lastName}`);
+                            setShowContactDropdown(false);
+                          }}
+                          className="dropdown-item"
+                        >
+                          <div className="font-medium">
+                            {c.firstName} {c.lastName}
+                          </div>
+                          <div className="text-xs text-gray-400">{c.email}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-3 text-gray-500 text-sm">
+                        No contacts found
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
@@ -253,23 +299,48 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
               </div>
 
               <div className="grid grid-cols-2 gap-6">
-                <input
-                  name="amount"
-                  type="number"
-                  placeholder="Deal Amount"
-                  value={formData.amount}
-                  onChange={handleChange}
-                  className="input"
-                />
+                <div className="relative">
+                  <label className="label">Deal Amount</label>
+                  <div className="absolute left-3 top-[38px] text-gray-400 text-sm">
+                    PKR
+                  </div>
+                  <input
+                    name="amount"
+                    type="number"
+                    value={formData.amount}
+                    onChange={handleChange}
+                    className="input pl-12"
+                  />
+                </div>
 
-                <input
-                  name="probability"
-                  type="number"
-                  placeholder="Win Probability (%)"
-                  value={formData.probability}
-                  onChange={handleChange}
-                  className="input"
-                />
+                <div className="space-y-3">
+                  <label className="label">Win Probability</label>
+
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>Confidence</span>
+                    <span className="text-red-500 font-semibold">
+                      {formData.probability}%
+                    </span>
+                  </div>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    name="probability"
+                    value={formData.probability}
+                    onChange={handleChange}
+                    className="w-full accent-red-600"
+                  />
+
+                  <div className="w-full bg-gray-800 rounded-full h-2">
+                    <div
+                      className="h-2 bg-red-600 rounded-full transition-all"
+                      style={{ width: `${formData.probability}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 

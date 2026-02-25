@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const EditContactModal = ({ contact, accounts = [], onClose, onSuccess }) => {
+const EditContactModal = ({ contact, onClose, onSuccess }) => {
   const token = sessionStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [accounts, setAccounts] = useState([]);
 
   const [formData, setFormData] = useState({
     ...contact,
@@ -16,6 +17,29 @@ const EditContactModal = ({ contact, accounts = [], onClose, onSuccess }) => {
       country: "",
     },
   });
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}account/my`,
+          {
+            headers: { authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch accounts");
+
+        const data = await res.json();
+
+        setAccounts(data.data || data || []);
+      } catch (err) {
+        console.error("Error fetching accounts:", err);
+      }
+    };
+
+    fetchAccounts();
+  }, [token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -118,6 +142,14 @@ const EditContactModal = ({ contact, accounts = [], onClose, onSuccess }) => {
                 />
 
                 <input
+                  name="designation"
+                  value={formData.designation || ""}
+                  onChange={handleChange}
+                  placeholder="Designation"
+                  className="input"
+                />
+
+                <input
                   name="phone"
                   value={formData.phone || ""}
                   onChange={handleChange}
@@ -151,7 +183,7 @@ const EditContactModal = ({ contact, accounts = [], onClose, onSuccess }) => {
             </div>
 
             {/* ADDRESS */}
-            <div>
+            {/* <div>
               <h3 className="text-sm text-gray-400 mb-3 uppercase tracking-wide">
                 Postal Address
               </h3>
@@ -170,7 +202,7 @@ const EditContactModal = ({ contact, accounts = [], onClose, onSuccess }) => {
                   )
                 )}
               </div>
-            </div>
+            </div> */}
 
             {/* DESCRIPTION */}
             <div>

@@ -31,6 +31,7 @@ const ViewContactModal = ({ contact, onClose }) => {
                 <Field label="Email" value={contact.email} />
                 <Field label="Phone" value={contact.phone} />
                 <Field label="Mobile" value={contact.mobile} />
+                <Field label="Designation" value={contact.designation || "-"} />
                 <Field
                   label="Status"
                   value={contact.isActive ? "Active" : "Inactive"}
