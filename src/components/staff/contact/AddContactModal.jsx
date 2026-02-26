@@ -144,7 +144,13 @@ const AddContactModal = ({ onClose, onSuccess }) => {
               />
             </div>
 
-            {/* Email */}
+            <input
+                  name="email"
+                  value={formData.email || ""}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="input"
+                />
             <input
               name="email"
               placeholder="Email"
