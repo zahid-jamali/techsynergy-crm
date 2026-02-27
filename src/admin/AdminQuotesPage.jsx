@@ -205,7 +205,7 @@ const AdminQuotesPage = () => {
                     {q.quoteStage}
                   </td>
                   <td onClick={() => setViewQuote(q)} className="p-3">
-                    {q.contact.firstName} {q.contact.lastName}
+                    {q.contact?.firstName || ""} {q.contact?.lastName || ""}
                   </td>
                   <td onClick={() => setViewQuote(q)} className="p-3">
                     {q.grandTotal?.toLocaleString()}

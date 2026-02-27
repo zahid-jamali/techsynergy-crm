@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import AddContactModal from "../components/staff/contact/AddContactModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
 import EditContactModal from "../components/staff/contact/EditContactModal";
@@ -14,8 +14,7 @@ const AdminContactsPage = () => {
   const [search, setSearch] = useState("");
   const [selectedAccountFilter, setSelectedAccountFilter] = useState("all");
   const [selectedOwnerFilter, setSelectedOwnerFilter] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [showAll, setShowAll] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("active");
 
   const token = sessionStorage.getItem("token");
 
@@ -44,44 +43,69 @@ const AdminContactsPage = () => {
     fetchContacts();
   }, [fetchContacts]);
 
-  const filteredContacts = contacts.filter((c) => {
-    // Toggle logic
-    if (!showAll && !c.isActive) return false;
+  const uniqueAccounts = useMemo(() => {
+    return [
+      ...new Map(
+        contacts
+          .filter((c) => c.account?._id)
+          .map((c) => [c.account._id, c.account])
+      ).values(),
+    ];
+  }, [contacts]);
 
-    // Search filter
-    const fullName = `${c.firstName} ${c.lastName}`.toLowerCase();
-    if (
-      search &&
-      !fullName.includes(search.toLowerCase()) &&
-      !c.email?.toLowerCase().includes(search.toLowerCase()) &&
-      !c.phone?.toLowerCase().includes(search.toLowerCase())
-    ) {
-      return false;
-    }
+  const uniqueOwners = useMemo(() => {
+    return [
+      ...new Map(
+        contacts
+          .filter((c) => c.contactOwner?._id)
+          .map((c) => [c.contactOwner._id, c.contactOwner])
+      ).values(),
+    ];
+  }, [contacts]);
 
-    // Account filter
-    if (
-      selectedAccountFilter !== "all" &&
-      c.account?._id !== selectedAccountFilter
-    ) {
-      return false;
-    }
+  const filteredContacts = useMemo(() => {
+    return contacts.filter((c) => {
+      const searchValue = search.toLowerCase().trim();
 
-    // Owner filter
-    if (
-      selectedOwnerFilter !== "all" &&
-      c.contactOwner?._id !== selectedOwnerFilter
-    ) {
-      return false;
-    }
+      if (searchValue) {
+        const searchableText = `
+          ${c.firstName || ""}
+          ${c.lastName || ""}
+          ${c.email || ""}
+          ${c.phone || ""}
+          ${c.account?.accountName || ""}
+          ${c.contactOwner?.name || ""}
+        `.toLowerCase();
 
-    // Status filter
-    if (selectedStatus !== "all" && String(c.isActive) !== selectedStatus) {
-      return false;
-    }
+        if (!searchableText.includes(searchValue)) return false;
+      }
 
-    return true;
-  });
+      if (
+        selectedAccountFilter !== "all" &&
+        c.account?._id !== selectedAccountFilter
+      ) {
+        return false;
+      }
+
+      if (
+        selectedOwnerFilter !== "all" &&
+        c.contactOwner?._id !== selectedOwnerFilter
+      ) {
+        return false;
+      }
+
+      if (selectedStatus === "active" && !c.isActive) return false;
+      if (selectedStatus === "inactive" && c.isActive) return false;
+
+      return true;
+    });
+  }, [
+    contacts,
+    search,
+    selectedAccountFilter,
+    selectedOwnerFilter,
+    selectedStatus,
+  ]);
 
   const View = (contact) => {
     setShowModal("View");
@@ -102,82 +126,76 @@ const AdminContactsPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-900 border border-gray-800 p-4 rounded-lg mb-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-6 space-y-4">
         {/* Search */}
-        <input
-          type="text"
-          placeholder="Search name, email, phone..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-black border border-gray-700 px-3 py-2 rounded text-white"
-        />
+        <div className="flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search contacts..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 bg-black border border-gray-700 px-4 py-2 rounded-lg focus:outline-none focus:border-red-500"
+          />
 
-        {/* Account Filter */}
-        <select
-          value={selectedAccountFilter}
-          onChange={(e) => setSelectedAccountFilter(e.target.value)}
-          className="bg-black border border-gray-700 px-3 py-2 rounded"
-        >
-          <option value="all">All Accounts</option>
-          {[
-            ...new Map(
-              contacts.map((c) => [c.account?._id, c.account])
-            ).values(),
-          ]
-            .filter(Boolean)
-            .map((acc) => (
+          <button
+            onClick={() => {
+              setSearch("");
+              setSelectedAccountFilter("all");
+              setSelectedOwnerFilter("all");
+              setSelectedStatus("active");
+            }}
+            className="text-sm text-gray-400 hover:text-red-400"
+          >
+            Reset Filters
+          </button>
+        </div>
+
+        {/* Filters Row */}
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Account */}
+          <select
+            value={selectedAccountFilter}
+            onChange={(e) => setSelectedAccountFilter(e.target.value)}
+            className="bg-black border border-gray-700 px-4 py-2 rounded-lg"
+          >
+            <option value="all">All Accounts</option>
+            {uniqueAccounts.map((acc) => (
               <option key={acc._id} value={acc._id}>
                 {acc.accountName}
               </option>
             ))}
-        </select>
+          </select>
 
-        {/* Owner Filter */}
-        <select
-          value={selectedOwnerFilter}
-          onChange={(e) => setSelectedOwnerFilter(e.target.value)}
-          className="bg-black border border-gray-700 px-3 py-2 rounded"
-        >
-          <option value="all">All Owners</option>
-          {[
-            ...new Map(
-              contacts.map((c) => [c.contactOwner?._id, c.contactOwner])
-            ).values(),
-          ]
-            .filter(Boolean)
-            .map((owner) => (
+          {/* Owner */}
+          <select
+            value={selectedOwnerFilter}
+            onChange={(e) => setSelectedOwnerFilter(e.target.value)}
+            className="bg-black border border-gray-700 px-4 py-2 rounded-lg"
+          >
+            <option value="all">All Owners</option>
+            {uniqueOwners.map((owner) => (
               <option key={owner._id} value={owner._id}>
                 {owner.name}
               </option>
             ))}
-        </select>
+          </select>
 
-        {/* Status Filter */}
-        <select
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          className="bg-black border border-gray-700 px-3 py-2 rounded"
-        >
-          <option value="all">All Status</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
-        </select>
-
-        {/* Toggle Show All */}
-        <div className="flex items-center gap-3">
-          <span className="text-sm">Show All</span>
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className={`w-12 h-6 rounded-full transition ${
-              showAll ? "bg-red-600" : "bg-gray-600"
-            }`}
-          >
-            <div
-              className={`h-6 w-6 bg-white rounded-full transform transition ${
-                showAll ? "translate-x-6" : ""
-              }`}
-            />
-          </button>
+          {/* Status Pills */}
+          <div className="flex bg-black border border-gray-700 rounded-lg overflow-hidden">
+            {["active", "inactive", "all"].map((status) => (
+              <button
+                key={status}
+                onClick={() => setSelectedStatus(status)}
+                className={`px-4 py-2 text-sm capitalize transition ${
+                  selectedStatus === status
+                    ? "bg-red-600 text-white"
+                    : "text-gray-400 hover:bg-gray-800"
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

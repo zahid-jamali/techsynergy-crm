@@ -20,7 +20,7 @@ import {
 const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("revenue");
+  const [activeTab, setActiveTab] = useState("deals");
   const token = sessionStorage.getItem("token");
 
   const [data, setData] = useState(null);
@@ -154,8 +154,8 @@ const AdminDashboard = () => {
         {/* ================= DASHBOARD FILTER BUTTONS ================= */}
         <div className="flex flex-wrap gap-3 mb-10">
           {[
-            { key: "revenue", label: "Revenue" },
             { key: "deals", label: "Deals" },
+            { key: "revenue", label: "Revenue" },
             { key: "quotes", label: "Quotes" },
             { key: "accounts", label: "Accounts" },
             { key: "contacts", label: "Contacts" },
