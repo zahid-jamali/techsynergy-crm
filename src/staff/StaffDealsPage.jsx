@@ -2,10 +2,8 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal";
 import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
-// import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
 import { Search, Plus, BarChart3 } from "lucide-react";
-import UpdateQuoteStageModal from "../components/staff/quote/UpdateQuoteStageModal";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
 
 const StaffDealsPage = () => {
@@ -174,14 +172,14 @@ const StaffDealsPage = () => {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <KpiCard label="Total Deals" value={filteredDeals.length} />
+        <KpiCard
+          label="Total Deals"
+          showPKR={false}
+          value={filteredDeals.length}
+        />
         <KpiCard
           label="Pipeline Value (PKR)"
           value={totalPipeline.toLocaleString()}
-        />
-        <KpiCard
-          label="Expected Revenue (PKR)"
-          value={totalExpected.toLocaleString()}
         />
       </div>
 
@@ -350,10 +348,12 @@ const StaffDealsPage = () => {
   );
 };
 
-const KpiCard = ({ label, value }) => (
+const KpiCard = ({ label, value, showPKR = true }) => (
   <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
     <p className="text-xs text-gray-400 uppercase tracking-wide">{label}</p>
-    <p className="text-2xl font-bold mt-2">PKR {value}</p>
+    <p className="text-2xl font-bold mt-2">
+      {showPKR ? "PKR" : ""} {value}
+    </p>
   </div>
 );
 

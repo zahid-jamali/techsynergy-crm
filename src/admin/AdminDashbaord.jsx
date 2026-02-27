@@ -110,7 +110,7 @@ const AdminDashboard = () => {
           />
           <ExecutiveCard
             title="Pipeline Revenue"
-            value={summaryStats.pipelineValue}
+            value={summaryStats.pipelineValue.toLocaleString()}
             description="Revenue in pipeline"
           />
           <ExecutiveCard

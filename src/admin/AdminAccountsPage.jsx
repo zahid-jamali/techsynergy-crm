@@ -1,10 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import AddAccountModal from "../components/staff/account/AddAccountModal";
+import EditAccountModal from "../components/staff/account/EditAccountModal";
+import DeleteAccountModal from "../components/staff/account/DeleteAccountModal";
+import ViewAccountModal from "../components/staff/account/ViewAccountModal";
+import ViewContactModal from "../components/staff/contact/ViewContactModal";
 
 const AdminAccountsPage = () => {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedContact, setSelectedContact] = useState(null);
 
   const token = sessionStorage.getItem("token");
 
@@ -37,17 +43,22 @@ const AdminAccountsPage = () => {
     fetchAccounts();
   }, [fetchAccounts]);
 
+  const View = (account) => {
+    setShowModal("View");
+    setSelectedAccount(account);
+  };
+
   return (
     <div className="p-6 text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-red-500">Accounts</h1>
-        {/* <button
-          onClick={() => setShowModal(true)}
+        <button
+          onClick={() => setShowModal("Add")}
           className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
         >
           + Add Account
-        </button> */}
+        </button>
       </div>
 
       {/* Table */}
@@ -59,6 +70,8 @@ const AdminAccountsPage = () => {
               <th className="px-4 py-3 text-left">Type</th>
               <th className="px-4 py-3 text-left">Industry</th>
               <th className="px-4 py-3 text-left">Ownership</th>
+
+              <th className="px-4 py-3 text-left">POC</th>
               <th className="px-4 py-3 text-left">Phone</th>
               <th className="px-4 py-3 text-left">A/Owner</th>
               <th className="px-4 py-3 text-left">Actions</th>
@@ -84,22 +97,60 @@ const AdminAccountsPage = () => {
                   key={account._id}
                   className="border-t border-gray-800 hover:bg-gray-900"
                 >
-                  <td className="px-4 py-3">{account.accountName}</td>
-                  <td className="px-4 py-3">{account.accountType}</td>
-                  <td className="px-4 py-3">{account.industry || "-"}</td>
-                  <td className="px-4 py-3">{account.ownership || "-"}</td>
-                  <td className="px-4 py-3">{account.phone || "-"}</td>
-                  <td className="px-4 py-3">
+                  <td onClick={() => View(account)} className="px-4 py-3">
+                    {account.accountName}
+                  </td>
+                  <td onClick={() => View(account)} className="px-4 py-3">
+                    {account.accountType}
+                  </td>
+                  <td onClick={() => View(account)} className="px-4 py-3">
+                    {account.industry || "-"}
+                  </td>
+                  <td onClick={() => View(account)} className="px-4 py-3">
+                    {account.ownership || "-"}
+                  </td>
+                  <td className="px-4 py-3 ">
+                    {account.contacts.map((c) => (
+                      <span
+                        onClick={() => {
+                          setShowModal("contact");
+                          setSelectedContact(c);
+                        }}
+                        className="px-2 cursor-pointer hover:underline "
+                      >
+                        {c.firstName} {c.lastName}
+                      </span>
+                    )) || "-"}
+                  </td>
+                  <td onClick={() => View(account)} className="px-4 py-3">
+                    {account.phone || "-"}
+                  </td>
+                  <td onClick={() => View(account)} className="px-4 py-3">
                     {account.accountOwner.name || "-"}
                   </td>
                   <td className="px-4 py-3 flex gap-3">
-                    <button className="text-blue-400 hover:underline">
+                    {/* <button
+                      onClick={}}
+                      className="text-blue-400 hover:underline"
+                    >
                       View
-                    </button>
-                    <button className="text-yellow-400 hover:underline">
+                    </button> */}
+                    <button
+                      onClick={() => {
+                        setShowModal("Edit");
+                        setSelectedAccount(account);
+                      }}
+                      className="text-yellow-400 hover:underline"
+                    >
                       Edit
                     </button>
-                    <button className="text-red-400 hover:underline">
+                    <button
+                      onClick={() => {
+                        setShowModal("Delete");
+                        setSelectedAccount(account);
+                      }}
+                      className="text-red-400 hover:underline"
+                    >
                       Delete
                     </button>
                   </td>
@@ -111,10 +162,51 @@ const AdminAccountsPage = () => {
       </div>
 
       {/* Modal */}
-      {showModal && (
+      {showModal === "Add" && (
         <AddAccountModal
           onClose={() => setShowModal(false)}
           onSuccess={fetchAccounts}
+        />
+      )}
+
+      {showModal === "Edit" && (
+        <EditAccountModal
+          account={selectedAccount}
+          onClose={() => {
+            setShowModal(null);
+            setSelectedAccount(null);
+          }}
+          onSuccess={fetchAccounts}
+        />
+      )}
+
+      {showModal === "View" && (
+        <ViewAccountModal
+          account={selectedAccount}
+          onClose={() => {
+            setShowModal(null);
+            setSelectedAccount(null);
+          }}
+        />
+      )}
+
+      {showModal === "Delete" && (
+        <DeleteAccountModal
+          account={selectedAccount}
+          onClose={() => {
+            setShowModal(null);
+            setSelectedAccount(null);
+          }}
+          onSuccess={fetchAccounts}
+        />
+      )}
+      {showModal === "contact" && (
+        <ViewContactModal
+          contact={selectedContact}
+          onClose={() => {
+            setShowModal(null);
+            setSelectedContact(null);
+          }}
         />
       )}
     </div>

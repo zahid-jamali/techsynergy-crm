@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 // import AddAccountModal from "../components/staff/AddAccountModal";
 import AddContactModal from "../components/staff/contact/AddContactModal";
 import DeleteContactModal from "../components/staff/contact/DeleteContactModal";
@@ -10,6 +11,7 @@ const StaffContactsPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
   const [showModal, setShowModal] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState(false);
 
   const token = sessionStorage.getItem("token");
 
@@ -97,7 +99,13 @@ const StaffContactsPage = () => {
                   <td onClick={() => View(c)} className="px-4 py-3">
                     {c.phone || "-"}
                   </td>
-                  <td onClick={() => View(c)} className="px-4 py-3">
+                  <td
+                    onClick={() => {
+                      setShowModal("account");
+                      setSelectedAccount(c.account);
+                    }}
+                    className="px-4 py-3 hover:underline cursor-pointer"
+                  >
                     {c.account?.accountName || "-"}
                   </td>
                   <td className="px-4 py-3 flex gap-3">
@@ -154,6 +162,16 @@ const StaffContactsPage = () => {
           contact={selectedContact}
           onClose={() => setShowModal(false)}
           onSuccess={fetchContacts}
+        />
+      )}
+
+      {showModal === "account" && (
+        <ViewAccountModal
+          account={selectedAccount}
+          onClose={() => {
+            setShowModal(null);
+            setSelectedAccount(null);
+          }}
         />
       )}
     </div>
