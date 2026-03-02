@@ -10,7 +10,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
     nextStep: deal.nextStep || "",
     previousStep: deal.previousStep || "",
     amount: deal.amount || 0,
-    probability: deal.probability || 0,
+    currency: deal.currency || "PKR",
     closingDate: deal.closingDate ? deal.closingDate.slice(0, 10) : "",
     description: deal.description || "",
   });
@@ -299,11 +299,22 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
               </div>
 
               <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <select
+                    name="currency"
+                    value={formData.currency}
+                    onChange={handleChange}
+                    className="input"
+                  >
+                    {["USD", "PKR"].map((s) => (
+                      <option key={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="relative">
                   <label className="label">Deal Amount</label>
-                  <div className="absolute left-3 top-[38px] text-gray-400 text-sm">
-                    PKR
-                  </div>
+
                   <input
                     name="amount"
                     type="number"
@@ -313,7 +324,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                   />
                 </div>
 
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                   <label className="label">Win Probability</label>
 
                   <div className="flex justify-between text-sm text-gray-400">
@@ -340,7 +351,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                       style={{ width: `${formData.probability}%` }}
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 

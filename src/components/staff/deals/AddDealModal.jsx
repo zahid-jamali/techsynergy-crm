@@ -25,8 +25,6 @@ const AddDealModal = ({ onClose, onSuccess }) => {
     previousStep: "",
     amount: "",
     currency: "PKR",
-
-    probability: "",
     closingDate: "",
     description: "",
   });
@@ -259,13 +257,12 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                   className="input"
                 />
               </div>
-
               <div>
-                <label className="label">Probability (%)</label>
+                <label className="label">Closing Date</label>
                 <input
-                  name="probability"
-                  type="number"
-                  value={formData.probability}
+                  name="closingDate"
+                  type="date"
+                  value={formData.closingDate}
                   onChange={handleChange}
                   className="input"
                 />
@@ -273,16 +270,6 @@ const AddDealModal = ({ onClose, onSuccess }) => {
             </div>
 
             {/* DATE */}
-            <div>
-              <label className="label">Closing Date</label>
-              <input
-                name="closingDate"
-                type="date"
-                value={formData.closingDate}
-                onChange={handleChange}
-                className="input"
-              />
-            </div>
 
             {/* DESCRIPTION */}
             <div>

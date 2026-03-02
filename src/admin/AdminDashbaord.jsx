@@ -208,305 +208,6 @@ const AdminDashboard = () => {
             <ContactsSection contactsPerAccount={contactsPerAccount} />
           )}
         </div>
-
-        {/* ============================================================== */}
-
-        {/* <ChartCard title="Top Deals by Amount">
-          {dealsByAmount?.length ? (
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={dealsByAmount}>
-                <CartesianGrid stroke="#222" />
-                <XAxis dataKey="dealName" stroke="#aaa" hide />
-                <YAxis stroke="#aaa" />
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (active && payload?.length) {
-                      const d = payload[0].payload;
-                      return (
-                        <div className="bg-[#111] border border-red-500 p-3 rounded">
-                          <p className="font-semibold text-white">
-                            {d.dealName}
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            Stage: {d.stage}
-                          </p>
-                          <p className="text-red-400 font-semibold">
-                            Amount: Rs {d.amount.toLocaleString()}
-                          </p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Bar dataKey="amount" fill="#ef4444" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <NoData />
-          )}
-        </ChartCard>
-
-        <ChartCard title="Total Deal Amount by Stage">
-          {dealsByStageAmount?.length ? (
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={dealsByStageAmount}>
-                <CartesianGrid stroke="#222" />
-                <XAxis dataKey="_id" stroke="#aaa" />
-                <YAxis stroke="#aaa" />
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (active && payload?.length) {
-                      const d = payload[0].payload;
-                      return (
-                        <div className="bg-[#111] border border-red-500 p-3 rounded">
-                          <p className="font-semibold text-white">{d._id}</p>
-                          <p className="text-gray-400 text-sm">
-                            Deals: {d.dealCount}
-                          </p>
-                          <p className="text-red-400 font-semibold">
-                            Total: Rs {d.totalAmount.toLocaleString()}
-                          </p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Bar dataKey="totalAmount" fill="#dc2626" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <NoData />
-          )}
-        </ChartCard> */}
-
-        {/* <div className="grid grid-cols-1 md:grid-cols-2">
-          <ChartCard title="Top Deals by Amount">
-            {dealsByAmount?.length ? (
-              <div style={{ width: "100%", aspectRatio: 1.618, maxWidth: 700 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dealsByAmount}>
-                    <CartesianGrid stroke="#222" />
-
-                    <XAxis
-                      dataKey="dealName"
-                      stroke="#aaa"
-                      tick={{ fill: "#aaa", fontSize: 12 }}
-                      hide
-                    />
-
-                    <YAxis
-                      stroke="#aaa"
-                      tick={{ fill: "#aaa", fontSize: 12 }}
-                    />
-
-                    <Tooltip
-                      content={({ active, payload }) => {
-                        if (active && payload?.length) {
-                          const d = payload[0].payload;
-                          return (
-                            <div className="bg-[#111] border border-red-500 p-3 rounded shadow-xl">
-                              <p className="font-semibold text-white">
-                                {d.dealName}
-                              </p>
-                              <p className="text-sm text-gray-400">
-                                Stage: {d.stage}
-                              </p>
-                              <p className="text-red-400 font-semibold">
-                                Amount: Rs {d.amount.toLocaleString()}
-                              </p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-
-                    <Legend />
-
-                    <Line
-                      type="monotone"
-                      dataKey="amount"
-                      stroke="#ef4444"
-                      strokeWidth={3}
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 8 }}
-                      name="Deal Amount"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-
-          <ChartCard title="Deal Value Distribution by Stage">
-            {dealsByStageAmount?.length ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <PieChart>
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload?.length) {
-                        const d = payload[0].payload;
-                        return (
-                          <div className="bg-[#111] border border-red-500 p-3 rounded shadow-xl">
-                            <p className="font-semibold text-white">{d._id}</p>
-                            <p className="text-gray-400 text-sm">
-                              Deals: {d.dealCount}
-                            </p>
-                            <p className="text-red-400 font-semibold">
-                              Total: Rs {d.totalAmount.toLocaleString()}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Pie
-                    data={dealsByStageAmount}
-                    dataKey="totalAmount"
-                    nameKey="_id"
-                    outerRadius={110}
-                  >
-                    {dealsByStageAmount.map((_, index) => (
-                      <Cell
-                        key={index}
-                        fill={
-                          [
-                            "#ef4444",
-                            "#dc2626",
-                            "#b91c1c",
-                            "#7f1d1d",
-                            "#991b1b",
-                          ][index % 5]
-                        }
-                      />
-                    ))}
-                    <Legend />
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-        </div> */}
-
-        {/* ================= OPERATIONS ================= */}
-        {/* <SectionTitle title="Pipeline & Operational Health" />
-
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          <ChartCard title="Deal Stage Distribution">
-            {dealStages?.length ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={dealStages}>
-                  <CartesianGrid stroke="#222" />
-                  <XAxis dataKey="stage" stroke="#aaa" />
-                  <YAxis stroke="#aaa" />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#ef4444" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-
-          <ChartCard title="Quote Status Overview">
-            {quoteStatus?.length ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <PieChart>
-                  <Tooltip />
-                  <Pie
-                    data={quoteStatus}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={110}
-                  >
-                    {quoteStatus.map((_, i) => (
-                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-        </div> */}
-
-        {/* ================= REVENUE INTELLIGENCE ================= */}
-        {/* <SectionTitle title="Revenue & Growth Intelligence" />
-
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-14">
-          <ChartCard title="Revenue Trend (Monthly)">
-            {revenueTrend?.length ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <LineChart data={revenueTrend}>
-                  <CartesianGrid stroke="#222" />
-                  <XAxis dataKey="month" stroke="#aaa" />
-                  <YAxis stroke="#aaa" />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#ef4444"
-                    strokeWidth={3}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-
-          <ChartCard title="Revenue Growth Area">
-            {revenueTrend?.length ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <AreaChart data={revenueTrend}>
-                  <CartesianGrid stroke="#222" />
-                  <XAxis dataKey="month" stroke="#aaa" />
-                  <YAxis stroke="#aaa" />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#ef4444"
-                    fill="#7f1d1d"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-        </div> */}
-
-        {/* ================= SALES PERFORMANCE ================= */}
-        {/* <SectionTitle title="Sales Team Performance" />
-
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-14">
-          <ChartCard title="Revenue by Staff">
-            {revenueByStaff?.length ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={revenueByStaff}>
-                  <CartesianGrid stroke="#222" />
-                  <XAxis dataKey="name" stroke="#aaa" />
-                  <YAxis stroke="#aaa" />
-                  <Tooltip />
-                  <Bar dataKey="revenue" fill="#dc2626" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <NoData />
-            )}
-          </ChartCard>
-
-          <PerformanceTable data={revenueByStaff} />
-        </div> */}
       </div>
     </div>
   );
@@ -630,6 +331,54 @@ const RevenueSection = ({ revenueTrend, userPerformance }) => (
   </div>
 );
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+
+    return (
+      <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-lg">
+        <p className="text-red-500 font-semibold mb-1">{data.dealName}</p>
+        <p className="text-gray-300 text-sm">
+          Account:{" "}
+          <span className="text-white">{data.account?.accountName}</span>
+        </p>
+        <p className="text-gray-300 text-sm">
+          Amount:{" "}
+          <span className="text-white">PKR {data.amount.toLocaleString()}</span>
+        </p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+const CustomPieTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+
+    return (
+      <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-xl">
+        <p className="text-red-500 font-semibold mb-1">{data._id}</p>
+
+        <p className="text-gray-300 text-sm">
+          Total Amount:
+          <span className="text-white ml-1">
+            PKR {data.totalAmount.toLocaleString()}
+          </span>
+        </p>
+
+        <p className="text-gray-300 text-sm">
+          Deal Count:
+          <span className="text-white ml-1">{data.dealCount}</span>
+        </p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
   <div className="space-y-10">
     <SectionTitle title="Deal Performance Intelligence" />
@@ -650,18 +399,7 @@ const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
                 textAnchor="end"
               />
               <YAxis stroke="#aaa" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#111827",
-                  border: "1px solid #374151",
-                  borderRadius: "8px",
-                }}
-                labelStyle={{ color: "#ef4444", fontWeight: 600 }}
-                formatter={(value) => [
-                  `PKR ${value.toLocaleString()}`,
-                  "Amount",
-                ]}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
                 dataKey="amount"
@@ -680,7 +418,7 @@ const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
         {dealsByStageAmount?.length ? (
           <ResponsiveContainer width="100%" height={320}>
             <PieChart>
-              <Tooltip />
+              <Tooltip content={<CustomPieTooltip />} />
               <Pie
                 data={dealsByStageAmount}
                 dataKey="totalAmount"

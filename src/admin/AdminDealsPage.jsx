@@ -6,6 +6,8 @@ import ViewDealModal from "../components/staff/deals/ViewDealModal";
 import { BarChart3 } from "lucide-react";
 import { Plus } from "lucide-react";
 import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal";
+import ViewAccountModal from "../components/staff/account/ViewAccountModal";
+import ViewContactModal from "../components/staff/contact/ViewContactModal";
 
 const AdminDealsPage = () => {
   const token = sessionStorage.getItem("token");
@@ -16,6 +18,8 @@ const AdminDealsPage = () => {
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
   const [ownerFilter, setOwnerFilter] = useState("all");
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedContact, setSelectedContact] = useState(null);
 
   const fetchDeals = useCallback(async () => {
     setLoading(true);
@@ -178,7 +182,13 @@ const AdminDealsPage = () => {
                   <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.dealName}
                   </td>
-                  <td onClick={() => View(deal)} className="px-4 py-3">
+                  <td
+                    onClick={() => {
+                      setShowModal("account");
+                      setSelectedAccount(deal.account);
+                    }}
+                    className="px-4 py-3 hover:underline cursor-pointer"
+                  >
                     {deal.account?.accountName || "-"}
                   </td>
                   <td onClick={() => View(deal)} className="px-4 py-3">
@@ -192,7 +202,13 @@ const AdminDealsPage = () => {
                     {deal.currencry || "-"}
                   </td>
 
-                  <td className="px-4 py-3">
+                  <td
+                    onClick={() => {
+                      setShowModal("contact");
+                      setSelectedContact(deal.contact);
+                    }}
+                    className="px-4 py-3 hover:underline cursor-pointer"
+                  >
                     {deal.contact?.firstName || ""}{" "}
                     {deal.contact?.lastName || ""}
                   </td>
@@ -271,6 +287,7 @@ const AdminDealsPage = () => {
             setSelectedDeal(null);
             setShowModal("");
           }}
+          onSuccess={fetchDeals}
         />
       )}
       {showModal === "Pipeline" && (
@@ -284,6 +301,25 @@ const AdminDealsPage = () => {
             fetchDeals();
             setSelectedDeal(null);
             setShowModal("");
+          }}
+        />
+      )}
+
+      {showModal === "account" && (
+        <ViewAccountModal
+          account={selectedAccount}
+          onClose={() => {
+            setSelectedAccount(null);
+            setShowModal(null);
+          }}
+        />
+      )}
+      {showModal === "contact" && (
+        <ViewContactModal
+          contact={selectedContact}
+          onClose={() => {
+            setShowModal(null);
+            setSelectedContact(null);
           }}
         />
       )}

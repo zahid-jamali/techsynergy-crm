@@ -20,14 +20,9 @@ const UpdateQuoteStageModal = ({
   const token = sessionStorage.getItem("token");
 
   const [quoteStage, setQuoteStage] = useState(currentStage);
-  const [probability, setProbability] = useState(deal.probability);
   const [purchaseOrder, setPurchaseOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    console.log(currentStage);
-  }, []);
 
   const handleUpdate = async () => {
     setError("");
@@ -46,10 +41,6 @@ const UpdateQuoteStageModal = ({
 
       if (quoteStage === "Confirmed") {
         formData.append("purchaseOrder", purchaseOrder);
-      }
-
-      if (quoteStage === "Delivered") {
-        formData.append("probability", probability);
       }
 
       const res = await fetch(
@@ -153,9 +144,9 @@ const UpdateQuoteStageModal = ({
           {error && <p className="text-red-400 text-sm">{error}</p>}
         </div>
 
-        {quoteStage === "Delivered" && (
+        {/* {quoteStage === "Delivered" && (
           <div className="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-red-500/20 rounded-2xl p-6 space-y-6 shadow-lg">
-            {/* Header */}
+        
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-gray-400 text-sm">Deal Probability</p>
@@ -164,7 +155,6 @@ const UpdateQuoteStageModal = ({
                 </h3>
               </div>
 
-              {/* Dynamic Status */}
               <div
                 className={`px-3 py-1 rounded-full text-xs font-medium
           ${
@@ -182,8 +172,6 @@ const UpdateQuoteStageModal = ({
                   : "Low Chance"}
               </div>
             </div>
-
-            {/* Modern Slider */}
             <input
               type="range"
               min="0"
@@ -201,7 +189,6 @@ const UpdateQuoteStageModal = ({
                  [&::-webkit-slider-thumb]:shadow-lg"
             />
 
-            {/* Animated Progress Bar */}
             <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
               <div
                 className="h-full transition-all duration-500 ease-out rounded-full"
@@ -217,7 +204,6 @@ const UpdateQuoteStageModal = ({
               />
             </div>
 
-            {/* Preset Buttons */}
             <div className="flex gap-2 flex-wrap">
               {[25, 50, 75, 100].map((p) => (
                 <button
@@ -236,7 +222,7 @@ const UpdateQuoteStageModal = ({
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-800">
