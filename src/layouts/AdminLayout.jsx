@@ -97,6 +97,11 @@ export default function AdminLayout({ children }) {
 
           <Section title="CRM" />
           <NavItem
+            to="/admin/users"
+            icon={Users}
+            label={!collapsed && "Users"}
+          />
+          <NavItem
             to="/admin/accounts"
             icon={Building2}
             label={!collapsed && "Accounts"}
@@ -129,17 +134,13 @@ export default function AdminLayout({ children }) {
             label={!collapsed && "Vendors"}
           />
 
-          <Section title="Administration" />
-          <NavItem
-            to="/admin/users"
-            icon={Users}
-            label={!collapsed && "Users"}
-          />
+          {/* <Section title="Administration" />
+
           <NavItem
             to="/admin/settings"
             icon={Settings}
             label={!collapsed && "Settings"}
-          />
+          /> */}
         </nav>
       </aside>
 

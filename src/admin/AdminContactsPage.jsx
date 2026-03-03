@@ -4,6 +4,8 @@ import ViewContactModal from "../components/staff/contact/ViewContactModal";
 import EditContactModal from "../components/staff/contact/EditContactModal";
 import DeleteContactModal from "../components/staff/contact/DeleteContactModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
+import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 
 const AdminContactsPage = () => {
   const [contacts, setContacts] = useState([]);
@@ -15,33 +17,46 @@ const AdminContactsPage = () => {
   const [selectedAccountFilter, setSelectedAccountFilter] = useState("all");
   const [selectedOwnerFilter, setSelectedOwnerFilter] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("active");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState(0);
 
+  const { ref, inView } = useInView();
   const token = sessionStorage.getItem("token");
 
   const fetchContacts = useCallback(async () => {
+    if (loading || !hasMore) return;
+
     setLoading(true);
+
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}contact/all`,
+        `${process.env.REACT_APP_BACKEND_URL}contact/all?page=${page}&limit=20`,
         {
-          method: "GET",
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+          headers: { authorization: `Bearer ${token}` },
         }
       );
-      const data = await res.json();
-      setContacts(data || []);
+
+      if (res.ok) {
+        const data = await res.json();
+
+        setContacts((prev) => [...prev, ...data.contacts]);
+        setHasMore(data.hasMore);
+        setTotal(data.total);
+        setPage((prev) => prev + 1);
+      }
     } catch (err) {
       console.error("Failed to load contacts");
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [page, token]);
 
   useEffect(() => {
-    fetchContacts();
-  }, [fetchContacts]);
+    if (hasMore && inView) {
+      fetchContacts();
+    }
+  }, [fetchContacts, inView, hasMore]);
 
   const uniqueAccounts = useMemo(() => {
     return [
@@ -196,6 +211,7 @@ const AdminContactsPage = () => {
               </button>
             ))}
           </div>
+          <div>{`Total accounts: ${total}`}</div>
         </div>
       </div>
 
@@ -244,15 +260,19 @@ const AdminContactsPage = () => {
                       setSelectedAccount(c.account);
                       setShowModal("account");
                     }}
-                    className="px-4 py-3 cursor-pointer hover:underline"
+                    className="px-4 py-3 cursor-pointer hover:underline hover:text-blue-600"
                   >
                     {c.account.accountName || "-"}
                   </td>
                   <td onClick={() => View(c)} className="px-4 py-3">
                     {c.phone || "-"}
                   </td>
-                  <td onClick={() => View(c)} className="px-4 py-3">
-                    {c.contactOwner.name || "-"}
+                  <td className="px-4 py-3 hover:underline hover:text-blue-600">
+                    <Link
+                      to={`/admin/singleUserPerformance/${c.contactOwner._id}`}
+                    >
+                      {c.contactOwner.name || "-"}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 flex gap-3">
                     <button
@@ -279,6 +299,7 @@ const AdminContactsPage = () => {
             )}
           </tbody>
         </table>
+        <div ref={ref}></div>
       </div>
 
       {showModal === "Add" && (

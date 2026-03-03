@@ -8,9 +8,10 @@ import { Plus } from "lucide-react";
 import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
+import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 
 const AdminDealsPage = () => {
-  const token = sessionStorage.getItem("token");
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState("");
@@ -20,28 +21,47 @@ const AdminDealsPage = () => {
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState(0);
+
+  const { ref, inView } = useInView();
+  const token = sessionStorage.getItem("token");
 
   const fetchDeals = useCallback(async () => {
+    if (!hasMore || loading) return;
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}deals/all`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}deals/all?limit=20&page=${page}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
-      setDeals(data || []);
+      if (res.ok) {
+        setDeals((prev) => [...prev, ...(data.data || [])]);
+
+        setHasMore(data.hasMore);
+        setTotal(data.total);
+        setPage((prev) => prev + 1);
+      }
     } catch (err) {
       console.error("Failed to fetch deals");
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, page]);
 
   useEffect(() => {
-    fetchDeals();
-  }, [fetchDeals]);
+    if (inView && hasMore) {
+      fetchDeals();
+    }
+  }, [inView, fetchDeals, hasMore]);
+
   const filteredDeals = deals.filter((deal) => {
     const matchesSearch =
       deal.dealName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -187,7 +207,7 @@ const AdminDealsPage = () => {
                       setShowModal("account");
                       setSelectedAccount(deal.account);
                     }}
-                    className="px-4 py-3 hover:underline cursor-pointer"
+                    className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-700"
                   >
                     {deal.account?.accountName || "-"}
                   </td>
@@ -199,7 +219,7 @@ const AdminDealsPage = () => {
                   </td>
 
                   <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.currencry || "-"}
+                    {deal.currency || "-"}
                   </td>
 
                   <td
@@ -207,7 +227,7 @@ const AdminDealsPage = () => {
                       setShowModal("contact");
                       setSelectedContact(deal.contact);
                     }}
-                    className="px-4 py-3 hover:underline cursor-pointer"
+                    className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-600"
                   >
                     {deal.contact?.firstName || ""}{" "}
                     {deal.contact?.lastName || ""}
@@ -220,8 +240,13 @@ const AdminDealsPage = () => {
                   <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.probability}
                   </td>
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.dealOwner.name}
+
+                  <td className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-600">
+                    <Link
+                      to={`/admin/singleUserPerformance/${deal.dealOwner._id}`}
+                    >
+                      {deal.dealOwner.name}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 flex gap-3">
                     <button className="text-blue-400 hover:underline">
@@ -253,6 +278,7 @@ const AdminDealsPage = () => {
             )}
           </tbody>
         </table>
+        <div ref={ref} className="h-5"></div>
       </div>
 
       {showModal === "Add" && (

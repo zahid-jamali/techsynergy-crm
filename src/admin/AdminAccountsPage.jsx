@@ -4,6 +4,8 @@ import EditAccountModal from "../components/staff/account/EditAccountModal";
 import DeleteAccountModal from "../components/staff/account/DeleteAccountModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
+import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 
 const AdminAccountsPage = () => {
   const [accounts, setAccounts] = useState([]);
@@ -15,14 +17,18 @@ const AdminAccountsPage = () => {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [selectedOwner, setSelectedOwner] = useState("all");
-
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState(0);
+  const { ref, inView } = useInView({ threshold: 1 });
   const token = sessionStorage.getItem("token");
 
   const fetchAccounts = useCallback(async () => {
+    if (!hasMore && loading) return;
     try {
       setLoading(true);
       const url = process.env.REACT_APP_BACKEND_URL;
-      const res = await fetch(`${url}account/all`, {
+      const res = await fetch(`${url}account/all?limit=20&page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -34,18 +40,22 @@ const AdminAccountsPage = () => {
         throw new Error(data.msg || "Failed to fetch users");
       }
 
-      setAccounts(data);
+      setAccounts((prev) => [...prev, ...data.accounts]);
+      setHasMore(data.hasMore);
+      setTotal(data.total);
+      setPage((prev) => prev + 1);
     } catch (err) {
-      // setError(err.message);
       console.log(err);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, page]);
 
   useEffect(() => {
-    fetchAccounts();
-  }, [fetchAccounts]);
+    if (hasMore && inView) {
+      fetchAccounts();
+    }
+  }, [fetchAccounts, hasMore, inView]);
 
   const View = (account) => {
     setShowModal("View");
@@ -184,6 +194,9 @@ const AdminAccountsPage = () => {
         <div className="text-sm text-gray-400">
           Showing {filteredAccounts.length} of {accounts.length} accounts
         </div>
+        <div className="text-sm text-gray-400">
+          Showing {filteredAccounts.length} of {accounts.length} accounts
+        </div>
       </div>
 
       {/* Table */}
@@ -241,7 +254,7 @@ const AdminAccountsPage = () => {
                           setShowModal("contact");
                           setSelectedContact(c);
                         }}
-                        className="px-2 cursor-pointer hover:underline "
+                        className="px-2 cursor-pointer hover:underline hover:text-blue-600"
                       >
                         {c.firstName} {c.lastName}
                       </span>
@@ -250,8 +263,13 @@ const AdminAccountsPage = () => {
                   <td onClick={() => View(account)} className="px-4 py-3">
                     {account.phone || "-"}
                   </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.accountOwner.name || "-"}
+                  <td className="px-4 py-3">
+                    <Link
+                      to={`/admin/singleUserPerformance/${account.accountOwner._id}`}
+                      className={"hover:underline hover:text-blue-600"}
+                    >
+                      {account.accountOwner.name || "-"}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 flex gap-3">
                     {/* <button
@@ -284,6 +302,7 @@ const AdminAccountsPage = () => {
             )}
           </tbody>
         </table>
+        <div ref={ref}></div>
       </div>
 
       {/* Modal */}

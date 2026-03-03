@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import CreateUserModal from "../components/admin/CreateUserModal";
 import EditUserModal from "../components/admin/EditUserModal";
+import { Link } from "react-router-dom";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -112,8 +113,16 @@ export default function AdminUsers() {
           <tbody className="bg-zinc-950 divide-y divide-zinc-800">
             {users.map((user) => (
               <tr key={user._id}>
-                <td className="px-4 py-3">{user.name}</td>
-                <td className="px-4 py-3 text-gray-400">{user.email}</td>
+                <td className="px-4 py-3">
+                  <Link to={`/admin/singleUserPerformance/${user._id}`}>
+                    {user.name}
+                  </Link>
+                </td>
+                <td className="px-4 py-3 text-gray-400">
+                  <Link to={`/admin/singleUserPerformance/${user._id}`}>
+                    {user.email}
+                  </Link>
+                </td>
 
                 {/* Role */}
                 <td className="px-4 py-3">
@@ -124,7 +133,9 @@ export default function AdminUsers() {
                         : "bg-zinc-700 text-gray-200"
                     }`}
                   >
-                    {user.isSuperUser ? "Admin" : "Staff"}
+                    <Link to={`/admin/singleUserPerformance/${user._id}`}>
+                      {user.isSuperUser ? "Admin" : "Staff"}
+                    </Link>
                   </span>
                 </td>
 
@@ -137,10 +148,11 @@ export default function AdminUsers() {
                         : "bg-zinc-700 text-gray-300"
                     }`}
                   >
-                    {user.isActive ? "Active" : "Inactive"}
+                    <Link to={`/admin/singleUserPerformance/${user._id}`}>
+                      {user.isActive ? "Active" : "Inactive"}
+                    </Link>
                   </span>
                 </td>
-
                 {/* Actions */}
                 <td className="px-4 py-3 text-right space-x-2">
                   <button

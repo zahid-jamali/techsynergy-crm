@@ -7,6 +7,12 @@ import EditQuoteModal from "../components/staff/quote/EditQuateModal";
 import AddQuoteModal from "../components/staff/quote/AddQuoteModal";
 // import StageUpdateModal from "../components/staff/StageUpdateModal";import UpdateQuoteStageModal from "../components/staff/UpdateQuoteStageModal";
 import UpdateQuoteStageModal from "../components/staff/quote/UpdateQuoteStageModal";
+import ViewAccountModal from "../components/staff/account/ViewAccountModal";
+import ViewContactModal from "../components/staff/contact/ViewContactModal";
+import ViewDealModal from "../components/staff/deals/ViewDealModal";
+import { Link } from "react-router-dom";
+import { useInView } from "react-intersection-observer";
+// import { InView } from "react-intersection-observer";
 
 const AdminQuotesPage = () => {
   const token = sessionStorage.getItem("token");
@@ -14,35 +20,51 @@ const AdminQuotesPage = () => {
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [showAdd, setShowAdd] = useState(false);
-  const [viewQuote, setViewQuote] = useState(null);
-  const [editQuote, setEditQuote] = useState(null);
+  const [showModal, setShowModal] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState();
+  const [selectedContact, setSelectedContact] = useState();
+  const [selectedDeal, setSelectedDeal] = useState();
+  const [selectedQuote, setSelectedQuote] = useState();
+
   const [stagePipeline, setStagePipeline] = useState(null);
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
   const [ownerFilter, setOwnerFilter] = useState("all");
 
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState();
+  const [ref, inView] = useInView();
+
   const fetchQuotes = useCallback(async () => {
+    // if (!hasMore || loading) return;
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}quotes/all`,
+        `${process.env.REACT_APP_BACKEND_URL}quotes/all?limit=20&page=${page}`,
         {
           headers: { authorization: `Bearer ${token}` },
         }
       );
       const data = await res.json();
-      setQuotes(data.data || []);
+      setQuotes((prev) => [...prev, ...(data.data || [])]);
+      setPage((prev) => prev + 1);
+      setTotal(data.total);
+      setHasMore(data.hasMore);
     } catch (err) {
       console.error("Failed to fetch quotes");
     } finally {
       setLoading(false);
+      setShowModal("");
+      setSelectedQuote(null);
     }
-  }, [token]);
+  }, [token, page]);
 
   useEffect(() => {
-    fetchQuotes();
-  }, [fetchQuotes]);
+    if (hasMore && inView) {
+      fetchQuotes();
+    }
+  }, [fetchQuotes, inView]);
 
   const filteredQuotes = quotes.filter((q) => {
     if (q.quoteStage === "Confirmed") {
@@ -64,17 +86,24 @@ const AdminQuotesPage = () => {
     return matchesSearch && matchesStage && matchesOwner;
   });
 
+  const View = (q) => {
+    setSelectedQuote(q);
+    setShowModal("viewQuote");
+  };
+
   return (
     <div className="p-6 text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold">Quotes</h1>
-        {/* <button
-          onClick={() => setShowAdd(true)}
+        <button
+          onClick={() => {
+            setShowModal("Add");
+          }}
           className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
         >
           + New Quote
-        </button> */}
+        </button>
       </div>
 
       {/* Filters */}
@@ -189,66 +218,83 @@ const AdminQuotesPage = () => {
                   key={q._id}
                   className="border-t border-gray-800 hover:bg-gray-900"
                 >
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td onClick={() => View(q)} className="p-3">
                     {q.quoteNumber || "-"}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td onClick={() => View(q)} className="p-3">
                     {q.subject}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td
+                    onClick={() => {
+                      setShowModal("viewDeal");
+                      setSelectedDeal(q.deal);
+                    }}
+                    className="p-3 hover:underline cursor-pointer hover:text-blue-600"
+                  >
                     {q.deal.dealName}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td
+                    onClick={() => {
+                      setSelectedAccount(q.account);
+                      setShowModal("viewAccount");
+                    }}
+                    className="p-3 hover:underline cursor-pointer hover:text-blue-600"
+                  >
                     {q.account?.accountName}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td onClick={() => View(q)} className="p-3">
                     {q.quoteStage}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td
+                    onClick={() => {
+                      setShowModal("viewContact");
+                      setSelectedContact(q.contact);
+                    }}
+                    className="p-3 hover:underline cursor-pointer hover:text-blue-600"
+                  >
                     {q.contact?.firstName || ""} {q.contact?.lastName || ""}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td onClick={() => View(q)} className="p-3">
                     {q.grandTotal?.toLocaleString()}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
+                  <td onClick={() => View(q)} className="p-3">
                     {q.validUntil
                       ? new Date(q.validUntil).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td onClick={() => setViewQuote(q)} className="p-3">
-                    {q.quoteOwner.name}
+                  <td className="p-3">
+                    <Link
+                      to={`/admin/singleUserPerformance/${q.quoteOwner._id}`}
+                      className={
+                        "hover:underline cursor-pointer hover:text-blue-600"
+                      }
+                    >
+                      {q.quoteOwner.name}
+                    </Link>
                   </td>
                   <td className="p-3 flex gap-2">
-                    {/* <button
-                      onClick={() => setViewQuote(q)}
-                      className="text-blue-400 hover:underline"
-                    >
-                      View
-                    </button> */}
-
                     <button
-                      onClick={() => setEditQuote(q)}
+                      onClick={() => {
+                        setShowModal("edit");
+                        setSelectedQuote(q);
+                      }}
                       className="text-yellow-400 hover:underline"
                     >
                       Edit
                     </button>
 
                     <button
-                      onClick={() => setStagePipeline(q)}
+                      onClick={() => {
+                        setShowModal("updateStage");
+                        setSelectedQuote(q);
+                      }}
                       className="text-blue-400 hover:underline"
                     >
                       Update-stage
                     </button>
 
-                    {/* <button
-                      onClick={}
-                      className="text-yellow-400 hover:underline"
-                    ></button> */}
-
                     <a
                       href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
-                      //   target="_blank"
-                      //   rel="noreferrer"
                       className="text-green-400 hover:underline"
                     >
                       PDF
@@ -259,34 +305,78 @@ const AdminQuotesPage = () => {
             )}
           </tbody>
         </table>
+        <div className="h-5" ref={ref}></div>
       </div>
       {/* Modals */}
-      {showAdd && (
+      {showModal === "Add" && (
         <AddQuoteModal
-          onClose={() => setShowAdd(false)}
+          onClose={() => setShowModal("")}
           onSuccess={fetchQuotes}
         />
       )}
 
-      {viewQuote && (
-        <ViewQuoteModal quote={viewQuote} onClose={() => setViewQuote(null)} />
+      {showModal === "viewQuote" && (
+        <ViewQuoteModal
+          quote={selectedQuote}
+          onClose={() => {
+            setShowModal("");
+            setSelectedQuote(null);
+          }}
+        />
       )}
 
-      {editQuote && (
+      {showModal === "edit" && (
         <EditQuoteModal
-          quote={editQuote}
-          onClose={() => setEditQuote(null)}
+          quote={selectedQuote}
+          onClose={() => {
+            setShowModal("");
+            setSelectedQuote(null);
+          }}
           onSuccess={fetchQuotes}
         />
       )}
-      {stagePipeline && (
+      {showModal === "updateStage" && (
         <UpdateQuoteStageModal
-          quoteId={stagePipeline._id}
-          currentStage={stagePipeline.stage}
-          onClose={() => setStagePipeline(null)}
+          quoteId={selectedQuote._id}
+          currentStage={selectedQuote.stage}
+          onClose={() => {
+            setSelectedQuote(null);
+            setShowModal("");
+          }}
           onSuccess={() => fetchQuotes()}
         />
       )}
+
+      {showModal === "viewDeal" && (
+        <ViewDealModal
+          deal={selectedDeal}
+          onClose={() => {
+            setShowModal("");
+            setSelectedDeal(null);
+          }}
+        />
+      )}
+
+      {showModal === "viewAccount" && (
+        <ViewAccountModal
+          account={selectedAccount}
+          onClose={() => {
+            setShowModal("");
+            setSelectedAccount(null);
+          }}
+        />
+      )}
+
+      {showModal === "viewContact" && (
+        <ViewContactModal
+          contact={selectedContact}
+          onClose={() => {
+            setShowModal("");
+            setSelectedContact(null);
+          }}
+        />
+      )}
+
       {/* quoteId,
   currentStage,
   onClose,
