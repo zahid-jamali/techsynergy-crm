@@ -10,7 +10,6 @@ import AdminQuotesPage from "../admin/AdminQuotesPage";
 import SalesTargetPage from "../admin/AdminSalesTargetPage";
 import AdminSellOrderPage from "../admin/AdminSellOrderPage";
 import AdminSingleUserPerformance from "../admin/AdminSingleUserPerformance";
-import AdminUserPerformance from "../admin/AdminUserPerformance";
 import AdminUsers from "../admin/AdminUsers";
 import AdminVendorsPage from "../admin/AdminVendorsPage";
 
@@ -30,7 +29,6 @@ export default function AdminApp() {
       <Route path="poToVendor" element={<AdminPOToVendorPage />} />
       <Route path="invoice" element={<AdminInvoicePage />} />
       <Route path="sales-target" element={<SalesTargetPage />} />
-      <Route path="performance" element={<AdminUserPerformance />} />
       <Route
         path="singleUserPerformance/:userId"
         element={<AdminSingleUserPerformance />}
