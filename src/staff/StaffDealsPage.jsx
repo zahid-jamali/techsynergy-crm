@@ -5,6 +5,7 @@ import EditDealModal from "../components/staff/deals/EditDealModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
 import { Search, Plus, BarChart3 } from "lucide-react";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
+import Loading from "../components/Loading";
 
 const StaffDealsPage = () => {
   const token = sessionStorage.getItem("token");
@@ -138,6 +139,14 @@ const StaffDealsPage = () => {
   };
 
   /* ================= UI ================= */
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 text-white space-y-8">

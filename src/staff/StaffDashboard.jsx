@@ -13,10 +13,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Loading from "../components/Loading";
 
 const AdminDashboard = () => {
   const token = sessionStorage.getItem("token");
-  
+
   const [dashboard, setDashboard] = useState(null);
 
   const fetchData = async () => {
@@ -40,7 +41,12 @@ const AdminDashboard = () => {
   }, []);
 
   if (!dashboard) {
-    return <div className="text-white p-10">Loading...</div>;
+    // return <div className="text-white p-10">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
   }
 
   const {

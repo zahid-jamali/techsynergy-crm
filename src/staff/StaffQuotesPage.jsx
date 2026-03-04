@@ -7,6 +7,7 @@ import EditQuoteModal from "../components/staff/quote/EditQuateModal";
 import AddQuoteModal from "../components/staff/quote/AddQuoteModal";
 // import StageUpdateModal from "../components/staff/StageUpdateModal";import UpdateQuoteStageModal from "../components/staff/UpdateQuoteStageModal";
 import UpdateQuoteStageModal from "../components/staff/quote/UpdateQuoteStageModal";
+import Loading from "../components/Loading";
 
 const StaffQuotePage = () => {
   const token = sessionStorage.getItem("token");
@@ -71,6 +72,14 @@ const StaffQuotePage = () => {
 
     return matchesSearch && matchesStage;
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-white">

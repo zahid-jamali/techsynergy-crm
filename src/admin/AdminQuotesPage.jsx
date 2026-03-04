@@ -37,7 +37,6 @@ const AdminQuotesPage = () => {
   const [ref, inView] = useInView();
 
   const fetchQuotes = useCallback(async () => {
-    // if (!hasMore || loading) return;
     setLoading(true);
     try {
       const res = await fetch(
@@ -231,7 +230,7 @@ const AdminQuotesPage = () => {
                     }}
                     className="p-3 hover:underline cursor-pointer hover:text-blue-600"
                   >
-                    {q.deal.dealName}
+                    {q.deal?.dealName || "-"}
                   </td>
                   <td
                     onClick={() => {

@@ -16,6 +16,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Loading from "../components/Loading";
 
 const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
 
@@ -54,7 +55,7 @@ const AdminDashboard = () => {
   if (loading)
     return (
       <div className="bg-black min-h-screen flex items-center justify-center text-red-500">
-        Loading Dashboard...
+        <Loading />
       </div>
     );
 

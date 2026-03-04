@@ -6,6 +6,7 @@ import DeleteContactModal from "../components/staff/contact/DeleteContactModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const AdminContactsPage = () => {
   const [contacts, setContacts] = useState([]);
@@ -126,6 +127,14 @@ const AdminContactsPage = () => {
     setShowModal("View");
     setSelectedContact(contact);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-white">

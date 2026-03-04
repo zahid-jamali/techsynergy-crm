@@ -1,46 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import {
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Legend,
-  AreaChart,
-  Area,
-} from "recharts";
 import Loading from "../components/Loading";
-
-const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
-
-export default function AdminSingleUserPerformance({
-  View,
-  setShowModal,
-  setSelectedAccount,
-  setSelectedContact,
-  setSelectedDeal,
-  setViewQuote,
-  setEditQuote,
-  setStagePipeline,
-  setViewOrder,
-  setShowApproveSO,
-}) {
+import DealsTab from "../components/admin/singleUserPerformance/DealsTab";
+import QuoteTab from "../components/admin/singleUserPerformance/QuoteTab";
+export default function AdminSingleUserPerformance() {
   const [activeTab, setActiveTab] = useState("deals");
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
   const { userId } = useParams();
   const token = sessionStorage.getItem("token");
-
-  /* ================= FETCH ================= */
+  const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,8 +30,6 @@ export default function AdminSingleUserPerformance({
 
     fetchData();
   }, [userId]);
-
-  /* ================= SAFE DEFAULTS ================= */
 
   const user = data?.user || {};
   const stats = data?.stats || {};
@@ -182,142 +150,31 @@ export default function AdminSingleUserPerformance({
         {/* ================= DEALS ================= */}
         {activeTab === "deals" && (
           <>
-            <details>
-              <summary>Visuals</summary>
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <ChartCard title="Deal Amount Trend">
-                  <ResponsiveContainer width="100%" height={320}>
-                    <LineChart data={dealsByAmount}>
-                      <CartesianGrid stroke="#1f1f1f" />
-                      <XAxis dataKey="dealName" stroke="#aaa" />
-                      <YAxis stroke="#aaa" />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="amount"
-                        stroke="#ef4444"
-                        strokeWidth={3}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartCard>
-
-                <ChartCard title="Deal Stage Distribution">
-                  <ResponsiveContainer width="100%" height={320}>
-                    <PieChart>
-                      <Tooltip />
-                      <Pie
-                        data={dealsByStage}
-                        dataKey="value"
-                        outerRadius={110}
-                      >
-                        {dealsByStage.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </ChartCard>
-              </div>
-            </details>
-
-            {/* DEAL TABLE */}
-            <TableWrapper>
-              {filteredDeals.length === 0 ? (
-                <EmptyRow colSpan={10} message="No deals found" />
-              ) : (
-                filteredDeals.map((deal) => (
-                  <tr
-                    key={deal._id}
-                    className="border-t border-gray-800 hover:bg-gray-900"
-                  >
-                    <td className="p-3">{deal.dealName}</td>
-                    <td className="p-3">{deal.account?.accountName}</td>
-                    <td className="p-3">{deal.stage}</td>
-                    <td className="p-3">
-                      {deal.amount?.toLocaleString() || 0}
-                    </td>
-                    <td className="p-3">{deal.currency}</td>
-                    <td className="p-3">
-                      {deal.contact?.firstName} {deal.contact?.lastName}
-                    </td>
-                    <td className="p-3">
-                      {new Date(deal.closingDate).toLocaleDateString()}
-                    </td>
-                    <td className="p-3">{deal.probability}%</td>
-                    <td className="p-3">{deal.dealOwner?.name}</td>
-                    <td className="p-3 flex gap-3">
-                      <button className="text-blue-400">View</button>
-                      <button className="text-purple-500">
-                        Stage-Pipeline
-                      </button>
-                      <button className="text-yellow-400">Edit</button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </TableWrapper>
+            <DealsTab
+              filteredDeals={filteredDeals}
+              dealsByAmount={dealsByAmount}
+              dealsByStage={dealsByStage}
+            />
           </>
         )}
 
         {/* ================= QUOTES ================= */}
         {activeTab === "quotes" && (
           <>
-            <ChartCard title="Quote Status Breakdown">
-              <ResponsiveContainer width="100%" height={320}>
-                <PieChart>
-                  <Tooltip />
-                  <Pie data={quotesData} dataKey="value" outerRadius={120}>
-                    {quotesData.map((_, i) => (
-                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartCard>
+            <QuoteTab filteredQuotes={filteredQuotes} quotesData={quotesData} />
+          </>
+        )}
 
-            <TableWrapper>
-              {filteredQuotes.length === 0 ? (
-                <EmptyRow colSpan={10} message="No quotes found" />
-              ) : (
-                filteredQuotes.map((q) => (
-                  <tr
-                    key={q._id}
-                    className="border-t border-gray-800 hover:bg-gray-900"
-                  >
-                    <td className="p-3">{q.quoteNumber || "-"}</td>
-                    <td className="p-3">{q.subject}</td>
-                    <td className="p-3">
-                      {typeof q.deal === "object" ? q.deal?.dealName : q.deal}
-                    </td>
-                    <td className="p-3">{q.account?.accountName}</td>
-                    <td className="p-3">{q.quoteStage}</td>
-                    <td className="p-3">
-                      {q.contact?.firstName} {q.contact?.lastName}
-                    </td>
-                    <td className="p-3">
-                      {q.grandTotal?.toLocaleString() || 0}
-                    </td>
-                    <td className="p-3">
-                      {q.validUntil
-                        ? new Date(q.validUntil).toLocaleDateString()
-                        : "-"}
-                    </td>
-                    <td className="p-3">{q.quoteOwner?.name}</td>
-                    <td className="p-3">
-                      <a
-                        href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
-                        className="text-green-400"
-                      >
-                        PDF
-                      </a>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </TableWrapper>
+        {activeTab === "orders" && (
+          <>
+            <p className="text-center">Under Development</p>
+          </>
+        )}
+
+        {activeTab === "revenue" && (
+          <>
+            <p className="text-center">Under Development</p>
+            {/* <QuoteTab filteredQuotes={filteredQuotes} quotesData={quotesData} /> */}
           </>
         )}
       </div>
@@ -332,27 +189,4 @@ const StatusCard = ({ label, value }) => (
     <p className="text-gray-400 text-xs">{label}</p>
     <h3 className="text-lg font-semibold text-red-500 mt-1">{value}</h3>
   </div>
-);
-
-const ChartCard = ({ title, children }) => (
-  <div className="bg-[#111] border border-white/10 rounded-2xl p-6">
-    <h2 className="text-lg font-semibold mb-6">{title}</h2>
-    {children}
-  </div>
-);
-
-const TableWrapper = ({ children }) => (
-  <div className="bg-black border border-gray-800 rounded overflow-x-auto">
-    <table className="w-full text-sm">
-      <tbody>{children}</tbody>
-    </table>
-  </div>
-);
-
-const EmptyRow = ({ colSpan, message }) => (
-  <tr>
-    <td colSpan={colSpan} className="text-center py-6 text-gray-400">
-      {message}
-    </td>
-  </tr>
 );

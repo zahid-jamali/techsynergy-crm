@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import Loading from "../components/Loading";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 // import AddAccountModal from "../components/staff/AddAccountModal";
 import AddContactModal from "../components/staff/contact/AddContactModal";
@@ -44,6 +45,14 @@ const StaffContactsPage = () => {
     setShowModal("View");
     setSelectedContact(c);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-white">

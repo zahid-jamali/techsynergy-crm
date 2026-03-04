@@ -10,6 +10,7 @@ import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const AdminDealsPage = () => {
   const [deals, setDeals] = useState([]);
@@ -82,6 +83,14 @@ const AdminDealsPage = () => {
     setSelectedDeal(deal);
     setShowModal("View");
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-white">

@@ -6,6 +6,7 @@ import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const AdminAccountsPage = () => {
   const [accounts, setAccounts] = useState([]);
@@ -111,6 +112,14 @@ const AdminAccountsPage = () => {
       return true;
     });
   }, [accounts, search, selectedType, selectedIndustry, selectedOwner]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-white">

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import Loading from "../components/Loading";
 
 // import ViewSellOrderModal from "../components/staff/ViewSellOrderModal";
 // import EditSellOrderModal from "../components/staff/EditSellOrderModal";
@@ -37,6 +38,10 @@ const StaffSellOrderPage = () => {
   const confirmedQuotes = sellOrders.filter(
     (q) => q.quoteStage === "Confirmed"
   );
+
+  if (loading) {
+    <Loading />;
+  }
 
   return (
     <div className="p-6 text-white">

@@ -3,6 +3,7 @@ import AddAccountModal from "../components/staff/account/AddAccountModal";
 import EditAccountModal from "../components/staff/account/EditAccountModal";
 import DeleteAccountModal from "../components/staff/account/DeleteAccountModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
+import Loading from "../components/Loading";
 
 const StaffAccountsPage = () => {
   const [accounts, setAccounts] = useState([]);
@@ -45,6 +46,13 @@ const StaffAccountsPage = () => {
     setShowModal("Edit");
     setSelectedAccount(account);
   };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loading />
+      </div>
+    );
+  }
   return (
     <div className="p-6 text-white">
       <div className="flex justify-between items-center mb-6">
