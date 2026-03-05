@@ -30,7 +30,6 @@ const AdminDealsPage = () => {
   const token = sessionStorage.getItem("token");
 
   const fetchDeals = useCallback(async () => {
-    if (!hasMore || loading) return;
     setLoading(true);
     try {
       const res = await fetch(
@@ -181,7 +180,7 @@ const AdminDealsPage = () => {
               <th className="px-4 py-3 text-left">Stage</th>
               <th className="px-4 py-3 text-left">Amount</th>
               <th className="px-4 py-3 text-left">Currency</th>
-              <th className="px-4 py-3 text-left">POS</th>
+              <th className="px-4 py-3 text-left">POC</th>
               <th className="px-4 py-3 text-left">Closing Date</th>
               <th className="px-4 py-3 text-left">Probability</th>
               <th className="px-4 py-3 text-left">D/Owner</th>
@@ -334,8 +333,6 @@ const AdminDealsPage = () => {
           }}
           onSuccess={() => {
             fetchDeals();
-            setSelectedDeal(null);
-            setShowModal("");
           }}
         />
       )}

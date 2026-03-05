@@ -41,7 +41,7 @@ const AddAccountModal = ({ onClose, onSuccess }) => {
     "Hospitals",
     "Banking",
     "FMCG",
-    "Pharma",
+    'Pharma',
     "Textile",
     "Logistics",
     "Automobile",

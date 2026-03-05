@@ -190,7 +190,7 @@ const AdminQuotesPage = () => {
               <th className="p-3">Deal</th>
               <th className="p-3">Account</th>
               <th className="p-3">Stage</th>
-              <th className="p-3">POS</th>
+              <th className="p-3">POC</th>
               <th className="p-3">Total (PKR)</th>
               <th className="p-3">Valid Until</th>
               <th className="p-3">S/Owner</th>
@@ -239,7 +239,7 @@ const AdminQuotesPage = () => {
                     }}
                     className="p-3 hover:underline cursor-pointer hover:text-blue-600"
                   >
-                    {q.account?.accountName}
+                    {q.account?.accountName || "-"}
                   </td>
                   <td onClick={() => View(q)} className="p-3">
                     {q.quoteStage}

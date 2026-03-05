@@ -97,7 +97,7 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        {/* ================= EXECUTIVE SNAPSHOT ================= */}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6 mb-12">
           <ExecutiveCard
             title="Total Revenue"

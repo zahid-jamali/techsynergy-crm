@@ -105,11 +105,37 @@ const SalesTargetPage = () => {
       <div className="grid grid-cols-3 gap-6 mb-8">
         <SummaryCard
           title="Total Target"
-          value={`₹ ${teamSummary.totalTarget}`}
+          value={
+            <>
+              <img
+                src="https://flagcdn.com/16x12/pk.png"
+                srcSet="https://flagcdn.com/32x24/pk.png 2x,
+https://flagcdn.com/48x36/pk.png 3x"
+                width="16"
+                height="12"
+                alt="Pakistan"
+                style={{ marginRight: "6px" }}
+              />
+              {teamSummary.totalTarget}
+            </>
+          }
         />
         <SummaryCard
           title="Total Forecast"
-          value={`₹ ${teamSummary.totalForecast}`}
+          value={
+            <>
+              <img
+                src="https://flagcdn.com/16x12/pk.png"
+                srcSet="https://flagcdn.com/32x24/pk.png 2x,
+https://flagcdn.com/48x36/pk.png 3x"
+                width="16"
+                height="12"
+                alt="Pakistan"
+                style={{ marginRight: "6px" }}
+              />
+              {teamSummary.totalForecast}
+            </>
+          }
         />
         <SummaryCard
           title="Achievement %"

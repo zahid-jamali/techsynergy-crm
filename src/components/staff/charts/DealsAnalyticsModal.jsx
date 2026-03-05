@@ -183,6 +183,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
           count: 0,
         };
       }
+
       byCurrency[currency].totalAmount += deal.amount || 0;
       byCurrency[currency].totalExpected += deal.expectedRevenue || 0;
       byCurrency[currency].weightedPipeline +=
@@ -190,16 +191,24 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
       byCurrency[currency].count++;
 
       // PKR totals (all converted)
-      totalAmountPKR += deal.amountInPKR || 0;
-      totalExpectedPKR += deal.expectedRevenueInPKR || 0;
-      weightedPipelinePKR +=
-        ((deal.amountInPKR || 0) * (deal.probability || 0)) / 100;
+      if (
+        deal.stage !== "Closed Lost" &&
+        deal.stage !== "Closed Lost to Competition"
+      ) {
+        totalAmountPKR += deal.amountInPKR || 0;
+        totalExpectedPKR += deal.expectedRevenueInPKR || 0;
+        weightedPipelinePKR +=
+          ((deal.amountInPKR || 0) * (deal.probability || 0)) / 100;
+      }
     });
 
     const totalDeals = dealsArray.length;
     const avgDealSizePKR = totalDeals > 0 ? totalAmountPKR / totalDeals : 0;
     const closedDeals = dealsArray.filter(
-      (d) => d.stage === "Closed Won" || d.stage === "Closed Lost"
+      (d) =>
+        d.stage === "Closed Won" ||
+        d.stage === "Closed Lost" ||
+        d.stage === "Closed Lost to Competition"
     ).length;
     const activeDeals = totalDeals - closedDeals;
     const conversionRate =
@@ -559,7 +568,15 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
             <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-lg p-3">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <IndianRupee size={16} className="text-yellow-500" />
+                  {/* <IndianRupee size={16} className="text-yellow-500" /> */}
+                  <img
+                    src="https://flagcdn.com/16x12/pk.png"
+                    srcset="https://flagcdn.com/32x24/pk.png 2x,
+    https://flagcdn.com/48x36/pk.png 3x"
+                    width="16"
+                    height="12"
+                    alt="Pakistan"
+                  ></img>
                   <span className="text-gray-300">
                     All amounts are displayed in{" "}
                     <span className="font-bold text-yellow-500">
@@ -609,7 +626,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
           )}
 
           {/* KPI Cards Grid - All in PKR */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid  gap-5 justify-center grid-cols-3">
             <KpiCard
               icon={<TrendingUp size={20} />}
               label="Total Deals"
@@ -618,19 +635,29 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
               accent="from-blue-500 to-blue-600"
             />
             <KpiCard
-              icon={<IndianRupee size={20} />}
+              icon={
+                <img
+                  src="https://flagcdn.com/16x12/pk.png"
+                  srcSet="https://flagcdn.com/32x24/pk.png 2x,
+      https://flagcdn.com/48x36/pk.png 3x"
+                  width="16"
+                  height="12"
+                  alt="Pakistan"
+                />
+              }
               label="Pipeline Value (PKR)"
               value={formatPKR(kpis.totalAmountPKR)}
-              subValue={`Avg: ${formatPKR(kpis.avgDealSizePKR)}`}
-              accent="from-purple-500 to-purple-600"
+              // subValue={`Avg: ${formatPKR(kpis.avgDealSizePKR)}`}
+              accent="from-black to-white"
             />
-            <KpiCard
+
+            {/* <KpiCard
               icon={<Target size={20} />}
               label="Expected Revenue (PKR)"
               value={formatPKR(kpis.totalExpectedPKR)}
-              subValue={`Weighted: ${formatPKR(kpis.weightedPipelinePKR)}`}
+              // subValue={`Weighted: ${formatPKR(kpis.weightedPipelinePKR)}`}
               accent="from-red-500 to-red-600"
-            />
+            /> */}
             <KpiCard
               icon={<Calendar size={20} />}
               label="Conversion Rate"
