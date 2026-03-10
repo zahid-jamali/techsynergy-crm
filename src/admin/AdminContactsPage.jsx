@@ -258,7 +258,7 @@ const AdminContactsPage = () => {
                   className="border-t border-gray-800 hover:bg-gray-900"
                 >
                   <td onClick={() => View(c)} className="px-4 py-3">
-                    {c.firstName} {c.lastName}
+                    {c.firstName || ""} {c.lastName || ""}
                   </td>
                   <td onClick={() => View(c)} className="px-4 py-3">
                     {c.email || "-"}
@@ -271,16 +271,16 @@ const AdminContactsPage = () => {
                     }}
                     className="px-4 py-3 cursor-pointer hover:underline hover:text-blue-600"
                   >
-                    {c.account.accountName || "-"}
+                    {c.account?.accountName || "-"}
                   </td>
                   <td onClick={() => View(c)} className="px-4 py-3">
                     {c.phone || "-"}
                   </td>
                   <td className="px-4 py-3 hover:underline hover:text-blue-600">
                     <Link
-                      to={`/admin/singleUserPerformance/${c.contactOwner._id}`}
+                      to={`/admin/singleUserPerformance/${c.contactOwner?._id}`}
                     >
-                      {c.contactOwner.name || "-"}
+                      {c.contactOwner?.name || "-"}
                     </Link>
                   </td>
                   <td className="px-4 py-3 flex gap-3">

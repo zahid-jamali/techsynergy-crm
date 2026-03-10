@@ -82,7 +82,16 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
     USD: { symbol: "$", icon: DollarSign, color: "#10b981", position: "left" },
     PKR: {
       symbol: "Rs.",
-      icon: IndianRupee,
+      icon: () => (
+        <img
+          src="https://flagcdn.com/16x12/pk.png"
+          srcset="https://flagcdn.com/32x24/pk.png 2x,
+https://flagcdn.com/48x36/pk.png 3x"
+          width="16"
+          height="12"
+          alt="Pakistan"
+        ></img>
+      ),
       color: "#f59e0b",
       position: "left",
     },
@@ -577,6 +586,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
                     height="12"
                     alt="Pakistan"
                   ></img>
+
                   <span className="text-gray-300">
                     All amounts are displayed in{" "}
                     <span className="font-bold text-yellow-500">

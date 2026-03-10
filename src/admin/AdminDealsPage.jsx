@@ -12,6 +12,52 @@ import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 
+const TableSkeleton = ({ rows = 8 }) => {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <tr key={i} className="animate-pulse border-t border-gray-800">
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-40"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-28"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-20"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-20"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-20"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-24"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-24"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-24"></div>
+          </td>
+
+          <td className="px-4 py-3">
+            <div className="h-3 bg-gray-700 rounded w-28"></div>
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+};
+
 const AdminDealsPage = () => {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,38 +75,47 @@ const AdminDealsPage = () => {
   const { ref, inView } = useInView();
   const token = sessionStorage.getItem("token");
 
-  const fetchDeals = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}deals/all?limit=20&page=${page}`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  const fetchDeals = useCallback(
+    async (pageNumber = 1, reset = false) => {
+      if (!hasMore && !reset) return;
 
-      const data = await res.json();
-      if (res.ok) {
-        setDeals((prev) => [...prev, ...(data.data || [])]);
+      try {
+        setLoading(true);
+
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}deals/all?limit=20&page=${pageNumber}`,
+          {
+            headers: { authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = await res.json();
+
+        setDeals((prev) =>
+          reset ? data.data || [] : [...prev, ...(data.data || [])]
+        );
 
         setHasMore(data.hasMore);
         setTotal(data.total);
-        setPage((prev) => prev + 1);
+        setPage(pageNumber);
+      } catch (err) {
+        console.error("Failed to fetch deals");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to fetch deals");
-    } finally {
-      setLoading(false);
-    }
-  }, [token, page]);
+    },
+    [token, hasMore]
+  );
 
   useEffect(() => {
-    if (inView && hasMore) {
-      fetchDeals();
+    if (inView && hasMore && !loading) {
+      fetchDeals(page + 1);
     }
-  }, [inView, fetchDeals, hasMore]);
+  }, [inView]);
+
+  useEffect(() => {
+    fetchDeals(1, true);
+  }, []);
 
   const filteredDeals = deals.filter((deal) => {
     const matchesSearch =
@@ -82,14 +137,6 @@ const AdminDealsPage = () => {
     setSelectedDeal(deal);
     setShowModal("View");
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loading />
-      </div>
-    );
-  }
 
   return (
     <div className="p-6 text-white">
@@ -170,6 +217,10 @@ const AdminDealsPage = () => {
         </button>
       </div>
 
+      <div className="text-sm text-gray-400 mb-3">
+        Showing {deals.length} of {total} deals
+      </div>
+
       {/* Table */}
       <div className="bg-black border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
@@ -189,12 +240,8 @@ const AdminDealsPage = () => {
           </thead>
 
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-400">
-                  Loading deals...
-                </td>
-              </tr>
+            {deals.length === 0 && loading ? (
+              <TableSkeleton />
             ) : filteredDeals.length === 0 ? (
               <tr>
                 <td colSpan="6" className="text-center py-6 text-gray-400">
@@ -205,7 +252,7 @@ const AdminDealsPage = () => {
               filteredDeals.map((deal) => (
                 <tr
                   key={deal._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-800 hover:bg-gray-900 group"
                 >
                   <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.dealName}
@@ -246,7 +293,17 @@ const AdminDealsPage = () => {
                       : "-"}
                   </td>
                   <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.probability}
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 h-2 bg-gray-800 rounded">
+                        <div
+                          className="h-2 bg-green-500 rounded"
+                          style={{ width: `${deal.probability}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400">
+                        {deal.probability}%
+                      </span>
+                    </div>
                   </td>
 
                   <td className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-600">
@@ -256,37 +313,51 @@ const AdminDealsPage = () => {
                       {deal.dealOwner.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 flex gap-3">
-                    <button className="text-blue-400 hover:underline">
-                      View
-                    </button>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-3 text-xs opacity-0 group-hover:opacity-100 transition">
+                      <button
+                        onClick={() => View(deal)}
+                        className="text-blue-400 hover:text-blue-300"
+                      >
+                        View
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        setShowModal("Pipeline");
-                        setSelectedDeal(deal);
-                      }}
-                      className="text-purple-500 hover:underline"
-                    >
-                      Stage-Pipeline
-                    </button>
+                      <button
+                        onClick={() => {
+                          setShowModal("Pipeline");
+                          setSelectedDeal(deal);
+                        }}
+                        className="text-purple-400 hover:text-purple-300"
+                      >
+                        Pipeline
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        setShowModal("Edit");
-                        setSelectedDeal(deal);
-                      }}
-                      className="text-yellow-400 hover:underline"
-                    >
-                      Edit
-                    </button>
+                      <button
+                        onClick={() => {
+                          setShowModal("Edit");
+                          setSelectedDeal(deal);
+                        }}
+                        className="text-yellow-400 hover:text-yellow-300"
+                      >
+                        Edit
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
-        <div ref={ref} className="h-5"></div>
+        <div
+          ref={ref}
+          className="flex justify-center py-6 text-gray-400 text-sm"
+        >
+          {loading && deals.length > 0 && <span>Loading more deals...</span>}
+
+          {!hasMore && deals.length > 0 && (
+            <span className="text-gray-600">No more deals</span>
+          )}
+        </div>
       </div>
 
       {showModal === "Add" && (

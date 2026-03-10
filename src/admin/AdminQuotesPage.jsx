@@ -36,34 +36,47 @@ const AdminQuotesPage = () => {
   const [total, setTotal] = useState();
   const [ref, inView] = useInView();
 
-  const fetchQuotes = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}quotes/all?limit=20&page=${page}`,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await res.json();
-      setQuotes((prev) => [...prev, ...(data.data || [])]);
-      setPage((prev) => prev + 1);
-      setTotal(data.total);
-      setHasMore(data.hasMore);
-    } catch (err) {
-      console.error("Failed to fetch quotes");
-    } finally {
-      setLoading(false);
-      setShowModal("");
-      setSelectedQuote(null);
-    }
-  }, [token, page]);
+  const fetchQuotes = useCallback(
+    async (pageNumber = 1, reset = false) => {
+      if (!hasMore && !reset) return;
+
+      try {
+        setLoading(true);
+
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}quotes/all?limit=20&page=${pageNumber}`,
+          {
+            headers: { authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = await res.json();
+
+        setQuotes((prev) =>
+          reset ? data.data || [] : [...prev, ...(data.data || [])]
+        );
+
+        setTotal(data.total);
+        setHasMore(data.hasMore);
+        setPage(pageNumber);
+      } catch (err) {
+        console.error("Failed to fetch quotes");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token, hasMore]
+  );
 
   useEffect(() => {
-    if (hasMore && inView) {
-      fetchQuotes();
+    fetchQuotes(1, true);
+  }, []);
+
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      fetchQuotes(page + 1);
     }
-  }, [fetchQuotes, inView]);
+  }, [inView]);
 
   const filteredQuotes = quotes.filter((q) => {
     if (q.quoteStage === "Confirmed") {
@@ -179,6 +192,9 @@ const AdminQuotesPage = () => {
           Reset
         </button>
       </div>
+      <div className="text-sm text-gray-400 mb-3">
+        Showing {quotes.length} of {total || 0} quotes
+      </div>
 
       {/* Table */}
       <div className="bg-black border border-gray-800 rounded">
@@ -199,15 +215,11 @@ const AdminQuotesPage = () => {
           </thead>
 
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="6" className="p-6 text-center text-gray-400">
-                  Loading...
-                </td>
-              </tr>
+            {quotes.length === 0 && loading ? (
+              <TableSkeleton rows={8} />
             ) : filteredQuotes.length === 0 ? (
               <tr>
-                <td colSpan="6" className="p-6 text-center text-gray-400">
+                <td colSpan="10" className="p-6 text-center text-gray-400">
                   No quotes found
                 </td>
               </tr>
@@ -215,7 +227,7 @@ const AdminQuotesPage = () => {
               filteredQuotes.map((q) => (
                 <tr
                   key={q._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-800 hover:bg-gray-900 group"
                 >
                   <td onClick={() => View(q)} className="p-3">
                     {q.quoteNumber || "-"}
@@ -271,7 +283,7 @@ const AdminQuotesPage = () => {
                       {q.quoteOwner.name}
                     </Link>
                   </td>
-                  <td className="p-3 flex gap-2">
+                  <td className="p-3 flex gap-1 opacity-0 text-sm group-hover:opacity-100">
                     <button
                       onClick={() => {
                         setShowModal("edit");
@@ -304,7 +316,16 @@ const AdminQuotesPage = () => {
             )}
           </tbody>
         </table>
-        <div className="h-5" ref={ref}></div>
+        <div
+          ref={ref}
+          className="flex justify-center py-6 text-gray-400 text-sm"
+        >
+          {loading && <span>Loading more quotes...</span>}
+
+          {!hasMore && quotes.length > 0 && (
+            <span className="text-gray-600">No more quotes</span>
+          )}
+        </div>
       </div>
       {/* Modals */}
       {showModal === "Add" && (
@@ -385,3 +406,53 @@ const AdminQuotesPage = () => {
 };
 
 export default AdminQuotesPage;
+
+const TableSkeleton = ({ rows = 5 }) => {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <tr key={i} className="animate-pulse border-t border-gray-800">
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-10"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-40"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-32 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-32 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-24 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-28 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-20 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-24 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-28 mx-auto"></div>
+          </td>
+
+          <td className="p-3">
+            <div className="h-3 bg-gray-700 rounded w-20 mx-auto"></div>
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+};
