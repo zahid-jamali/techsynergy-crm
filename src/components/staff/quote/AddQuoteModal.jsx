@@ -254,7 +254,9 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     d.dealName?.toLowerCase().includes(dealQuery.toLowerCase())
                   )}
                   getDisplay={(d) => d.dealName}
-                  getMeta={(d) => `${d.stage || ""} • ${d.amount || ""}`}
+                  getMeta={(d) =>
+                    `${d.stage || ""} • ${d.account?.accountName || ""} `
+                  }
                   onSelect={(d) => {
                     setSelectedDeal(d);
                     setDealQuery(d.dealName);
