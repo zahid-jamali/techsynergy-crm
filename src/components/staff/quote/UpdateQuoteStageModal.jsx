@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const QUOTE_STAGES = [
   "Draft",
   "Negotiation",
-  "Delivered",
+  "Submit",
   "On Hold",
   "Confirmed",
   "Closed Won",

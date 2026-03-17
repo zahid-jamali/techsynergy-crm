@@ -15,7 +15,7 @@ const AdminSellOrderPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}quotes/all`,
+        `${process.env.REACT_APP_BACKEND_URL}quotes/all?stage=Confirmed`,
         {
           headers: { authorization: `Bearer ${token}` },
         }

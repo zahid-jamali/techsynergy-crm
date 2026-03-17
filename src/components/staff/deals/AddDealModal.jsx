@@ -206,7 +206,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
 
             {/* STAGE + CURRENCY */}
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              {/* <div>
                 <label className="label">Stage</label>
                 <select
                   name="stage"
@@ -228,7 +228,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                     <option key={s}>{s}</option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
               <div>
                 <label className="label">Currency</label>
@@ -246,7 +246,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
             </div>
 
             {/* AMOUNT + PROBABILITY */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">Amount</label>
                 <input
@@ -266,8 +266,8 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                   onChange={handleChange}
                   className="input"
                 />
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
 
             {/* DATE */}
 
