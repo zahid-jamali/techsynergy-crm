@@ -6,10 +6,11 @@ import Loading from "../components/Loading";
 // import AddSellOrderModal from "../components/staff/AddSellOrderModal";
 // import UpdateSellOrderStatusModal from "../components/staff/UpdateSellOrderStatusModal";
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
+import PdfViewersModal from "../components/staff/SO/PdfViewersModal";
 
 const StaffSellOrderPage = () => {
   const token = sessionStorage.getItem("token");
-
+  const [selectedPdf, setSelectedPdf] = useState(null);
   const [sellOrders, setSellOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -136,7 +137,14 @@ const StaffSellOrderPage = () => {
                     </a>
                     |
                     <a
-                      href={order.purchaseOrder ? order.purchaseOrder.url : "#"}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+
+                        if (order.purchaseOrder?.url) {
+                          setSelectedPdf(order.purchaseOrder.url);
+                        }
+                      }}
                       className="text-green-400 hover:underline"
                     >
                       PO
@@ -180,6 +188,12 @@ const StaffSellOrderPage = () => {
           onSuccess={fetchSellOrders}
         />
       )} */}
+      {selectedPdf && (
+        <PdfViewersModal
+          pdfUrl={selectedPdf}
+          onClose={() => setSelectedPdf(null)}
+        />
+      )}
     </div>
   );
 };

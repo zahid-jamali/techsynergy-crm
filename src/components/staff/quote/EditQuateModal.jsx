@@ -67,8 +67,6 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
           pricingMode: "direct",
           listPrice: 0,
           purchasePrice: 0,
-          margin: 0,
-          discount: 0,
         },
       ],
     });
@@ -230,6 +228,16 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
             {/* PRODUCTS + SUMMARY */}
             <div className="grid grid-cols-4 gap-8">
               <div className="col-span-3 space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-gray-300 font-semibold">Products</h3>
+                  <button
+                    type="button"
+                    onClick={addProduct}
+                    className="bg-red-600 px-3 py-1 rounded text-sm"
+                  >
+                    + Add Product
+                  </button>
+                </div>
                 {formData.products.map((p, i) => (
                   <div
                     key={i}

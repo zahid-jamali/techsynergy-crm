@@ -138,6 +138,7 @@ const StaffQuotePage = () => {
           <thead className="bg-gray-900 text-gray-400">
             <tr>
               <th className="p-3 text-left">Subject</th>
+              <th className="p-3">Deal</th>
               <th className="p-3">Account</th>
               <th className="p-3">Stage</th>
               <th className="p-3">Total </th>
@@ -167,6 +168,9 @@ const StaffQuotePage = () => {
                 >
                   <td onClick={() => View(q)} className="p-3">
                     {q.subject}
+                  </td>
+                  <td onClick={() => View(q)} className="p-3">
+                    {q.deal.dealName}
                   </td>
                   <td onClick={() => View(q)} className="p-3">
                     {q.account?.accountName}
