@@ -170,7 +170,7 @@ const StaffQuotePage = () => {
                     {q.subject}
                   </td>
                   <td onClick={() => View(q)} className="p-3">
-                    {q.deal.dealName}
+                    {q.deal?.dealName || "-"}
                   </td>
                   <td onClick={() => View(q)} className="p-3">
                     {q.account?.accountName}
