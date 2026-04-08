@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 
-const QUOTE_STAGES = [
-  "Draft",
-  "Negotiation",
-  "Submit",
-  "On Hold",
-  "Confirmed",
-  "Closed Won",
-  "Closed Lost",
-];
+const QUOTE_STAGES = ["Draft", "Submit", "On Hold", "Confirmed"];
 
 const UpdateQuoteStageModal = ({
   quoteId,
@@ -20,28 +12,17 @@ const UpdateQuoteStageModal = ({
   const token = sessionStorage.getItem("token");
 
   const [quoteStage, setQuoteStage] = useState(currentStage);
-  const [purchaseOrder, setPurchaseOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleUpdate = async () => {
     setError("");
 
-    // 🚨 Frontend validation
-    if (quoteStage === "Confirmed" && !purchaseOrder) {
-      setError("Purchase Order is required to confirm the quote");
-      return;
-    }
-
     setLoading(true);
 
     try {
       const formData = new FormData();
       formData.append("quoteStage", quoteStage);
-
-      if (quoteStage === "Confirmed") {
-        formData.append("purchaseOrder", purchaseOrder);
-      }
 
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}quotes/${quoteId}/updateStage`,
@@ -90,7 +71,6 @@ const UpdateQuoteStageModal = ({
               value={quoteStage}
               onChange={(e) => {
                 setQuoteStage(e.target.value);
-                setPurchaseOrder(null);
               }}
               className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
             >
@@ -98,7 +78,10 @@ const UpdateQuoteStageModal = ({
                 let isDisabled = false;
 
                 // Rule 1: Closed Won always disabled
-                if (stage === "Closed Won") {
+                if (
+                  currentStage === "Delivered" &&
+                  (stage === "Draft" || stage === "On Hold")
+                ) {
                   isDisabled = true;
                 }
 
@@ -124,7 +107,7 @@ const UpdateQuoteStageModal = ({
           </div>
 
           {/* 🧾 PO Upload (ONLY FOR CONFIRMED) */}
-          {quoteStage === "Confirmed" && (
+          {/* {quoteStage === "Confirmed" && (
             <div>
               <label className="text-gray-400 text-sm mb-1 block">
                 Upload Purchase Order (PDF / Image)
@@ -139,7 +122,7 @@ const UpdateQuoteStageModal = ({
                 Purchase Order is mandatory to confirm the quote
               </p>
             </div>
-          )}
+          )} */}
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
         </div>

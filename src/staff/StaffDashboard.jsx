@@ -78,12 +78,12 @@ const AdminDashboard = () => {
       <h1 className="text-3xl font-bold mb-8">Staff Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
-        <KpiCard title="Contacts" value={summaryStats.contacts} />
-        <KpiCard title="Accounts" value={summaryStats.accounts} />
+        <KpiCard title="Total SO" value={summaryStats.totalSellOrders} />
+        <KpiCard title="Approved SO" value={summaryStats.approvedSellOrders} />
+        <KpiCard title="Total Revenue" value={summaryStats.totalSell} />
         <KpiCard title="Deals" value={summaryStats.totalDeals} />
         <KpiCard title="Quotes" value={summaryStats.totalQuotes} />
-        <KpiCard title="Win Rate %" value={summaryStats.winRate} />
-        <KpiCard title="Conversion %" value={summaryStats.conversionRate} />
+        <KpiCard title="Accounts" value={summaryStats.accounts} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
