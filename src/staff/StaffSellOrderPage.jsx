@@ -182,7 +182,7 @@ const StaffSellOrderPage = () => {
                       {order.purchaseOrder?.url && (
                         <a
                           href={`${process.env.REACT_APP_BACKEND_URL.replace(
-                            "/api",
+                            "/api/",
                             ""
                           )}${order.purchaseOrder.url}`}
                           target="_blank"
