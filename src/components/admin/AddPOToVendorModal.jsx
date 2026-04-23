@@ -1,118 +1,232 @@
 import { useEffect, useState } from "react";
 
+const round = (n) => Math.round(n * 100) / 100;
+
 const AddPOToVendorModal = ({ onClose, onSuccess }) => {
   const token = sessionStorage.getItem("token");
+
+  /* ================= BASIC ================= */
 
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
 
-  
+  /* ================= VENDOR SEARCH ================= */
+
   const [vendors, setVendors] = useState([]);
   const [vendorSearch, setVendorSearch] = useState("");
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [showVendorList, setShowVendorList] = useState(false);
 
-  
-  const [isGstApplied, setIsGstApplied] = useState(false);
-  const [gstRate, setGstRate] = useState(18);
+  /* ================= ORDER SEARCH ================= */
 
-  
-  const [products, setProducts] = useState([
-    { productName: "", quantity: 1, listPrice: 0 },
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [orderSearch, setOrderSearch] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOrderList, setShowOrderList] = useState(false);
 
-  
+  /* ================= PRODUCTS ================= */
+
+  const [products, setProducts] = useState([]);
+
+  /* ================= TAX ================= */
+
+  const [taxes, setTaxes] = useState([]);
+
+  /* ================= TERMS ================= */
+
   const [terms, setTerms] = useState([""]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
-  useEffect(() => {
-    const fetchVendors = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}vendors/get`,
-          {
-            headers: { authorization: `Bearer ${token}` },
-          }
-        );
-        const result = await res.json();
-        setVendors(result.data || []);
-      } catch (err) {
-        console.error("Failed to fetch vendors");
-      }
-    };
+  /* ================= FETCH DATA ================= */
 
-    fetchVendors();
+  useEffect(() => {
+    if (token) {
+      fetchVendors();
+      fetchOrders();
+    }
   }, [token]);
 
+  const fetchVendors = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}vendors/get`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      setVendors(data.data || []);
+    } catch {
+      console.error("Vendor fetch failed");
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}orders/all`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      setOrders(data.data || []);
+    } catch {
+      console.error("Order fetch failed");
+    }
+  };
+
+  /* ================= FILTER ================= */
+
   const filteredVendors = vendors.filter((v) =>
-    v.name?.toLowerCase().includes(vendorSearch.toLowerCase())
+    (v.name || "").toLowerCase().includes(vendorSearch.toLowerCase())
   );
 
-  /* ---------------- Product Handlers ---------------- */
+  const filteredOrders = orders.filter((o) =>
+    `${o.orderNumber} ${o.finalQuote?.subject}`
+      .toLowerCase()
+      .includes(orderSearch.toLowerCase())
+  );
+
+  /* ================= SELECT ORDER ================= */
+
+  const selectOrder = (order) => {
+    setSelectedOrder(order);
+
+    setOrderSearch(`${order.orderNumber} - ${order.finalQuote?.subject}`);
+
+    setShowOrderList(false);
+
+    if (order.products) {
+      const mapped = order.products.map((p) => ({
+        productName: p.productName || "",
+        quantity: Number(p.quantity) || 1,
+
+        customerPrice: Number(p.listPrice) || 0,
+
+        listPrice: Number(p.listPrice) || 0,
+      }));
+
+      setProducts(mapped);
+    }
+  };
+
+  /* ================= PRODUCT ================= */
+
   const updateProduct = (index, field, value) => {
     const updated = [...products];
+
     updated[index][field] = value;
+
     setProducts(updated);
   };
 
-  const addProductRow = () => {
-    setProducts([...products, { productName: "", quantity: 1, listPrice: 0 }]);
+  /* ================= TAX ================= */
+
+  const addTax = () => {
+    setTaxes([
+      ...taxes,
+      {
+        tax: "",
+        percent: 0,
+      },
+    ]);
   };
 
-  const removeProductRow = (index) => {
-    if (products.length === 1) return;
-    setProducts(products.filter((_, i) => i !== index));
+  const updateTax = (index, field, value) => {
+    const updated = [...taxes];
+
+    updated[index][field] = value;
+
+    setTaxes(updated);
   };
 
-  /* ---------------- Terms Handlers ---------------- */
+  const removeTax = (index) => {
+    setTaxes(taxes.filter((_, i) => i !== index));
+  };
+
+  /* ================= TERMS ================= */
+
   const updateTerm = (index, value) => {
     const updated = [...terms];
+
     updated[index] = value;
+
     setTerms(updated);
   };
 
-  const addTerm = () => setTerms([...terms, ""]);
-  const removeTerm = (index) => {
-    if (terms.length === 1) return;
-    setTerms(terms.filter((_, i) => i !== index));
-  };
+  /* ================= CALCULATIONS ================= */
 
-  /* ---------------- Create PO ---------------- */
+  const subTotal = round(
+    products.reduce((sum, p) => {
+      const qty = Number(p.quantity) || 0;
+
+      const price = Number(p.listPrice) || 0;
+
+      return sum + qty * price;
+    }, 0)
+  );
+
+  const totalTax = round(
+    taxes.reduce((sum, t) => {
+      return sum + (subTotal * Number(t.percent || 0)) / 100;
+    }, 0)
+  );
+
+  const grandTotal = round(subTotal + totalTax);
+
+  /* ================= CREATE ================= */
+
   const handleCreate = async () => {
     setError("");
 
-    if (!subject.trim()) return setError("Subject is required");
-    if (!selectedVendor) return setError("Vendor is required");
-    if (products.some((p) => !p.productName.trim()))
-      return setError("Each product must have a name");
+    if (!subject.trim()) return setError("Subject required");
+
+    if (!selectedVendor) return setError("Vendor required");
+
+    if (!selectedOrder) return setError("Order required");
+
+    if (products.length === 0) return setError("Products required");
 
     setLoading(true);
+
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}potovendor/create`,
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
           },
+
           body: JSON.stringify({
             subject,
             vendor: selectedVendor._id,
+            Order: selectedOrder._id,
+            refQuote: selectedOrder.finalQuote?._id,
             description,
             products,
-            isGstApplied,
-            gstRate,
+            Tax: taxes,
             termsAndConditions: terms.filter((t) => t.trim()),
           }),
         }
       );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.msg || "Failed to create PO");
+
+      if (!res.ok) throw new Error(data.msg);
 
       onSuccess();
       onClose();
@@ -124,25 +238,30 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-2xl text-white">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-800 flex justify-between">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-6xl text-white">
+        {/* HEADER */}
+
+        <div className="px-6 py-4 border-b border-gray-800 flex justify-between">
           <h2 className="text-red-500 font-semibold">Create PO to Vendor</h2>
+
           <button onClick={onClose}>✕</button>
         </div>
 
-        {/* Body */}
-        <div className="p-5 space-y-4 text-sm max-h-[70vh] overflow-y-auto">
-          {/* Subject */}
+        {/* BODY */}
+
+        <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+          {/* SUBJECT */}
+
           <input
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="PO Subject"
-            className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+            className="w-full bg-gray-900 border border-gray-700 px-3 py-2 rounded"
           />
 
-          {/* Vendor Live Search */}
+          {/* VENDOR SEARCH */}
+
           <div className="relative">
             <input
               value={vendorSearch}
@@ -150,139 +269,162 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
                 setVendorSearch(e.target.value);
                 setShowVendorList(true);
               }}
-              placeholder="Search vendor..."
-              className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+              placeholder="Search Vendor"
+              className="w-full bg-gray-900 border border-gray-700 px-3 py-2 rounded"
             />
 
             {showVendorList && (
-              <div className="absolute z-10 w-full bg-black border border-gray-800 rounded mt-1 max-h-40 overflow-y-auto">
-                {filteredVendors.length === 0 ? (
-                  <div className="px-3 py-2 text-gray-400">
-                    No vendors found
+              <div className="absolute w-full bg-black border border-gray-800 mt-1 max-h-40 overflow-y-auto z-10">
+                {filteredVendors.map((v) => (
+                  <div
+                    key={v._id}
+                    onClick={() => {
+                      setSelectedVendor(v);
+
+                      setVendorSearch(v.name);
+
+                      setShowVendorList(false);
+                    }}
+                    className="px-3 py-2 hover:bg-gray-800 cursor-pointer"
+                  >
+                    {v.name}
                   </div>
-                ) : (
-                  filteredVendors.map((v) => (
-                    <div
-                      key={v._id}
-                      onClick={() => {
-                        setSelectedVendor(v);
-                        setVendorSearch(v.name);
-                        setShowVendorList(false);
-                      }}
-                      className="px-3 py-2 hover:bg-gray-800 cursor-pointer"
-                    >
-                      {v.name}
-                    </div>
-                  ))
-                )}
+                ))}
               </div>
             )}
           </div>
 
-          {/* Description */}
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description"
-            className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
-          />
+          {/* ORDER SEARCH */}
 
-          {/* Products */}
+          <div className="relative">
+            <input
+              value={orderSearch}
+              onChange={(e) => {
+                setOrderSearch(e.target.value);
+                setShowOrderList(true);
+              }}
+              placeholder="Search Order"
+              className="w-full bg-gray-900 border border-gray-700 px-3 py-2 rounded"
+            />
+
+            {showOrderList && (
+              <div className="absolute w-full bg-black border border-gray-800 mt-1 max-h-40 overflow-y-auto">
+                {filteredOrders.map((o) => (
+                  <div
+                    key={o._id}
+                    onClick={() => selectOrder(o)}
+                    className="px-3 py-2 hover:bg-gray-800 cursor-pointer"
+                  >
+                    {o.finalQuote?.subject} -{" "}
+                    {o.finalQuote?.account?.accountName}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* PRODUCTS TABLE */}
+
           <div>
             <h3 className="text-gray-400 mb-2">Products</h3>
-            {products.map((p, index) => (
-              <div key={index} className="grid grid-cols-4 gap-2 mb-2">
+
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-gray-400">
+                  <th>Product</th>
+
+                  <th>Qty</th>
+
+                  <th>Customer Price</th>
+
+                  <th>Vendor Price</th>
+
+                  <th>Amount</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {products.map((p, i) => (
+                  <tr key={i}>
+                    <td>{p.productName}</td>
+
+                    <td>{p.quantity}</td>
+
+                    <td>{p.customerPrice}</td>
+
+                    <td>
+                      <input
+                        type="number"
+                        value={p.listPrice}
+                        onChange={(e) =>
+                          updateProduct(i, "listPrice", e.target.value)
+                        }
+                        className="bg-gray-900 border border-gray-700 px-2 py-1 rounded"
+                      />
+                    </td>
+
+                    <td>{round(p.quantity * p.listPrice)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* TAX */}
+
+          <div>
+            <h3 className="text-gray-400">Taxes</h3>
+
+            {taxes.map((t, i) => (
+              <div key={i} className="flex gap-2 mt-2">
                 <input
-                  value={p.productName}
-                  onChange={(e) =>
-                    updateProduct(index, "productName", e.target.value)
-                  }
-                  placeholder="Product"
-                  className="bg-gray-900 border border-gray-700 rounded px-2 py-1"
+                  placeholder="Tax"
+                  value={t.tax}
+                  onChange={(e) => updateTax(i, "tax", e.target.value)}
+                  className="bg-gray-900 border border-gray-700 px-2 py-1 rounded"
                 />
+
                 <input
                   type="number"
-                  min="1"
-                  value={p.quantity}
-                  onChange={(e) =>
-                    updateProduct(index, "quantity", e.target.value)
-                  }
-                  className="bg-gray-900 border border-gray-700 rounded px-2 py-1"
+                  placeholder="%"
+                  value={t.percent}
+                  onChange={(e) => updateTax(i, "percent", e.target.value)}
+                  className="w-24 bg-gray-900 border border-gray-700 px-2 py-1 rounded"
                 />
-                <input
-                  type="number"
-                  min="0"
-                  value={p.listPrice}
-                  onChange={(e) =>
-                    updateProduct(index, "listPrice", e.target.value)
-                  }
-                  className="bg-gray-900 border border-gray-700 rounded px-2 py-1"
-                />
-                <button
-                  onClick={() => removeProductRow(index)}
-                  className="text-red-400"
-                >
+
+                <button onClick={() => removeTax(i)} className="text-red-400">
                   Remove
                 </button>
               </div>
             ))}
-            <button
-              onClick={addProductRow}
-              className="text-blue-400 hover:underline"
-            >
-              + Add Product
+
+            <button onClick={addTax} className="text-blue-400 mt-2">
+              + Add Tax
             </button>
           </div>
 
-          {/* Terms */}
-          <div>
-            <h3 className="text-gray-400 mb-2">Terms & Conditions</h3>
-            {terms.map((t, i) => (
-              <div key={i} className="flex gap-2 mb-2">
-                <input
-                  value={t}
-                  onChange={(e) => updateTerm(i, e.target.value)}
-                  className="flex-1 bg-gray-900 border border-gray-700 rounded px-2 py-1"
-                />
-                <button onClick={() => removeTerm(i)} className="text-red-400">
-                  ✕
-                </button>
-              </div>
-            ))}
-            <button onClick={addTerm} className="text-blue-400 hover:underline">
-              + Add Term
-            </button>
-          </div>
+          {/* TOTALS */}
 
-          {/* GST */}
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={isGstApplied}
-                onChange={(e) => setIsGstApplied(e.target.checked)}
-              />
-              Apply GST
-            </label>
+          <div className="text-right space-y-1">
+            <div>Subtotal: {subTotal}</div>
 
-            {isGstApplied && (
-              <input
-                type="number"
-                value={gstRate}
-                onChange={(e) => setGstRate(e.target.value)}
-                className="w-24 bg-gray-900 border border-gray-700 rounded px-2 py-1"
-              />
-            )}
+            <div>Tax: {totalTax}</div>
+
+            <div className="text-red-500 font-semibold">
+              Grand Total: {grandTotal}
+            </div>
           </div>
 
           {error && <p className="text-red-400">{error}</p>}
         </div>
 
-        {/* Footer */}
-        <div className="px-5 py-4 border-t border-gray-800 flex justify-end gap-3">
+        {/* FOOTER */}
+
+        <div className="px-6 py-4 border-t border-gray-800 flex justify-end gap-3">
           <button onClick={onClose} className="bg-gray-700 px-4 py-2 rounded">
             Cancel
           </button>
+
           <button
             onClick={handleCreate}
             disabled={loading}

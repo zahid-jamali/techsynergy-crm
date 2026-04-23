@@ -58,8 +58,13 @@ const AdminPOToVendorPage = () => {
               <th className="p-3 text-left">PO No</th>
               <th className="p-3">Subject</th>
               <th className="p-3">Ref Quote</th>
+              <th className="p-3">Vendor</th>
+              <th className="p-3">Account</th>
+              <th className="p-3">Deal</th>
+
               <th className="p-3">Total</th>
               <th className="p-3">Created</th>
+              <th className="p-3">Owner</th>
               <th className="p-3">Actions</th>
             </tr>
           </thead>
@@ -86,9 +91,17 @@ const AdminPOToVendorPage = () => {
                   <td className="p-3">{po.poToNumber}</td>
                   <td className="p-3">{po.subject}</td>
                   <td className="p-3">{po.refQuote?.quoteNumber || "-"}</td>
+                  <td className="p-3">{po.vendor?.name || "-"}</td>
+                  <td className="p-3">
+                    {po.refQuote?.account?.accountName || "-"}
+                  </td>
+                  <td className="p-3">{po.refQuote?.deal?.dealName || "-"}</td>
                   <td className="p-3">{po.grandTotal?.toLocaleString()}</td>
                   <td className="p-3">
                     {new Date(po.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="p-3">
+                    {po.refQuote?.quoteOwner?.name || "-"}
                   </td>
                   <td className="p-3 flex gap-3">
                     <button

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
 import ApproveSOModal from "../components/admin/ApproveSOModal";
 import PdfViewersModal from "../components/staff/SO/PdfViewersModal";
+import InvoiceTermsModal from "../components/admin/InvoiceTermsModal";
 
 const AdminSellOrderPage = () => {
   const token = sessionStorage.getItem("token");
@@ -13,6 +14,9 @@ const AdminSellOrderPage = () => {
   const [viewOrder, setViewOrder] = useState(null);
   const [showApproveSO, setShowApproveSO] = useState(null);
   const [selectedPdf, setSelectedPdf] = useState(null);
+
+  const [showModal, setShowModal] = useState("");
+  const [selectedInvoice, setSelectedInvoice] = useState();
 
   /*
   ===============================
@@ -190,6 +194,15 @@ const AdminSellOrderPage = () => {
                         PO
                       </a>
                     )}
+                    <button
+                      onClick={() => {
+                        setShowModal("terms");
+                        setSelectedInvoice(order);
+                      }}
+                      className="text-red-500 hover:text-green-500"
+                    >
+                      Invoice-Terms
+                    </button>
                     <a
                       href={`${process.env.REACT_APP_BACKEND_URL}invoice/${order._id}/pdf`}
                       className="text-green-400 hover:underline"
@@ -214,6 +227,19 @@ const AdminSellOrderPage = () => {
 
       {viewOrder && (
         <ViewSOModal order={viewOrder} onClose={() => setViewOrder(null)} />
+      )}
+
+      {showModal === "terms" && (
+        <InvoiceTermsModal
+          isOpen={showModal === "terms"}
+          onClose={() => {
+            setShowModal("");
+            setSelectedInvoice(null);
+          }}
+          orderId={selectedInvoice._id}
+          existingTerms={selectedInvoice.invoiceTermsAndConditions}
+          onSaved={fetchOrders}
+        />
       )}
 
       {showApproveSO && (
