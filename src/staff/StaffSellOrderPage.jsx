@@ -90,7 +90,7 @@ const StaffSellOrderPage = () => {
 
               <th className="px-4 py-3">Total</th>
 
-              <th className="px-4 py-3">Owner</th>
+              <th className="px-4 py-3">Date</th>
 
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
@@ -148,7 +148,11 @@ const StaffSellOrderPage = () => {
                     {order.grandTotal?.toLocaleString()}
                   </td>
 
-                  <td className="px-4 py-3">{order.createdBy?.name || "-"}</td>
+                  <td className="px-4 py-3">
+                    {order.confirmedDate
+                      ? new Date(order.confirmedDate).toDateString()
+                      : "-"}
+                  </td>
 
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">

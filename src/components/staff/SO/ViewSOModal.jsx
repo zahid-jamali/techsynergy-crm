@@ -109,28 +109,54 @@ const ViewSOModal = ({ order, onClose }) => {
 
                   <tbody>
                     {order.products.map((p, i) => (
-                      <tr
-                        key={i}
-                        className="border-t border-gray-800 hover:bg-gray-900 transition"
-                      >
-                        <td className="p-2 text-center">{i + 1}</td>
+                      <>
+                        {/* MAIN ROW */}
+                        <tr
+                          key={`row-${i}`}
+                          className="border-t border-gray-800 hover:bg-gray-900 transition"
+                        >
+                          <td className="p-2 text-center">{i + 1}</td>
 
-                        <td className="p-2 font-medium">{p.productName}</td>
+                          <td className="p-2 font-medium">{p.productName}</td>
 
-                        <td className="p-2 text-gray-300">
-                          {p.description || "-"}
-                        </td>
+                          <td className="p-2 text-gray-300">
+                            {p.description || "-"}
+                          </td>
 
-                        <td className="p-2 text-center">{p.quantity}</td>
+                          <td className="p-2 text-center">{p.quantity}</td>
 
-                        <td className="p-2 text-right">
-                          {formatCurrency(p.listPrice)}
-                        </td>
+                          <td className="p-2 text-right">
+                            {formatCurrency(p.listPrice)}
+                          </td>
 
-                        <td className="p-2 text-right font-semibold">
-                          {formatCurrency(p.total)}
-                        </td>
-                      </tr>
+                          <td className="p-2 text-right font-semibold text-red-400">
+                            {formatCurrency(p.total)}
+                          </td>
+                        </tr>
+
+                        {/* 🔥 PRODUCT TAX ROW */}
+                        {p.Tax?.length > 0 && (
+                          <tr className="bg-black/40 text-xs">
+                            <td></td>
+                            <td colSpan="5" className="px-4 pb-2 text-gray-400">
+                              <div className="flex flex-wrap gap-2">
+                                {p.Tax.map((t, ti) => (
+                                  <span
+                                    key={ti}
+                                    className="bg-gray-800 px-2 py-1 rounded"
+                                  >
+                                    {t.tax} ({t.percent}%)
+                                  </span>
+                                ))}
+                              </div>
+
+                              <div className="flex justify-end mt-1 text-gray-300">
+                                Tax: {formatCurrency(p.taxAmount)}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     ))}
                   </tbody>
                 </table>
@@ -142,7 +168,29 @@ const ViewSOModal = ({ order, onClose }) => {
             <div className="grid grid-cols-2 gap-4">
               <Info label="Sub Total" value={formatCurrency(order.subtotal)} />
 
-              <Info label="Tax" value={formatCurrency(order.tax)} />
+              {order.otherTax?.length > 0 && (
+                <>
+                  {order.otherTax.map((t, i) => (
+                    <div
+                      key={i}
+                      className="flex justify-between text-xs text-gray-400"
+                    >
+                      <span>
+                        {t.tax} ({t.percent}%)
+                      </span>
+
+                      <span>
+                        {formatCurrency((order.subtotal * t.percent) / 100)}
+                      </span>
+                    </div>
+                  ))}
+
+                  <Info
+                    label="Total Tax"
+                    value={formatCurrency(order.otherTaxAmount)}
+                  />
+                </>
+              )}
 
               <Info label="Discount" value={formatCurrency(order.discount)} />
 

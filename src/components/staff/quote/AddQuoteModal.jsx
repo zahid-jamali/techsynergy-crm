@@ -32,6 +32,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
         margin: 0,
         discount: 0,
         suggestedPrice: null,
+        Tax: [],
       },
     ],
     termsAndConditions: [],
@@ -118,6 +119,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
           listPrice: 0,
           discount: 0,
           suggestedPrice: null,
+          Tax: [],
         },
       ],
     });
@@ -171,7 +173,19 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
     const qty = Number(p.quantity) || 0;
     const price = Number(p.listPrice) || 0;
     const discount = Number(p.discount) || 0;
-    return qty * price - discount;
+
+    const amount = qty * price;
+
+    let taxAmount = 0;
+
+    if (Array.isArray(p.Tax) && p.Tax.length > 0) {
+      p.Tax.forEach((t) => {
+        const percent = Number(t.percent) || 0;
+        taxAmount += (amount * percent) / 100;
+      });
+    }
+
+    return amount + taxAmount - discount;
   };
 
   const subtotal = useMemo(() => {
@@ -201,6 +215,21 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
         ...formData,
         deal: selectedDeal?._id,
         contact: selectedContact?._id,
+
+        products: formData.products.map((p) => ({
+          ...p,
+          Tax: (p.Tax || []).map((t) => ({
+            tax:
+              t.tax === "Custom" ? t.customName?.trim() || "Custom Tax" : t.tax,
+            percent: Number(t.percent) || 0,
+          })),
+        })),
+
+        otherTax: formData.otherTax.map((t) => ({
+          tax:
+            t.tax === "Custom" ? t.customName?.trim() || "Custom Tax" : t.tax,
+          percent: Number(t.percent) || 0,
+        })),
       };
 
       const res = await fetch(
@@ -473,6 +502,141 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                           </div>
                         </div>
                       )}
+
+                      <div className="mt-3 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-400">
+                            Product Tax
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...formData.products];
+                              updated[i].Tax = [
+                                ...(updated[i].Tax || []),
+                                { tax: "", percent: 0, customName: "" },
+                              ];
+                              setFormData({ ...formData, products: updated });
+                            }}
+                            className="text-xs text-red-500"
+                          >
+                            + Add Tax
+                          </button>
+                        </div>
+
+                        {(p.Tax || []).map((t, ti) => (
+                          <div key={ti} className="flex gap-2 items-center">
+                            <select
+                              value={t.tax}
+                              onChange={(e) => {
+                                const selected = TAX_OPTIONS.find(
+                                  (opt) => opt.label === e.target.value
+                                );
+
+                                const updated = [...formData.products];
+
+                                updated[i].Tax[ti].tax = selected.label;
+
+                                if (selected.label !== "Custom") {
+                                  updated[i].Tax[ti].percent = selected.percent;
+                                } else {
+                                  updated[i].Tax[ti].percent = 0;
+                                }
+
+                                setFormData({ ...formData, products: updated });
+                              }}
+                              className="input text-xs"
+                            >
+                              <option value="">Select Tax</option>
+                              {TAX_OPTIONS.map((opt) => (
+                                <option key={opt.label} value={opt.label}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+
+                            {t.tax === "Custom" ? (
+                              <>
+                                <input
+                                  placeholder="Name"
+                                  value={t.customName || ""}
+                                  onChange={(e) => {
+                                    const updated = [...formData.products];
+                                    updated[i].Tax[ti].customName =
+                                      e.target.value;
+                                    setFormData({
+                                      ...formData,
+                                      products: updated,
+                                    });
+                                  }}
+                                  className="input text-xs"
+                                />
+
+                                <input
+                                  type="number"
+                                  placeholder="%"
+                                  value={t.percent}
+                                  onChange={(e) => {
+                                    const updated = [...formData.products];
+                                    updated[i].Tax[ti].percent = e.target.value;
+                                    setFormData({
+                                      ...formData,
+                                      products: updated,
+                                    });
+                                  }}
+                                  className="input text-xs w-16 text-center"
+                                />
+                              </>
+                            ) : (
+                              <input
+                                type="number"
+                                value={t.percent}
+                                disabled
+                                className="input text-xs w-16 text-center opacity-60"
+                              />
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [...formData.products];
+                                updated[i].Tax = updated[i].Tax.filter(
+                                  (_, idx) => idx !== ti
+                                );
+                                setFormData({ ...formData, products: updated });
+                              }}
+                              className="text-red-500 text-xs"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+
+                        {/* TAX PREVIEW */}
+                        {(p.Tax || []).length > 0 && (
+                          <div className="text-xs text-gray-400 flex justify-between">
+                            <span>Total Product Tax</span>
+                            <span>
+                              {formData.currency}.{" "}
+                              {(() => {
+                                const amount =
+                                  (Number(p.quantity) || 0) *
+                                  (Number(p.listPrice) || 0);
+
+                                let tax = 0;
+
+                                p.Tax.forEach((t) => {
+                                  tax +=
+                                    (amount * (Number(t.percent) || 0)) / 100;
+                                });
+
+                                return tax.toFixed(2);
+                              })()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -490,32 +654,6 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     </span>
                   </div>
 
-                  {/* <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-400">
-                      Apply GST (18%)
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={formData.isGstApplied}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          isGstApplied: e.target.checked,
-                        })
-                      }
-                      className="accent-red-600"
-                    />
-                  </div>
-
-                  {formData.isGstApplied && (
-                    <div className="flex justify-between text-sm text-gray-400">
-                      <span>GST</span>
-                      <span>
-                        {formData.currency}. {gstAmount.toFixed(2)}
-                      </span>
-                    </div>
-                  )} */}
-
                   <div className="border-t border-gray-700 pt-3 space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-400">Apply Taxes</span>
@@ -531,15 +669,6 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     {formData.otherTax.map((t, i) => (
                       <div key={i} className="space-y-1">
                         <div className="flex gap-2">
-                          {/* <input
-                            placeholder="Tax Name"
-                            value={t.tax}
-                            onChange={(e) =>
-                              updateOtherTax(i, "tax", e.target.value)
-                            }
-                            className="input text-xs"
-                          /> */}
-
                           <select
                             value={t.tax}
                             onChange={(e) => {
@@ -599,15 +728,6 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                               className="input text-xs w-20 text-center opacity-60"
                             />
                           )}
-                          {/* <input
-                            type="number"
-                            placeholder="%"
-                            value={t.percent}
-                            onChange={(e) =>
-                              updateOtherTax(i, "percent", e.target.value)
-                            }
-                            className="input text-xs w-20 text-center"
-                          /> */}
 
                           <button
                             type="button"

@@ -14,7 +14,7 @@ const AddOrderModal = ({ onClose, onSuccess }) => {
 
   const [formData, setFormData] = useState({
     products: [],
-    Tax: [],
+    otherTax: [], // ✅ rename
     currency: "USD",
   });
 
@@ -62,7 +62,6 @@ const AddOrderModal = ({ onClose, onSuccess }) => {
 
   const handleSelectQuote = (quote) => {
     setSelectedQuote(quote);
-
     setQuoteQuery(quote.subject);
 
     const products = quote.products.map((p) => ({
@@ -70,11 +69,12 @@ const AddOrderModal = ({ onClose, onSuccess }) => {
       description: p.description || "",
       quantity: p.quantity,
       listPrice: p.listPrice,
+      Tax: p.Tax || [], // ✅ IMPORTANT
     }));
 
     setFormData({
       products,
-      Tax: quote.Tax || [],
+      otherTax: quote.otherTax || [], // ✅ FIX
       currency: quote.currency || "USD",
     });
   };
@@ -122,12 +122,12 @@ TAX MANAGEMENT
   const addTax = () => {
     setFormData({
       ...formData,
-      Tax: [...formData.Tax, { tax: "", percent: 0 }],
+      otherTax: [...formData.otherTax, { tax: "", percent: 0 }],
     });
   };
 
   const updateTax = (index, field, value) => {
-    const updated = [...formData.Tax];
+    const updated = [...formData.otherTax];
 
     if (field === "percent") {
       value = Math.max(0, Number(value));
@@ -137,16 +137,16 @@ TAX MANAGEMENT
 
     setFormData({
       ...formData,
-      Tax: updated,
+      otherTax: updated,
     });
   };
 
   const removeTax = (index) => {
-    const updated = formData.Tax.filter((_, i) => i !== index);
+    const updated = formData.otherTax.filter((_, i) => i !== index);
 
     setFormData({
       ...formData,
-      Tax: updated,
+      otherTax: updated,
     });
   };
 
@@ -178,7 +178,17 @@ PO FILE HANDLING
     const qty = Number(p.quantity) || 0;
     const price = Number(p.listPrice) || 0;
 
-    return qty * price;
+    const amount = qty * price;
+
+    let tax = 0;
+
+    if (Array.isArray(p.Tax)) {
+      p.Tax.forEach((t) => {
+        tax += (amount * (Number(t.percent) || 0)) / 100;
+      });
+    }
+
+    return amount + tax;
   };
 
   const subtotal = useMemo(() => {
@@ -186,12 +196,11 @@ PO FILE HANDLING
   }, [formData.products]);
 
   const totalTax = useMemo(() => {
-    return formData.Tax.reduce((acc, t) => {
+    return formData.otherTax.reduce((acc, t) => {
       const percent = Number(t.percent) || 0;
-
       return acc + (subtotal * percent) / 100;
     }, 0);
-  }, [formData.Tax, subtotal]);
+  }, [formData.otherTax, subtotal]);
 
   const grandTotal = subtotal + totalTax;
 
@@ -219,7 +228,7 @@ PO FILE HANDLING
 
         fd.append("quoteId", selectedQuote._id);
         fd.append("products", JSON.stringify(formData.products));
-        fd.append("Tax", JSON.stringify(formData.Tax));
+        fd.append("otherTax", JSON.stringify(formData.otherTax));
 
         fd.append("purchaseOrder", purchaseOrderFile);
 
@@ -244,8 +253,14 @@ PO FILE HANDLING
           },
           body: JSON.stringify({
             quoteId: selectedQuote._id,
-            products: formData.products,
-            Tax: formData.Tax,
+            products: formData.products.map((p) => ({
+              ...p,
+              Tax: (p.Tax || []).map((t) => ({
+                tax: t.tax || "",
+                percent: Number(t.percent) || 0,
+              })),
+            })),
+            otherTax: formData.otherTax, // ✅ FIX
           }),
         });
       }
@@ -349,62 +364,180 @@ PO FILE HANDLING
                     </thead>
 
                     <tbody>
-                      {formData.products.map((p, i) => (
-                        <tr
-                          key={i}
-                          className="border-b border-gray-800 hover:bg-[#020617]"
-                        >
-                          <td className="p-3">{p.productName}</td>
+                      {formData.products.map((p, i) => {
+                        const amount =
+                          (Number(p.quantity) || 0) *
+                          (Number(p.listPrice) || 0);
 
-                          <td className="p-3">
-                            <input
-                              value={p.description}
-                              onChange={(e) =>
-                                updateProduct(i, "description", e.target.value)
-                              }
-                              className="input"
-                            />
-                          </td>
+                        let productTax = 0;
 
-                          <td className="p-3 text-center">
-                            <input
-                              type="number"
-                              min="1"
-                              value={p.quantity}
-                              onChange={(e) =>
-                                updateProduct(i, "quantity", e.target.value)
-                              }
-                              className="input text-center w-24"
-                            />
-                          </td>
+                        p.Tax?.forEach((t) => {
+                          productTax +=
+                            (amount * (Number(t.percent) || 0)) / 100;
+                        });
 
-                          <td className="p-3">
-                            <input
-                              type="number"
-                              value={p.listPrice}
-                              onChange={(e) =>
-                                updateProduct(i, "listPrice", e.target.value)
-                              }
-                              className="input w-32"
-                            />
-                          </td>
-
-                          <td className="p-3 font-semibold text-red-400">
-                            {formData.currency}{" "}
-                            {calculateLineTotal(p).toFixed(2)}
-                          </td>
-
-                          <td className="p-3">
-                            <button
-                              type="button"
-                              onClick={() => removeProduct(i)}
-                              className="text-red-500 hover:text-red-400"
+                        return (
+                          <>
+                            {/* MAIN ROW */}
+                            <tr
+                              key={`row-${i}`}
+                              className="border-b border-gray-800 hover:bg-[#020617]"
                             >
-                              ✕
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                              <td className="p-3 font-medium">
+                                {p.productName}
+                              </td>
+
+                              <td className="p-3">
+                                <input
+                                  value={p.description}
+                                  onChange={(e) =>
+                                    updateProduct(
+                                      i,
+                                      "description",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="input"
+                                />
+                              </td>
+
+                              <td className="p-3 text-center">
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={p.quantity}
+                                  onChange={(e) =>
+                                    updateProduct(i, "quantity", e.target.value)
+                                  }
+                                  className="input text-center w-20"
+                                />
+                              </td>
+
+                              <td className="p-3">
+                                <input
+                                  type="number"
+                                  value={p.listPrice}
+                                  onChange={(e) =>
+                                    updateProduct(
+                                      i,
+                                      "listPrice",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="input w-28"
+                                />
+                              </td>
+
+                              <td className="p-3 text-right">
+                                <div className="font-semibold text-red-400">
+                                  {formData.currency}{" "}
+                                  {(amount + productTax).toFixed(2)}
+                                </div>
+
+                                <div className="text-xs text-gray-400">
+                                  Tax: {productTax.toFixed(2)}
+                                </div>
+                              </td>
+
+                              <td className="p-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => removeProduct(i)}
+                                  className="text-red-500"
+                                >
+                                  ✕
+                                </button>
+                              </td>
+                            </tr>
+
+                            {/* TAX ROW */}
+                            <tr key={`tax-${i}`} className="bg-black/30">
+                              <td colSpan="6" className="px-3 pb-3 pt-2">
+                                <div className="flex flex-wrap gap-2 items-center">
+                                  {(p.Tax || []).map((t, ti) => (
+                                    <div
+                                      key={ti}
+                                      className="flex items-center gap-1 bg-gray-900 px-2 py-1 rounded text-xs border border-gray-800"
+                                    >
+                                      <input
+                                        placeholder="Tax"
+                                        value={t.tax}
+                                        onChange={(e) => {
+                                          const updated = [
+                                            ...formData.products,
+                                          ];
+                                          updated[i].Tax[ti].tax =
+                                            e.target.value;
+                                          setFormData({
+                                            ...formData,
+                                            products: updated,
+                                          });
+                                        }}
+                                        className="bg-transparent outline-none w-20"
+                                      />
+
+                                      <input
+                                        type="number"
+                                        value={t.percent}
+                                        onChange={(e) => {
+                                          const updated = [
+                                            ...formData.products,
+                                          ];
+                                          updated[i].Tax[ti].percent =
+                                            e.target.value;
+                                          setFormData({
+                                            ...formData,
+                                            products: updated,
+                                          });
+                                        }}
+                                        className="bg-transparent outline-none w-12 text-center"
+                                      />
+
+                                      <span>%</span>
+
+                                      <button
+                                        onClick={() => {
+                                          const updated = [
+                                            ...formData.products,
+                                          ];
+                                          updated[i].Tax = updated[
+                                            i
+                                          ].Tax.filter((_, x) => x !== ti);
+                                          setFormData({
+                                            ...formData,
+                                            products: updated,
+                                          });
+                                        }}
+                                        className="text-red-500"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+                                  ))}
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...formData.products];
+                                      updated[i].Tax = [
+                                        ...(updated[i].Tax || []),
+                                        { tax: "", percent: 0 },
+                                      ];
+                                      setFormData({
+                                        ...formData,
+                                        products: updated,
+                                      });
+                                    }}
+                                    className="text-xs text-red-500"
+                                  >
+                                    + Add Tax
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          </>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -443,49 +576,59 @@ PO FILE HANDLING
 
                 {/* TAX MANAGEMENT */}
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold text-gray-300">
-                      Taxes
+                    <h3 className="text-sm font-semibold text-gray-400">
+                      Order Tax
                     </h3>
 
                     <button
                       type="button"
                       onClick={addTax}
-                      className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm"
+                      className="text-xs text-red-500"
                     >
-                      + Add Tax
+                      + Add
                     </button>
                   </div>
 
-                  {formData.Tax.map((t, i) => (
-                    <div key={i} className="flex gap-3 items-center">
-                      <input
-                        placeholder="Tax Name"
-                        value={t.tax}
-                        onChange={(e) => updateTax(i, "tax", e.target.value)}
-                        className="input"
-                      />
-
-                      <input
-                        type="number"
-                        placeholder="%"
-                        value={t.percent}
-                        onChange={(e) =>
-                          updateTax(i, "percent", e.target.value)
-                        }
-                        className="input w-32"
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() => removeTax(i)}
-                        className="text-red-500 hover:text-red-400"
+                  <div className="space-y-2">
+                    {formData.otherTax.map((t, i) => (
+                      <div
+                        key={i}
+                        className="grid grid-cols-[1fr_80px_30px] items-center gap-2 bg-black/40 px-3 py-2 rounded border border-gray-800 text-xs"
                       >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
+                        {/* TAX NAME */}
+                        <input
+                          placeholder="Tax name (e.g. GST)"
+                          value={t.tax}
+                          onChange={(e) => updateTax(i, "tax", e.target.value)}
+                          className="input w-full"
+                        />
+
+                        {/* PERCENT */}
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="number"
+                            value={t.percent}
+                            onChange={(e) =>
+                              updateTax(i, "percent", e.target.value)
+                            }
+                            className="input w-full text-center"
+                          />
+                          <span className="text-gray-400">%</span>
+                        </div>
+
+                        {/* REMOVE */}
+                        <button
+                          type="button"
+                          onClick={() => removeTax(i)}
+                          className="text-red-500 text-center"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </>
             )}

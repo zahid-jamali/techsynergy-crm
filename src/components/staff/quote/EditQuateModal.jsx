@@ -1,13 +1,12 @@
 import { useState, useMemo } from "react";
 
-const QUOTE_STAGES = [
-  "Draft",
-  "Negotiation",
-  "Delivered",
-  "On Hold",
-  "Confirmed",
-  "Closed Won",
-  "Closed Lost",
+const QUOTE_STAGES = ["Draft", "Delivered", "On Hold", "Confirmed"];
+const TAX_OPTIONS = [
+  { label: "GST", percent: 18 },
+  { label: "SST", percent: 15 },
+  { label: "PST", percent: 16 },
+  { label: "KPK-ST", percent: 15 },
+  { label: "Custom", percent: 0 },
 ];
 
 const round = (n) => Math.round(n * 100) / 100;
@@ -34,6 +33,19 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
       listPrice: p.listPrice,
       purchasePrice: 0,
       margin: 0,
+      Tax: (p.Tax || []).map((t) => {
+        const predefined = ["GST", "SST", "PST", "KPK-ST"];
+
+        if (predefined.includes(t.tax)) {
+          return { ...t };
+        }
+
+        return {
+          tax: "Custom",
+          percent: t.percent,
+          customName: t.tax, // important
+        };
+      }),
     })),
   });
 
@@ -122,7 +134,20 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
   /* ================= CALCULATIONS ================= */
 
   const calculateLineTotal = (p) => {
-    return (Number(p.quantity) || 0) * (Number(p.listPrice) || 0);
+    const qty = Number(p.quantity) || 0;
+    const price = Number(p.listPrice) || 0;
+
+    const amount = qty * price;
+
+    let tax = 0;
+
+    if (Array.isArray(p.Tax)) {
+      p.Tax.forEach((t) => {
+        tax += (amount * (Number(t.percent) || 0)) / 100;
+      });
+    }
+
+    return amount + tax;
   };
 
   const subtotal = useMemo(
@@ -144,6 +169,16 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
 
   /* ================= SUBMIT ================= */
 
+  // ONLY showing CHANGED PARTS (safe integration)
+
+  const normalizeTaxesForPayload = (taxes = []) =>
+    taxes.map((t) => ({
+      tax: t.tax === "Custom" ? t.customName?.trim() || "Custom Tax" : t.tax,
+      percent: Number(t.percent) || 0,
+    }));
+
+  /* ================= SUBMIT ================= */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -162,12 +197,12 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
           description: p.description,
           quantity: Number(p.quantity),
           listPrice: Number(p.listPrice),
+
+          // ✅ FIXED TAX PAYLOAD
+          Tax: normalizeTaxesForPayload(p.Tax),
         })),
 
-        otherTax: formData.otherTax.map((t) => ({
-          tax: t.tax,
-          percent: Number(t.percent),
-        })),
+        otherTax: normalizeTaxesForPayload(formData.otherTax),
       };
 
       const res = await fetch(
@@ -322,6 +357,142 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                       >
                         ✕
                       </button>
+                    </div>
+
+                    <div className="mt-3 border-t border-gray-800 pt-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-gray-400">Tax</span>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = [...formData.products];
+                            updated[i].Tax = [
+                              ...(updated[i].Tax || []),
+                              { tax: "", percent: 0, customName: "" },
+                            ];
+                            setFormData({ ...formData, products: updated });
+                          }}
+                          className="text-xs text-red-500"
+                        >
+                          + Add
+                        </button>
+                      </div>
+
+                      <div className="space-y-1">
+                        {(p.Tax || []).map((t, ti) => (
+                          <div
+                            key={ti}
+                            className="flex items-center gap-2 text-xs bg-black/40 px-2 py-1.5 rounded border border-gray-800"
+                          >
+                            {/* SELECT */}
+                            <select
+                              value={t.tax}
+                              onChange={(e) => {
+                                const selected = TAX_OPTIONS.find(
+                                  (opt) => opt.label === e.target.value
+                                );
+
+                                const updated = [...formData.products];
+
+                                updated[i].Tax[ti] = {
+                                  tax: selected.label,
+                                  percent:
+                                    selected.label === "Custom"
+                                      ? 0
+                                      : selected.percent,
+                                  customName: "",
+                                };
+
+                                setFormData({ ...formData, products: updated });
+                              }}
+                              className="bg-[#111827] border border-gray-700 rounded px-2 py-1 flex-1 focus:border-red-500"
+                            >
+                              <option value="">Tax</option>
+                              {TAX_OPTIONS.map((opt) => (
+                                <option key={opt.label} value={opt.label}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+
+                            {/* CUSTOM NAME */}
+                            {t.tax === "Custom" && (
+                              <input
+                                placeholder="name"
+                                value={t.customName || ""}
+                                onChange={(e) => {
+                                  const updated = [...formData.products];
+                                  updated[i].Tax[ti].customName =
+                                    e.target.value;
+                                  setFormData({
+                                    ...formData,
+                                    products: updated,
+                                  });
+                                }}
+                                className="bg-[#111827] border border-gray-700 rounded px-2 py-1 w-24"
+                              />
+                            )}
+
+                            {/* % */}
+                            <input
+                              type="number"
+                              value={t.percent}
+                              disabled={t.tax !== "Custom"}
+                              onChange={(e) => {
+                                const updated = [...formData.products];
+                                updated[i].Tax[ti].percent = e.target.value;
+                                setFormData({ ...formData, products: updated });
+                              }}
+                              className={`bg-[#111827] border border-gray-700 rounded px-1 text-center w-14 ${
+                                t.tax !== "Custom"
+                                  ? "opacity-60 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            />
+
+                            <span className="text-gray-400">%</span>
+
+                            {/* REMOVE */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [...formData.products];
+                                updated[i].Tax = updated[i].Tax.filter(
+                                  (_, idx) => idx !== ti
+                                );
+                                setFormData({ ...formData, products: updated });
+                              }}
+                              className="text-red-500"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
+                      {(p.Tax || []).length > 0 && (
+                        <div className="flex justify-between text-xs text-gray-400 mt-2">
+                          <span>Tax Total</span>
+                          <span>
+                            {formData.currency}{" "}
+                            {(() => {
+                              const amount =
+                                (Number(p.quantity) || 0) *
+                                (Number(p.listPrice) || 0);
+
+                              let tax = 0;
+
+                              p.Tax.forEach((t) => {
+                                tax +=
+                                  (amount * (Number(t.percent) || 0)) / 100;
+                              });
+
+                              return round(tax).toFixed(2);
+                            })()}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="text-right text-red-400 font-semibold">
