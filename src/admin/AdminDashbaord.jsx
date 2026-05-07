@@ -84,6 +84,33 @@ const AdminDashboard = () => {
   const { contactsPerAccount } = contactAnalytics || {};
   const { userPerformance } = userAnalytics || {};
 
+  const downloadExcel = async ({ excelFile }) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}dashboard/${excelFile}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `crm-report-${excelFile}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
+
   return (
     <div className="bg-black min-h-screen p-8 text-white">
       <div className="max-w-screen-2xl mx-auto">
@@ -97,11 +124,10 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6 mb-12">
           <ExecutiveCard
             title="Total Revenue"
-            value={`Rs ${summaryStats.totalRevenue.toLocaleString()}`}
+            value={`${Math.round(summaryStats.totalRevenue).toLocaleString()}`}
             description="Revenue from closed deals"
           />
           <ExecutiveCard
@@ -111,7 +137,7 @@ const AdminDashboard = () => {
           />
           <ExecutiveCard
             title="Pipeline Revenue"
-            value={summaryStats.pipelineValue.toLocaleString()}
+            value={Math.round(summaryStats.pipelineValue).toLocaleString()}
             description="Revenue in pipeline"
           />
           <ExecutiveCard
@@ -151,9 +177,35 @@ const AdminDashboard = () => {
             value={userPerformance?.length || 0}
           />
         </div>
+        <div className=" flex justify-between bg-[#111] border rounded-2xl p-6 transition ">
+          <button
+            onClick={() => downloadExcel({ excelFile: "pipeline" })}
+            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
+          >
+            Download Pipeline Data
+          </button>
+          <button
+            onClick={() => downloadExcel({ excelFile: "master" })}
+            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
+          >
+            Download Master file
+          </button>
+          <button
+            onClick={() => downloadExcel({ excelFile: "revenue" })}
+            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
+          >
+            Download Revenue Data
+          </button>
+          <button
+            onClick={() => downloadExcel({ excelFile: "user" })}
+            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
+          >
+            Download Users Data
+          </button>
+        </div>
 
         {/* ================= DASHBOARD FILTER BUTTONS ================= */}
-        <div className="flex flex-wrap gap-3 mb-10">
+        <div className="flex flex-wrap gap-3 mb-10 pt-4">
           {[
             { key: "deals", label: "Deals" },
             { key: "revenue", label: "Revenue" },
