@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getHomePath } from "../lib/roles";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -35,12 +36,7 @@ export default function LoginPage() {
 
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("user", JSON.stringify(data.user));
-
-      if (data.user.isSuperUser) {
-        window.location.href = "/admin/dashboard";
-      } else {
-        window.location.href = "/staff/dashboard";
-      }
+      window.location.href = getHomePath(data.user);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,12 +45,13 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    let user = sessionStorage.getItem("user");
-    if (user) {
-      if (user.isSuperUser) {
-        window.location.href = "/admin/dashboard";
-      } else {
-        window.location.href = "/staff/dashboard";
+    const stored = sessionStorage.getItem("user");
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        window.location.href = getHomePath(user);
+      } catch {
+        sessionStorage.clear();
       }
     }
   }, []);

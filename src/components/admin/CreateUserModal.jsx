@@ -8,6 +8,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
     email: "",
     phone: "",
     password: "",
+    role: "staff",
   });
 
   const [loading, setLoading] = useState(false);
@@ -113,6 +114,18 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
             onChange={handleChange}
             className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 text-heading focus:border-brand outline-none"
           />
+
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 text-heading focus:border-brand outline-none"
+          >
+            <option value="staff">Staff</option>
+            <option value="operations">Operations</option>
+            <option value="finance">Finance</option>
+            <option value="admin">Admin</option>
+          </select>
 
           <button
             type="submit"

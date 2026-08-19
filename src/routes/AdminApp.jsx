@@ -12,6 +12,9 @@ import AdminSellOrderPage from "../admin/AdminSellOrderPage";
 import AdminSingleUserPerformance from "../admin/AdminSingleUserPerformance";
 import AdminUsers from "../admin/AdminUsers";
 import AdminVendorsPage from "../admin/AdminVendorsPage";
+import CalendarPage from "../workspace/CalendarPage";
+import TodosPage from "../workspace/TodosPage";
+import NotebooksPage from "../workspace/NotebooksPage";
 
 export default function AdminApp() {
   return (
@@ -29,6 +32,9 @@ export default function AdminApp() {
       <Route path="poToVendor" element={<AdminPOToVendorPage />} />
       <Route path="invoice" element={<AdminInvoicePage />} />
       <Route path="sales-target" element={<SalesTargetPage />} />
+      <Route path="calendar" element={<CalendarPage />} />
+      <Route path="todos" element={<TodosPage />} />
+      <Route path="notebooks" element={<NotebooksPage />} />
       <Route
         path="singleUserPerformance/:userId"
         element={<AdminSingleUserPerformance />}

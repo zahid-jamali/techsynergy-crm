@@ -1,23 +1,7 @@
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Handshake,
-  FileText,
-  ShoppingCart,
-  Target,
-  Building2,
-  Users,
-  Boxes,
-  Receipt,
-  FileSpreadsheet,
-  Truck,
-  Calendar,
-  CheckSquare,
-  BookOpen,
-  LogOut,
-  Menu,
-} from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { useState } from "react";
+import { getUserRole, ROLE_LABELS } from "../lib/roles";
 
 const NavItem = ({ to, icon: Icon, label, collapsed }) => (
   <NavLink
@@ -47,9 +31,16 @@ const Section = ({ title, collapsed }) =>
     </p>
   );
 
-export default function AdminLayout({ children }) {
+export default function AppShell({
+  panelLabel,
+  headerTitle,
+  headerSubtitle,
+  navSections,
+  children,
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const role = getUserRole(user);
 
   return (
     <div className="min-h-screen flex bg-surface text-bodyText">
@@ -64,7 +55,7 @@ export default function AdminLayout({ children }) {
               <h1 className="text-lg font-semibold tracking-tight">
                 Tech<span className="text-white/80">Synergy</span>
               </h1>
-              <p className="text-[11px] text-white/50">Admin Console</p>
+              <p className="text-[11px] text-white/50">{panelLabel}</p>
             </div>
           )}
           {collapsed && (
@@ -91,106 +82,20 @@ export default function AdminLayout({ children }) {
               <Menu size={18} />
             </button>
           )}
-
-          <Section title="Overview" collapsed={collapsed} />
-          <NavItem
-            to="/admin/dashboard"
-            icon={LayoutDashboard}
-            label="Dashboard"
-            collapsed={collapsed}
-          />
-
-          <Section title="Sales" collapsed={collapsed} />
-          <NavItem
-            to="/admin/deals"
-            icon={Handshake}
-            label="Deals"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/quotes"
-            icon={FileText}
-            label="Quotes"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/sell-order"
-            icon={ShoppingCart}
-            label="Sell Orders"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/sales-target"
-            icon={Target}
-            label="Sales Target"
-            collapsed={collapsed}
-          />
-
-          <Section title="CRM" collapsed={collapsed} />
-          <NavItem
-            to="/admin/users"
-            icon={Users}
-            label="Users"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/accounts"
-            icon={Building2}
-            label="Accounts"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/contacts"
-            icon={Users}
-            label="Contacts"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/products"
-            icon={Boxes}
-            label="Products"
-            collapsed={collapsed}
-          />
-
-          <Section title="Finance" collapsed={collapsed} />
-          <NavItem
-            to="/admin/invoice"
-            icon={Receipt}
-            label="Invoices"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/poToVendor"
-            icon={FileSpreadsheet}
-            label="Purchase Orders"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/vendors"
-            icon={Truck}
-            label="Vendors"
-            collapsed={collapsed}
-          />
-
-          <Section title="Workspace" collapsed={collapsed} />
-          <NavItem
-            to="/admin/calendar"
-            icon={Calendar}
-            label="Calendar"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/todos"
-            icon={CheckSquare}
-            label="To-dos"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/admin/notebooks"
-            icon={BookOpen}
-            label="Notebooks"
-            collapsed={collapsed}
-          />
+          {navSections.map((section) => (
+            <div key={section.title}>
+              <Section title={section.title} collapsed={collapsed} />
+              {section.items.map((item) => (
+                <NavItem
+                  key={item.to}
+                  to={item.to}
+                  icon={item.icon}
+                  label={item.label}
+                  collapsed={collapsed}
+                />
+              ))}
+            </div>
+          ))}
         </nav>
       </aside>
 
@@ -198,22 +103,20 @@ export default function AdminLayout({ children }) {
         <header className="h-16 bg-card border-b border-gray-200 flex items-center justify-between px-6">
           <div>
             <h2 className="text-base font-semibold text-heading tracking-tight">
-              Admin Control Panel
+              {headerTitle}
             </h2>
-            <p className="text-xs text-bodyText">
-              Welcome back{user?.name ? `, ${user.name}` : ""} to TechSynergy CRM
-            </p>
+            <p className="text-xs text-bodyText">{headerSubtitle}</p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium text-heading capitalize">
-                {user?.name || "Administrator"}
+                {user?.name || ROLE_LABELS[role]}
               </p>
-              <p className="text-xs text-bodyText">Admin</p>
+              <p className="text-xs text-bodyText">{ROLE_LABELS[role]}</p>
             </div>
             <div className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center text-sm font-semibold">
-              {(user?.name?.[0] || "A").toUpperCase()}
+              {(user?.name?.[0] || "U").toUpperCase()}
             </div>
             <button
               onClick={() => {

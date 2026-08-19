@@ -8,6 +8,9 @@ import {
   FileText,
   ShoppingCart,
   User,
+  Calendar,
+  CheckSquare,
+  BookOpen,
   LogOut,
   Menu,
 } from "lucide-react";
@@ -91,6 +94,24 @@ export default function StaffLayout({ children }) {
             to="/staff/s-order"
             icon={<ShoppingCart size={18} />}
             label="Sales Orders"
+          />
+          <SidebarLink
+            collapsed={collapsed}
+            to="/staff/calendar"
+            icon={<Calendar size={18} />}
+            label="Calendar"
+          />
+          <SidebarLink
+            collapsed={collapsed}
+            to="/staff/todos"
+            icon={<CheckSquare size={18} />}
+            label="To-dos"
+          />
+          <SidebarLink
+            collapsed={collapsed}
+            to="/staff/notebooks"
+            icon={<BookOpen size={18} />}
+            label="Notebooks"
           />
           <SidebarLink
             collapsed={collapsed}

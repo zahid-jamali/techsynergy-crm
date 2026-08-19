@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { fileUrl } from "../lib/roles";
 
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
 import ApproveSOModal from "../components/admin/ApproveSOModal";
@@ -179,10 +180,7 @@ const AdminSellOrderPage = () => {
                     |{/* PURCHASE ORDER */}
                     {order.purchaseOrder?.url && (
                       <a
-                        href={`${process.env.REACT_APP_BACKEND_URL.replace(
-                          "/api/",
-                          ""
-                        )}${order.purchaseOrder.url}`}
+                        href={fileUrl(order.purchaseOrder.url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-emerald-700 hover:underline"

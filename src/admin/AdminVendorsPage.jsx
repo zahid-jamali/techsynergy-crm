@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import AddVendorModal from "../components/admin/AddVendorModal";
 import EditVendorModal from "../components/admin/EditVendorModal";
 import DeleteVendorModal from "../components/admin/DeleteVendorModal";
+import { getUserRole } from "../lib/roles";
 
 const AdminVendorsPage = () => {
   const token = sessionStorage.getItem("token");
+  const isAdmin = getUserRole(JSON.parse(sessionStorage.getItem("user") || "{}")) === "admin";
 
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -95,12 +97,14 @@ const AdminVendorsPage = () => {
                     >
                       Edit
                     </button>
-                    <button
-                      onClick={() => setDeleteVendor(v)}
-                      className="text-red-400 hover:underline"
-                    >
-                      Delete
-                    </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => setDeleteVendor(v)}
+                        className="text-red-400 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

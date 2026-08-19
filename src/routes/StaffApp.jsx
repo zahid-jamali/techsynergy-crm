@@ -6,6 +6,9 @@ import StaffDealsPage from "../staff/StaffDealsPage";
 import StaffQuotePage from "../staff/StaffQuotesPage";
 import StaffSellOrderPage from "../staff/StaffSellOrderPage";
 import StaffUpdateProfile from "../staff/StaffUpdateProfile";
+import CalendarPage from "../workspace/CalendarPage";
+import TodosPage from "../workspace/TodosPage";
+import NotebooksPage from "../workspace/NotebooksPage";
 
 export default function StaffApp() {
   return (
@@ -18,6 +21,9 @@ export default function StaffApp() {
       <Route path="deals" element={<StaffDealsPage />} />
       <Route path="quotes" element={<StaffQuotePage />} />
       <Route path="s-order" element={<StaffSellOrderPage />} />
+      <Route path="calendar" element={<CalendarPage />} />
+      <Route path="todos" element={<TodosPage />} />
+      <Route path="notebooks" element={<NotebooksPage />} />
     </Routes>
   );
 }

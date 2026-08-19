@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import CreateUserModal from "../components/admin/CreateUserModal";
 import EditUserModal from "../components/admin/EditUserModal";
 import { Link } from "react-router-dom";
+import { getUserRole, ROLE_LABELS } from "../lib/roles";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -58,7 +59,10 @@ export default function AdminUsers() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          isSuperUser: updatedUser.isSuperUser,
+          role: updatedUser.role || (updatedUser.isSuperUser ? "admin" : "staff"),
+          isSuperUser: updatedUser.role
+            ? updatedUser.role === "admin"
+            : updatedUser.isSuperUser,
           isActive: updatedUser.isActive,
         }),
       });
@@ -92,7 +96,7 @@ export default function AdminUsers() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="page-title">User Management</h1>
-          <p className="page-subtitle">Manage admin and staff access</p>
+          <p className="page-subtitle">Manage admin, staff, operations and finance access</p>
         </div>
         <button
           onClick={() => setShowModal("Add")}
@@ -131,13 +135,13 @@ export default function AdminUsers() {
                 <td className="px-4 py-3">
                   <span
                     className={`px-2 py-1 rounded text-xs font-semibold ${
-                      user.isSuperUser
+                      getUserRole(user) === "admin"
                         ? "bg-brand text-white"
                         : "bg-gray-100 text-bodyText"
                     }`}
                   >
                     <Link to={`/admin/singleUserPerformance/${user._id}`}>
-                      {user.isSuperUser ? "Admin" : "Staff"}
+                      {ROLE_LABELS[getUserRole(user)] || "Staff"}
                     </Link>
                   </span>
                 </td>

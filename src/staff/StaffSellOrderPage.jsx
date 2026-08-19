@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { fileUrl } from "../lib/roles";
 import AddOrderModal from "../components/staff/SO/AddOrderModal";
 import DeleteOrderModal from "../components/staff/SO/DeleteOrderModal";
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
@@ -185,10 +186,7 @@ const StaffSellOrderPage = () => {
                       )}
                       {order.purchaseOrder?.url && (
                         <a
-                          href={`${process.env.REACT_APP_BACKEND_URL.replace(
-                            "/api/",
-                            ""
-                          )}${order.purchaseOrder.url}`}
+                          href={fileUrl(order.purchaseOrder.url)}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
