@@ -33,17 +33,17 @@ const DeleteContactModal = ({ contact, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-center items-center px-4">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-md text-white p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-red-500">Delete Contact</h2>
+    <div className="fixed inset-0 z-50 bg-heading/40 backdrop-blur-sm flex justify-center items-center px-4">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-md text-heading p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-brand">Delete Contact</h2>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-2 rounded text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
             {error}
           </div>
         )}
 
-        <p className="text-gray-300">
+        <p className="text-bodyText">
           Are you sure you want to delete{" "}
           <span className="text-red-400 font-semibold">
             {contact.firstName} {contact.lastName}
@@ -55,10 +55,10 @@ const DeleteContactModal = ({ contact, onClose, onSuccess }) => {
           This will deactivate the contact but not permanently remove it.
         </p>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
           >
             Cancel
           </button>
@@ -66,7 +66,7 @@ const DeleteContactModal = ({ contact, onClose, onSuccess }) => {
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded disabled:opacity-60"
+            className="px-4 py-2 btn-danger rounded disabled:opacity-60"
           >
             {loading ? "Deleting..." : "Delete Contact"}
           </button>

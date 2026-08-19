@@ -134,12 +134,12 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-6xl text-white">
+    <div className="fixed inset-0 bg-heading/40 flex items-center justify-center z-50">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-6xl text-heading">
         {/* HEADER */}
 
-        <div className="px-6 py-4 border-b border-gray-800 flex justify-between">
-          <h2 className="text-red-500 font-semibold">
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between">
+          <h2 className="text-brand font-semibold">
             Edit PO — {po.poToNumber}
           </h2>
 
@@ -155,7 +155,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="PO Subject"
-            className="w-full bg-gray-900 border border-gray-700 px-3 py-2 rounded"
+            className="w-full bg-card border border-gray-200 px-3 py-2 rounded"
           />
 
           {/* DESCRIPTION */}
@@ -164,17 +164,17 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
-            className="w-full bg-gray-900 border border-gray-700 px-3 py-2 rounded"
+            className="w-full bg-card border border-gray-200 px-3 py-2 rounded"
           />
 
           {/* PRODUCTS TABLE */}
 
           <div>
-            <h3 className="text-gray-400 mb-2">Products</h3>
+            <h3 className="text-bodyText mb-2">Products</h3>
 
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-gray-400">
+                <tr className="text-bodyText">
                   <th className="text-left">Product</th>
 
                   <th>Qty</th>
@@ -196,7 +196,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
                         onChange={(e) =>
                           updateProduct(i, "productName", e.target.value)
                         }
-                        className="bg-gray-900 border border-gray-700 px-2 py-1 rounded w-full"
+                        className="bg-card border border-gray-200 px-2 py-1 rounded w-full"
                       />
                     </td>
 
@@ -208,7 +208,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
                         onChange={(e) =>
                           updateProduct(i, "quantity", e.target.value)
                         }
-                        className="w-20 bg-gray-900 border border-gray-700 px-2 py-1 rounded"
+                        className="w-20 bg-card border border-gray-200 px-2 py-1 rounded"
                       />
                     </td>
 
@@ -220,7 +220,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
                         onChange={(e) =>
                           updateProduct(i, "listPrice", e.target.value)
                         }
-                        className="w-28 bg-gray-900 border border-gray-700 px-2 py-1 rounded"
+                        className="w-28 bg-card border border-gray-200 px-2 py-1 rounded"
                       />
                     </td>
 
@@ -239,7 +239,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
               </tbody>
             </table>
 
-            <button onClick={addProduct} className="text-blue-400 mt-2">
+            <button onClick={addProduct} className="text-brand mt-2">
               + Add Product
             </button>
           </div>
@@ -247,7 +247,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
           {/* TAX */}
 
           <div>
-            <h3 className="text-gray-400">Taxes</h3>
+            <h3 className="text-bodyText">Taxes</h3>
 
             {taxes.map((t, i) => (
               <div key={i} className="flex gap-2 mt-2">
@@ -255,7 +255,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
                   placeholder="Tax"
                   value={t.tax}
                   onChange={(e) => updateTax(i, "tax", e.target.value)}
-                  className="bg-gray-900 border border-gray-700 px-2 py-1 rounded"
+                  className="bg-card border border-gray-200 px-2 py-1 rounded"
                 />
 
                 <input
@@ -263,7 +263,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
                   placeholder="%"
                   value={t.percent}
                   onChange={(e) => updateTax(i, "percent", e.target.value)}
-                  className="w-24 bg-gray-900 border border-gray-700 px-2 py-1 rounded"
+                  className="w-24 bg-card border border-gray-200 px-2 py-1 rounded"
                 />
 
                 <button onClick={() => removeTax(i)} className="text-red-400">
@@ -272,7 +272,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
               </div>
             ))}
 
-            <button onClick={addTax} className="text-blue-400 mt-2">
+            <button onClick={addTax} className="text-brand mt-2">
               + Add Tax
             </button>
           </div>
@@ -284,7 +284,7 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
 
             <div>Tax: {totalTax}</div>
 
-            <div className="text-red-500 font-semibold">
+            <div className="text-brand font-semibold">
               Grand Total: {grandTotal}
             </div>
           </div>
@@ -294,15 +294,15 @@ const EditPOToVendorModal = ({ po, onClose, onSuccess }) => {
 
         {/* FOOTER */}
 
-        <div className="px-6 py-4 border-t border-gray-800 flex justify-end gap-3">
-          <button onClick={onClose} className="bg-gray-700 px-4 py-2 rounded">
+        <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+          <button onClick={onClose} className="bg-gray-100 px-4 py-2 rounded">
             Cancel
           </button>
 
           <button
             onClick={handleUpdate}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
           >
             {loading ? "Updating..." : "Update PO"}
           </button>

@@ -9,7 +9,6 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!email || !password) {
       setError("Email and password are required");
       return;
@@ -28,17 +27,15 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json(); 
+      const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.msg || "Login failed");
       }
 
-      // Save token (example)
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect (change route later)
       if (data.user.isSuperUser) {
         window.location.href = "/admin/dashboard";
       } else {
@@ -63,68 +60,84 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      {/* Card */}
-      <div className="w-full max-w-md bg-zinc-900 rounded-xl shadow-lg p-8">
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold text-red-500">TechSynergy CRM</h1>
-          <p className="text-gray-400 mt-2">Sign in to your account</p>
+    <div className="min-h-screen grid lg:grid-cols-2 bg-surface">
+      <div className="hidden lg:flex flex-col justify-between bg-brand text-white p-12">
+        <div>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase text-white/60">
+            TechSynergy
+          </p>
+          <h1 className="mt-6 text-4xl font-semibold leading-tight max-w-md">
+            Operate sales, quotes and finance from one workspace.
+          </h1>
+          <p className="mt-4 text-white/70 max-w-md text-sm leading-relaxed">
+            A professional CRM built for the TechSynergy team — deals, accounts,
+            invoices and vendor operations in a single place.
+          </p>
         </div>
-
-        {/* Error */}
-        {error && (
-          <div className="mb-4 text-sm text-red-400 bg-red-950 border border-red-800 px-3 py-2 rounded">
-            {error}
-          </div>
-        )}
-
-        {/* Form */}
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* Email */}
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">Email</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-gray-500 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-gray-500 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 rounded-lg font-semibold transition duration-200
-              ${
-                loading
-                  ? "bg-red-400 cursor-not-allowed"
-                  : "bg-red-600 hover:bg-red-700"
-              }
-              text-white`}
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
-
-        {/* Footer */}
-        <p className="text-center text-gray-500 text-sm mt-6">
-          © {new Date().getFullYear()} TechSynergy CRM
+        <p className="text-xs text-white/50">
+          © {new Date().getFullYear()} TechSynergy. All rights reserved.
         </p>
+      </div>
+
+      <div className="flex items-center justify-center p-6 sm:p-10">
+        <div className="w-full max-w-md bg-card rounded-2xl border border-gray-200 shadow-elevate p-8">
+          <div className="mb-8">
+            <img
+              src="/images/logo.jpeg"
+              width={120}
+              className="mb-5 rounded-md"
+              alt="TechSynergy"
+            />
+            <h2 className="text-2xl font-semibold text-heading">
+              Sign in to CRM
+            </h2>
+            <p className="text-bodyText mt-1.5 text-sm">
+              Enter your credentials to continue
+            </p>
+          </div>
+
+          {error && (
+            <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2.5 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div>
+              <label className="label">Email</label>
+              <input
+                type="email"
+                placeholder="you@techsynergy.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input"
+              />
+            </div>
+
+            <div>
+              <label className="label">Password</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-2.5"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <p className="text-center text-bodyText text-xs mt-8 lg:hidden">
+            © {new Date().getFullYear()} TechSynergy CRM
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -200,7 +200,7 @@ export default PdfViewersModal;
 const overlayStyle = {
   position: "fixed",
   inset: 0,
-  background: "rgba(0,0,0,0.85)",
+  background: "rgba(17, 24, 39, 0.45)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -208,15 +208,15 @@ const overlayStyle = {
 };
 
 const modalStyle = {
-  background: "#0b0b0b",
+  background: "#ffffff",
   width: "85%",
   height: "92%",
-  borderRadius: "14px",
+  borderRadius: "16px",
   display: "flex",
   flexDirection: "column",
   overflow: "hidden",
-  border: "1px solid #222",
-  boxShadow: "0 0 30px rgba(0,0,0,0.6)",
+  border: "1px solid #e5e7eb",
+  boxShadow: "0 10px 30px rgba(2, 29, 84, 0.08)",
 };
 
 const headerStyle = {
@@ -224,9 +224,9 @@ const headerStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   padding: "16px 22px",
-  borderBottom: "1px solid #222",
-  background: "#111",
-  color: "#fff",
+  borderBottom: "1px solid #e5e7eb",
+  background: "#ffffff",
+  color: "#111827",
   fontWeight: 600,
 };
 
@@ -237,15 +237,15 @@ const viewerStyle = {
   justifyContent: "center",
   alignItems: "flex-start",
   padding: "24px",
-  background: "#000",
+  background: "#f9fafb",
 };
 
 const paginationStyle = {
   padding: "16px",
   textAlign: "center",
-  borderTop: "1px solid #222",
-  background: "#111",
-  color: "#fff",
+  borderTop: "1px solid #e5e7eb",
+  background: "#ffffff",
+  color: "#111827",
   fontWeight: 500,
 };
 
@@ -253,9 +253,9 @@ const btnStyle = {
   padding: "8px 16px",
   cursor: "pointer",
   borderRadius: "8px",
-  border: "1px solid #333",
-  background: "#1a1a1a",
-  color: "#fff",
+  border: "1px solid #e5e7eb",
+  background: "#f9fafb",
+  color: "#111827",
   fontWeight: 500,
   transition: "0.2s",
 };
@@ -265,7 +265,7 @@ const primaryBtnStyle = {
   cursor: "pointer",
   borderRadius: "8px",
   border: "none",
-  background: "#e53935",
+  background: "#021d54",
   color: "#fff",
   fontWeight: 600,
   transition: "0.2s",
@@ -274,7 +274,7 @@ const primaryBtnStyle = {
 const loadingStyle = {
   padding: 24,
   fontSize: 16,
-  color: "#fff",
+  color: "#4b5563",
 };
 
 const errorStyle = {

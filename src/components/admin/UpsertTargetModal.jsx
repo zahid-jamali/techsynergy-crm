@@ -98,11 +98,11 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
 
   /* ================= UI ================= */
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-md text-white">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm flex justify-center items-center z-50">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-md text-heading">
         {/* HEADER */}
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-red-500">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-brand">
             {target ? "Edit Sales Target" : "Create Sales Target"}
           </h2>
           <button onClick={onClose}>✕</button>
@@ -112,7 +112,7 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* USER */}
           <div>
-            <label className="text-sm text-gray-400">Select User</label>
+            <label className="text-sm text-bodyText">Select User</label>
             <select
               value={formData.user}
               onChange={(e) => handleChange("user", e.target.value)}
@@ -131,7 +131,7 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
           {/* MONTH & YEAR */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-gray-400">Month</label>
+              <label className="text-sm text-bodyText">Month</label>
               <input
                 type="number"
                 value={formData.month}
@@ -141,7 +141,7 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
             </div>
 
             <div>
-              <label className="text-sm text-gray-400">Year</label>
+              <label className="text-sm text-bodyText">Year</label>
               <input
                 type="number"
                 value={formData.year}
@@ -153,7 +153,7 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
 
           {/* TARGET */}
           <div>
-            <label className="text-sm text-gray-400">Target Amount</label>
+            <label className="text-sm text-bodyText">Target Amount</label>
             <input
               type="number"
               value={formData.targetAmount}
@@ -165,7 +165,7 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
 
           {/* FORECAST */}
           <div>
-            <label className="text-sm text-gray-400">Forecast Amount</label>
+            <label className="text-sm text-bodyText">Forecast Amount</label>
             <input
               type="number"
               value={formData.forecastAmount}
@@ -175,11 +175,11 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
           </div>
 
           {/* ACTIONS */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-700 px-4 py-2 rounded"
+              className="bg-gray-100 px-4 py-2 rounded"
             >
               Cancel
             </button>
@@ -187,7 +187,7 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+              className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
             >
               {loading ? "Saving..." : "Save Target"}
             </button>
@@ -197,11 +197,11 @@ const UpsertTargetModal = ({ target, month, year, onClose, onSuccess }) => {
         <style jsx>{`
           .input {
             width: 100%;
-            background: #111827;
-            border: 1px solid #374151;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
             padding: 8px 10px;
             border-radius: 6px;
-            color: white;
+            color: #111827;
           }
         `}</style>
       </div>

@@ -61,10 +61,10 @@ const SalesTargetPage = () => {
       : 0;
 
   return (
-    <div className="p-6 text-white bg-black min-h-screen">
+    <div className="p-6 text-heading bg-card min-h-screen">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-red-500">
+        <h1 className="text-2xl font-bold text-brand">
           Sales Targets Management
         </h1>
 
@@ -73,7 +73,7 @@ const SalesTargetPage = () => {
             setSelectedTarget(null);
             setShowUpsertModal(true);
           }}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
         >
           + Add Target
         </button>
@@ -145,9 +145,9 @@ https://flagcdn.com/48x36/pk.png 3x"
       </div>
 
       {/* TABLE */}
-      <div className="bg-[#0f172a] border border-gray-800 rounded-lg">
+      <div className="bg-card border border-gray-200 rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-[#111827] text-gray-400">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="p-3 text-left">User</th>
               <th className="p-3 text-center">Target</th>
@@ -173,7 +173,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                   : 0;
 
               return (
-                <tr key={t._id} className="border-t border-gray-800">
+                <tr key={t._id} className="border-t border-gray-200">
                   <td className="p-3">{t.user?.name}</td>
                   <td className="p-3 text-center">₹ {t.targetAmount}</td>
                   <td className="p-3 text-center">₹ {t.forecastAmount}</td>
@@ -181,8 +181,8 @@ https://flagcdn.com/48x36/pk.png 3x"
                     <span
                       className={`px-2 py-1 rounded text-xs ${
                         percentage >= 100
-                          ? "bg-green-900 text-green-400"
-                          : "bg-yellow-900 text-yellow-400"
+                          ? "bg-green-900 text-emerald-700"
+                          : "bg-yellow-900 text-amber-700"
                       }`}
                     >
                       {percentage}%
@@ -194,7 +194,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                         setSelectedTarget(t);
                         setShowUpsertModal(true);
                       }}
-                      className="text-blue-400"
+                      className="text-brand"
                     >
                       Edit
                     </button>
@@ -242,11 +242,11 @@ https://flagcdn.com/48x36/pk.png 3x"
 
       <style jsx>{`
         .input {
-          background: #111827;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 8px 10px;
           border-radius: 6px;
-          color: white;
+          color: #111827;
         }
       `}</style>
     </div>
@@ -255,11 +255,11 @@ https://flagcdn.com/48x36/pk.png 3x"
 
 /* ================= SUMMARY CARD ================= */
 const SummaryCard = ({ title, value, highlight }) => (
-  <div className="bg-[#111827] border border-gray-800 rounded-lg p-5">
-    <p className="text-gray-400 text-sm">{title}</p>
+  <div className="bg-card border border-gray-200 rounded-lg p-5">
+    <p className="text-bodyText text-sm">{title}</p>
     <h2
       className={`text-2xl font-bold mt-2 ${
-        highlight ? "text-red-500" : "text-white"
+        highlight ? "text-brand" : "text-heading"
       }`}
     >
       {value}

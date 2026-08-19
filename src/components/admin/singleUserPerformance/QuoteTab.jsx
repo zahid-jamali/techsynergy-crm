@@ -7,7 +7,7 @@ import {
   Legend,
 } from "recharts";
 
-const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
+const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
 
 const QuoteTab = ({ filteredQuotes, quotesData }) => {
   const totalValue = filteredQuotes.reduce(
@@ -21,15 +21,15 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
 
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-semibold text-white">
+          <h2 className="text-xl font-semibold text-heading">
             Quotes Performance
           </h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-bodyText">
             Quote activity and status insights
           </p>
         </div>
 
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-bodyText">
           {filteredQuotes.length} Quotes • PKR {totalValue.toLocaleString()}
         </div>
       </div>
@@ -59,17 +59,17 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
 
       {/* ===== TABLE ===== */}
 
-      <div className="bg-[#0c0c0c] border border-gray-800 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-800 flex justify-between">
-          <h3 className="font-semibold text-white">Quotes List</h3>
-          <span className="text-sm text-gray-400">
+      <div className="bg-card border border-gray-200 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between">
+          <h3 className="font-semibold text-heading">Quotes List</h3>
+          <span className="text-sm text-bodyText">
             Showing {filteredQuotes.length} quotes
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-black text-gray-400 uppercase text-xs tracking-wider">
+            <thead className="bg-card text-bodyText uppercase text-xs tracking-wider">
               <tr>
                 <th className="px-6 py-3 text-left">Quote No</th>
                 <th className="px-6 py-3 text-left">Subject</th>
@@ -83,16 +83,16 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-gray-100">
               {filteredQuotes.map((q) => (
-                <tr key={q._id} className="hover:bg-[#151515] transition">
-                  <td className="px-6 py-4 font-medium text-white">
+                <tr key={q._id} className="hover:bg-surface transition">
+                  <td className="px-6 py-4 font-medium text-heading">
                     {q.quoteNumber || "-"}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">{q.subject}</td>
+                  <td className="px-6 py-4 text-bodyText">{q.subject}</td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {typeof q.deal === "object" ? q.deal?.dealName : q.deal}
                   </td>
 
@@ -100,7 +100,7 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
                     <QuoteStageBadge stage={q.quoteStage} />
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {q.contact?.firstName} {q.contact?.lastName}
                   </td>
 
@@ -108,20 +108,20 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
                     {q.grandTotal?.toLocaleString() || 0}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {q.validUntil
                       ? new Date(q.validUntil).toLocaleDateString()
                       : "-"}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {q.quoteOwner?.name}
                   </td>
 
                   <td className="px-6 py-4 text-right">
                     <a
                       href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
-                      className="text-green-400 hover:text-green-300"
+                      className="text-emerald-700 hover:text-green-300"
                     >
                       PDF
                     </a>
@@ -139,27 +139,27 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
 export default QuoteTab;
 
 const ChartCard = ({ title, children }) => (
-  <div className="bg-[#111] border border-white/10 rounded-xl p-6">
-    <h3 className="text-white font-semibold mb-5">{title}</h3>
+  <div className="bg-card border border-gray-200 rounded-xl p-6">
+    <h3 className="text-heading font-semibold mb-5">{title}</h3>
     {children}
   </div>
 );
 
 const QuoteStageBadge = ({ stage }) => {
   const colors = {
-    Draft: "bg-gray-500/10 text-gray-400",
-    Negotiation: "bg-yellow-500/10 text-yellow-400",
-    Delivered: "bg-blue-500/10 text-blue-400",
-    "On Hold": "bg-purple-500/10 text-purple-400",
-    Confirmed: "bg-green-500/10 text-green-400",
-    "Closed Won": "bg-green-600/10 text-green-500",
-    "Closed Lost": "bg-red-500/10 text-red-400",
+    Draft: "bg-gray-500/10 text-bodyText",
+    Negotiation: "bg-yellow-500/10 text-amber-700",
+    Delivered: "bg-blue-500/10 text-brand",
+    "On Hold": "bg-purple-500/10 text-bodyText",
+    Confirmed: "bg-green-500/10 text-emerald-700",
+    "Closed Won": "bg-emerald-600/10 text-green-500",
+    "Closed Lost": "bg-brand/10 text-red-400",
   };
 
   return (
     <span
       className={`px-3 py-1 rounded-full text-xs font-medium ${
-        colors[stage] || "bg-gray-700 text-gray-300"
+        colors[stage] || "bg-gray-100 text-bodyText"
       }`}
     >
       {stage}

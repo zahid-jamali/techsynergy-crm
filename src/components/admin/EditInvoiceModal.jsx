@@ -21,16 +21,16 @@ const EditInvoiceModal = ({ invoice, onClose, onSuccess }) => {
   const isEditable = invoice.status === "Draft";
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-heading/40 flex items-center justify-center z-50">
       <form
         onSubmit={submit}
-        className="bg-gray-900 text-white w-[480px] rounded-xl border border-gray-800 p-6"
+        className="bg-card text-heading w-[480px] rounded-xl border border-gray-200 p-6"
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <div>
             <h2 className="text-lg font-semibold">Edit Invoice</h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-bodyText">
               Invoice #{invoice.invoiceNumber}
             </p>
           </div>
@@ -38,7 +38,7 @@ const EditInvoiceModal = ({ invoice, onClose, onSuccess }) => {
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
+            className="text-bodyText hover:text-heading"
           >
             ✕
           </button>
@@ -47,7 +47,7 @@ const EditInvoiceModal = ({ invoice, onClose, onSuccess }) => {
         {/* Warning if not Draft */}
         {!isEditable && (
           <div className="bg-yellow-600/10 border border-yellow-600/30 rounded p-3 mb-4">
-            <p className="text-sm text-yellow-400">
+            <p className="text-sm text-amber-700">
               Only draft invoices can be edited.
             </p>
           </div>
@@ -56,25 +56,25 @@ const EditInvoiceModal = ({ invoice, onClose, onSuccess }) => {
         {/* Form Fields */}
         <div className="space-y-4">
           <div>
-            <label className="text-sm text-gray-400">
+            <label className="text-sm text-bodyText">
               Customer Purchase Order No
             </label>
             <input
               name="customerRefNo"
               defaultValue={invoice.customerRefNo}
               disabled={!isEditable}
-              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 disabled:opacity-60"
+              className="w-full bg-surface border border-gray-200 rounded px-3 py-2 disabled:opacity-60"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-400">Description</label>
+            <label className="text-sm text-bodyText">Description</label>
             <textarea
               name="description"
               rows={4}
               defaultValue={invoice.description}
               disabled={!isEditable}
-              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 disabled:opacity-60"
+              className="w-full bg-surface border border-gray-200 rounded px-3 py-2 disabled:opacity-60"
             />
           </div>
         </div>
@@ -84,7 +84,7 @@ const EditInvoiceModal = ({ invoice, onClose, onSuccess }) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-600 rounded hover:bg-gray-800"
+            className="px-4 py-2 border border-gray-200 rounded hover:bg-surface"
           >
             Cancel
           </button>

@@ -105,17 +105,17 @@ const AddContactModal = ({ onClose, onSuccess }) => {
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-4 py-8">
-        <div className="bg-black border border-gray-800 rounded-lg w-full max-w-xl text-white">
+        <div className="bg-card border border-gray-200 rounded-lg w-full max-w-xl text-heading">
           {/* Header */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-red-500">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-brand">
               Add New Contact
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white"
+              className="text-bodyText hover:text-heading"
             >
               ✕
             </button>
@@ -203,7 +203,7 @@ const AddContactModal = ({ onClose, onSuccess }) => {
               {showDropdown &&
                 filteredAccounts.length > 0 &&
                 !selectedAccount && (
-                  <div className="absolute z-10 w-full bg-gray-900 border border-gray-700 rounded mt-1 max-h-40 overflow-y-auto">
+                  <div className="absolute z-10 w-full bg-card border border-gray-200 rounded mt-1 max-h-40 overflow-y-auto">
                     {filteredAccounts.map((acc) => (
                       <div
                         key={acc._id}
@@ -213,7 +213,7 @@ const AddContactModal = ({ onClose, onSuccess }) => {
                           setShowDropdown(false);
                           setFilteredAccounts([]);
                         }}
-                        className="px-3 py-2 hover:bg-gray-800 cursor-pointer"
+                        className="px-3 py-2 hover:bg-surface cursor-pointer"
                       >
                         {acc.accountName}
                       </div>
@@ -233,18 +233,18 @@ const AddContactModal = ({ onClose, onSuccess }) => {
             />
 
             {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-700 rounded"
+                className="px-4 py-2 bg-gray-100 rounded"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded disabled:opacity-60"
+                className="px-4 py-2 bg-brand hover:bg-brand/90 rounded disabled:opacity-60"
               >
                 {loading ? "Saving..." : "Save Contact"}
               </button>
@@ -257,8 +257,8 @@ const AddContactModal = ({ onClose, onSuccess }) => {
       <style jsx>{`
         .input {
           width: 100%;
-          background: #111827;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 8px 10px;
           border-radius: 6px;
         }

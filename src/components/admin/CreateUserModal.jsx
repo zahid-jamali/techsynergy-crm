@@ -56,14 +56,14 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="bg-[#111] w-full max-w-md rounded-2xl shadow-2xl border border-white/10 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/40 backdrop-blur-sm">
+      <div className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-white text-xl font-semibold">Create New User</h2>
+          <h2 className="text-heading text-xl font-semibold">Create New User</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-red-500 transition"
+            className="text-bodyText hover:text-brand transition"
           >
             ✕
           </button>
@@ -71,7 +71,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
 
         {/* Error */}
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
             {error}
           </div>
         )}
@@ -84,7 +84,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
             placeholder="Full Name"
             value={form.name}
             onChange={handleChange}
-            className="w-full bg-black border border-white/10 rounded-lg px-4 py-2 text-white focus:border-red-500 outline-none"
+            className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 text-heading focus:border-brand outline-none"
           />
 
           <input
@@ -93,7 +93,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
             placeholder="Email Address"
             value={form.email}
             onChange={handleChange}
-            className="w-full bg-black border border-white/10 rounded-lg px-4 py-2 text-white focus:border-red-500 outline-none"
+            className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 text-heading focus:border-brand outline-none"
           />
 
           <input
@@ -102,7 +102,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
             placeholder="Phone Number"
             value={form.phone}
             onChange={handleChange}
-            className="w-full bg-black border border-white/10 rounded-lg px-4 py-2 text-white focus:border-red-500 outline-none"
+            className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 text-heading focus:border-brand outline-none"
           />
 
           <input
@@ -111,13 +111,13 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full bg-black border border-white/10 rounded-lg px-4 py-2 text-white focus:border-red-500 outline-none"
+            className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 text-heading focus:border-brand outline-none"
           />
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 transition rounded-lg py-2 font-medium text-white disabled:opacity-50"
+            className="w-full bg-brand hover:bg-brand/90 transition rounded-lg py-2 font-medium text-white disabled:opacity-50"
           >
             {loading ? "Creating..." : "Create User"}
           </button>

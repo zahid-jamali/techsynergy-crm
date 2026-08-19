@@ -61,7 +61,7 @@ const ViewAccountModal = ({ account, onClose }) => {
         {account.description && (
           <div>
             <h3 className="section-title">Description</h3>
-            <div className="bg-gray-900 border border-gray-800 p-4 rounded">
+            <div className="bg-card border border-gray-200 p-4 rounded">
               {account.description}
             </div>
           </div>
@@ -71,7 +71,7 @@ const ViewAccountModal = ({ account, onClose }) => {
         {account.meta && Object.keys(account.meta).length > 0 && (
           <div>
             <h3 className="section-title">Meta Data</h3>
-            <pre className="bg-gray-900 border border-gray-800 p-4 rounded text-xs overflow-x-auto">
+            <pre className="bg-card border border-gray-200 p-4 rounded text-xs overflow-x-auto">
               {JSON.stringify(account.meta, null, 2)}
             </pre>
           </div>
@@ -88,10 +88,10 @@ const ViewAccountModal = ({ account, onClose }) => {
         </div>
 
         {/* ACTION */}
-        <div className="flex justify-end pt-4 border-t border-gray-800">
+        <div className="flex justify-end pt-4 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+            className="px-4 py-2 bg-brand hover:bg-brand/90 rounded"
           >
             Close
           </button>
@@ -101,7 +101,7 @@ const ViewAccountModal = ({ account, onClose }) => {
         <style jsx>{`
           .section-title {
             font-size: 12px;
-            color: #9ca3af;
+            color: #4b5563;
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -113,10 +113,10 @@ const ViewAccountModal = ({ account, onClose }) => {
 };
 
 const Field = ({ label, value, highlight }) => (
-  <div className="bg-gray-900 border border-gray-800 rounded p-3">
-    <div className="text-gray-400 text-xs mb-1">{label}</div>
+  <div className="bg-card border border-gray-200 rounded p-3">
+    <div className="text-bodyText text-xs mb-1">{label}</div>
     <div
-      className={`font-medium ${highlight ? "text-green-400" : "text-white"}`}
+      className={`font-medium ${highlight ? "text-emerald-700" : "text-heading"}`}
     >
       {value || "-"}
     </div>
@@ -126,7 +126,7 @@ const Field = ({ label, value, highlight }) => (
 const AddressCard = ({ title, address }) => (
   <div>
     <h3 className="section-title">{title}</h3>
-    <div className="bg-gray-900 border border-gray-800 p-4 rounded space-y-1">
+    <div className="bg-card border border-gray-200 p-4 rounded space-y-1">
       <div>{address?.street || "-"}</div>
       <div>{address?.city || "-"}</div>
       <div>{address?.state || "-"}</div>

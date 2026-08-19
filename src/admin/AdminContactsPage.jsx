@@ -137,20 +137,20 @@ const AdminContactsPage = () => {
   }
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-red-500">Contacts</h1>
+        <h1 className="text-2xl font-bold text-brand">Contacts</h1>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold"
         >
           + Add Contact
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-6 space-y-4">
+      <div className="bg-card border border-gray-200 rounded-xl p-5 mb-6 space-y-4">
         {/* Search */}
         <div className="flex items-center gap-4">
           <input
@@ -158,7 +158,7 @@ const AdminContactsPage = () => {
             placeholder="Search contacts..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-black border border-gray-700 px-4 py-2 rounded-lg focus:outline-none focus:border-red-500"
+            className="flex-1 bg-card border border-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:border-brand"
           />
 
           <button
@@ -168,7 +168,7 @@ const AdminContactsPage = () => {
               setSelectedOwnerFilter("all");
               setSelectedStatus("active");
             }}
-            className="text-sm text-gray-400 hover:text-red-400"
+            className="text-sm text-bodyText hover:text-brand"
           >
             Reset Filters
           </button>
@@ -180,7 +180,7 @@ const AdminContactsPage = () => {
           <select
             value={selectedAccountFilter}
             onChange={(e) => setSelectedAccountFilter(e.target.value)}
-            className="bg-black border border-gray-700 px-4 py-2 rounded-lg"
+            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
           >
             <option value="all">All Accounts</option>
             {uniqueAccounts.map((acc) => (
@@ -194,7 +194,7 @@ const AdminContactsPage = () => {
           <select
             value={selectedOwnerFilter}
             onChange={(e) => setSelectedOwnerFilter(e.target.value)}
-            className="bg-black border border-gray-700 px-4 py-2 rounded-lg"
+            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
           >
             <option value="all">All Owners</option>
             {uniqueOwners.map((owner) => (
@@ -205,15 +205,15 @@ const AdminContactsPage = () => {
           </select>
 
           {/* Status Pills */}
-          <div className="flex bg-black border border-gray-700 rounded-lg overflow-hidden">
+          <div className="flex bg-card border border-gray-200 rounded-lg overflow-hidden">
             {["active", "inactive", "all"].map((status) => (
               <button
                 key={status}
                 onClick={() => setSelectedStatus(status)}
                 className={`px-4 py-2 text-sm capitalize transition ${
                   selectedStatus === status
-                    ? "bg-red-600 text-white"
-                    : "text-gray-400 hover:bg-gray-800"
+                    ? "bg-brand text-white"
+                    : "text-bodyText hover:bg-surface"
                 }`}
               >
                 {status}
@@ -225,9 +225,9 @@ const AdminContactsPage = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-black border border-gray-800 rounded-lg overflow-x-auto">
+      <div className="bg-card border border-gray-200 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-300">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="px-4 py-3 text-left">Name</th>
               <th className="px-4 py-3 text-left">Email</th>
@@ -241,13 +241,13 @@ const AdminContactsPage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-gray-400">
+                <td colSpan="5" className="text-center py-6 text-bodyText">
                   Loading contacts...
                 </td>
               </tr>
             ) : contacts.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-gray-400">
+                <td colSpan="5" className="text-center py-6 text-bodyText">
                   No contacts found
                 </td>
               </tr>
@@ -255,7 +255,7 @@ const AdminContactsPage = () => {
               filteredContacts.map((c) => (
                 <tr
                   key={c._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-200 hover:bg-surface"
                 >
                   <td onClick={() => View(c)} className="px-4 py-3">
                     {c.firstName || ""} {c.lastName || ""}
@@ -289,7 +289,7 @@ const AdminContactsPage = () => {
                         setShowModal("Edit");
                         setSelectedContact(c);
                       }}
-                      className="text-yellow-400 hover:underline"
+                      className="text-amber-700 hover:underline"
                     >
                       Edit
                     </button>

@@ -121,15 +121,15 @@ const StaffDealsPage = () => {
   const getStageColor = (stage) => {
     switch (stage) {
       case "Closed Won":
-        return "bg-green-500/20 text-green-400";
+        return "bg-emerald-50 text-emerald-700";
       case "Closed Lost":
-        return "bg-red-500/20 text-red-400";
+        return "bg-red-50 text-red-400";
       case "Qualification":
-        return "bg-blue-500/20 text-blue-400";
+        return "bg-brand/10 text-brand";
       case "Proposal/Price Quote":
-        return "bg-purple-500/20 text-purple-400";
+        return "bg-gray-100 text-bodyText";
       default:
-        return "bg-gray-700 text-gray-300";
+        return "bg-gray-100 text-bodyText";
     }
   };
 
@@ -149,12 +149,12 @@ const StaffDealsPage = () => {
   }
 
   return (
-    <div className="p-8 text-white space-y-8">
+    <div className="p-8 text-heading space-y-8">
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-red-500">Deals Pipeline</h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <h1 className="text-3xl font-bold text-brand">Deals Pipeline</h1>
+          <p className="text-bodyText text-sm mt-1">
             Primary Currency: PKR | Live USD Rate:{" "}
             {usdRate ? usdRate.toFixed(2) : "Loading..."}
           </p>
@@ -163,7 +163,7 @@ const StaffDealsPage = () => {
         <div className="flex gap-3">
           <button
             onClick={() => setShowModal("Analytics")}
-            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg border border-gray-700"
+            className="flex items-center gap-2 bg-surface hover:bg-gray-100 px-4 py-2 rounded-lg border border-gray-200"
           >
             <BarChart3 size={16} />
             Analytics
@@ -171,7 +171,7 @@ const StaffDealsPage = () => {
 
           <button
             onClick={() => setShowModal("Add")}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold"
+            className="flex items-center gap-2 bg-brand hover:bg-brand/90 px-4 py-2 rounded-lg font-semibold"
           >
             <Plus size={16} />
             Add Deal
@@ -201,7 +201,7 @@ const StaffDealsPage = () => {
             placeholder="Search deals or accounts..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-gray-900 border border-gray-800 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-red-500"
+            className="w-full bg-card border border-gray-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-brand"
           />
         </div>
 
@@ -209,7 +209,7 @@ const StaffDealsPage = () => {
           <select
             value={stageFilter}
             onChange={(e) => setStageFilter(e.target.value)}
-            className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-2"
+            className="bg-card border border-gray-200 rounded-lg px-4 py-2"
           >
             <option value="ALL">All Stages</option>
             {[...new Set(deals.map((d) => d.stage))].map((stage) => (
@@ -220,7 +220,7 @@ const StaffDealsPage = () => {
           <select
             value={currencyFilter}
             onChange={(e) => setCurrencyFilter(e.target.value)}
-            className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-2"
+            className="bg-card border border-gray-200 rounded-lg px-4 py-2"
           >
             <option value="ALL">All Currencies</option>
             <option value="PKR">PKR</option>
@@ -230,9 +230,9 @@ const StaffDealsPage = () => {
       </div>
 
       {/* TABLE */}
-      <div className="bg-[#0f172a] border border-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-card border border-gray-200 rounded-xl overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-400">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="px-6 py-4 text-left">Deal</th>
               <th className="px-6 py-4 text-left">Stage</th>
@@ -256,14 +256,14 @@ const StaffDealsPage = () => {
               filteredDeals.map((deal) => (
                 <tr
                   key={deal._id}
-                  className="border-t border-gray-800 hover:bg-gray-900 transition"
+                  className="border-t border-gray-200 hover:bg-surface transition"
                 >
                   <td
                     className="px-6 py-4 cursor-pointer"
                     onClick={() => View(deal)}
                   >
                     <div className="font-semibold">{deal.dealName}</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-bodyText">
                       {deal.account?.accountName || "-"}
                     </div>
                   </td>
@@ -301,7 +301,7 @@ const StaffDealsPage = () => {
                         setShowModal("Edit");
                         setSelectedDeal(deal);
                       }}
-                      className="hover:text-blue-700 hover:underline "
+                      className="hover:text-brand hover:underline "
                     >
                       Edit
                     </button>
@@ -310,7 +310,7 @@ const StaffDealsPage = () => {
                         setShowModal("updateStage");
                         setSelectedDeal(deal);
                       }}
-                      className="hover:text-blue-700 hover:underline "
+                      className="hover:text-brand hover:underline "
                     >
                       Update-stage
                     </button>
@@ -358,9 +358,9 @@ const StaffDealsPage = () => {
 };
 
 const KpiCard = ({ label, value, showPKR = true }) => (
-  <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-    <p className="text-xs text-gray-400 uppercase tracking-wide">{label}</p>
-    <p className="text-2xl font-bold mt-2">
+  <div className="bg-card border border-gray-200 rounded-xl p-6">
+    <p className="text-xs text-bodyText uppercase tracking-wide">{label}</p>
+    <p className="text-2xl font-bold mt-2 text-brand">
       {showPKR ? "PKR" : ""} {value}
     </p>
   </div>

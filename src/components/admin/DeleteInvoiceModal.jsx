@@ -6,17 +6,16 @@ const DeleteInvoiceModal = ({ invoice, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded w-[360px]">
+    <div className="fixed inset-0 bg-heading/40 flex items-center justify-center z-50">
+      <div className="bg-card border border-gray-200 p-6 rounded-xl w-[360px] shadow-elevate">
         <h2 className="font-semibold mb-4 text-red-600">Delete Invoice</h2>
-        <p>This action cannot be undone.</p>
+        <p className="text-bodyText text-sm">This action cannot be undone.</p>
 
         <div className="flex justify-end gap-2 mt-4">
-          <button onClick={onClose}>Cancel</button>
-          <button
-            onClick={remove}
-            className="bg-red-600 text-white px-4 py-2 rounded"
-          >
+          <button onClick={onClose} className="btn-secondary">
+            Cancel
+          </button>
+          <button onClick={remove} className="btn-danger">
             Delete
           </button>
         </div>

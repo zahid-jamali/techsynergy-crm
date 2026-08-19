@@ -10,7 +10,7 @@ export default function AdminSingleUserPerformance() {
 
   const { userId } = useParams();
   const token = sessionStorage.getItem("token");
-  const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
+  const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,7 +93,7 @@ export default function AdminSingleUserPerformance() {
 
   if (loading)
     return (
-      <div className="bg-black min-h-screen flex items-center justify-center">
+      <div className="min-h-[50vh] flex items-center justify-center">
         <Loading />
       </div>
     );
@@ -101,15 +101,15 @@ export default function AdminSingleUserPerformance() {
   /* ================= UI ================= */
 
   return (
-    <div className="bg-black min-h-screen p-8 text-white">
+    <div className="page">
       <div className="max-w-screen-2xl mx-auto space-y-12">
         {/* ================= USER STATUS ================= */}
-        <div className="bg-[#111] border border-white/10 rounded-2xl p-8 flex flex-col lg:flex-row justify-between gap-8">
+        <div className="bg-card border border-gray-200 rounded-2xl p-8 flex flex-col lg:flex-row justify-between gap-8">
           <div>
-            <h1 className="text-3xl font-bold text-red-500 capitalize">
+            <h1 className="text-3xl font-bold text-brand capitalize">
               {user.name}
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-bodyText mt-1">
               {user.isActive ? "Active User" : "Inactive User"}
             </p>
             <p className="text-gray-500 text-sm mt-2">
@@ -136,8 +136,8 @@ export default function AdminSingleUserPerformance() {
               onClick={() => setActiveTab(key)}
               className={`px-6 py-2 rounded-xl text-sm font-medium transition ${
                 activeTab === key
-                  ? "bg-red-600 text-white"
-                  : "bg-[#111] border border-white/10 text-gray-400 hover:border-red-500"
+                  ? "bg-brand text-white"
+                  : "bg-card border border-gray-200 text-bodyText hover:border-brand"
               }`}
             >
               {key === "orders"
@@ -185,8 +185,8 @@ export default function AdminSingleUserPerformance() {
 /* ================= SMALL COMPONENTS ================= */
 
 const StatusCard = ({ label, value }) => (
-  <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-    <p className="text-gray-400 text-xs">{label}</p>
-    <h3 className="text-lg font-semibold text-red-500 mt-1">{value}</h3>
+  <div className="bg-surface border border-gray-200 rounded-xl p-4">
+    <p className="text-bodyText text-xs">{label}</p>
+    <h3 className="text-lg font-semibold text-brand mt-1">{value}</h3>
   </div>
 );

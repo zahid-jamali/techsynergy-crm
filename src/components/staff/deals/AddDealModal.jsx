@@ -34,7 +34,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
     const fetchData = async () => {
       try {
         const [accRes, conRes] = await Promise.all([
-          fetch(`${process.env.REACT_APP_BACKEND_URL}account/my`, {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}account/all`, {
             headers: { authorization: `Bearer ${token}` },
           }),
           fetch(`${process.env.REACT_APP_BACKEND_URL}contact/my`, {
@@ -42,7 +42,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
           }),
         ]);
 
-        const accData = await accRes.json();
+        const accData = await accRes.accounts.json();
         const conData = await conRes.json();
 
         setAccounts(accData || []);
@@ -59,8 +59,8 @@ const AddDealModal = ({ onClose, onSuccess }) => {
   useEffect(() => {
     setFilteredAccounts(
       accounts.filter((a) =>
-        a.accountName.toLowerCase().includes(accountQuery.toLowerCase())
-      )
+        a.accountName.toLowerCase().includes(accountQuery.toLowerCase()),
+      ),
     );
   }, [accountQuery, accounts]);
 
@@ -69,8 +69,8 @@ const AddDealModal = ({ onClose, onSuccess }) => {
       contacts.filter((c) =>
         `${c.firstName} ${c.lastName}`
           .toLowerCase()
-          .includes(contactQuery.toLowerCase())
-      )
+          .includes(contactQuery.toLowerCase()),
+      ),
     );
   }, [contactQuery, contacts]);
 
@@ -98,7 +98,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
             authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
 
       if (!res.ok) throw new Error("Failed to create deal");
@@ -112,15 +112,15 @@ const AddDealModal = ({ onClose, onSuccess }) => {
     }
   };
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-6 py-10">
-        <div className="bg-black border border-gray-800 rounded-xl w-full max-w-3xl text-white shadow-2xl">
+        <div className="bg-card border border-gray-200 rounded-xl w-full max-w-3xl text-heading shadow-2xl">
           {/* Header */}
-          <div className="px-6 py-5 border-b border-gray-800 flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-red-500">Add New Deal</h2>
+          <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-brand">Add New Deal</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-xl"
+              className="text-bodyText hover:text-heading text-xl"
             >
               ✕
             </button>
@@ -149,7 +149,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                 placeholder="Search Account..."
                 value={accountQuery}
                 onChange={(e) => setAccountQuery(e.target.value)}
-                className="input focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                className="input focus:border-brand focus:ring-1 focus:ring-brand"
               />
 
               {accountQuery && filteredAccounts.length > 0 && (
@@ -165,7 +165,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                       className="dropdown-item"
                     >
                       <div className="font-medium">{a.accountName}</div>
-                      <div className="text-xs text-gray-400">{a.industry}</div>
+                      <div className="text-xs text-bodyText">{a.industry}</div>
                     </div>
                   ))}
                 </div>
@@ -179,7 +179,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                 placeholder="Search Contact..."
                 value={contactQuery}
                 onChange={(e) => setContactQuery(e.target.value)}
-                className="input focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                className="input focus:border-brand focus:ring-1 focus:ring-brand"
               />
 
               {contactQuery && filteredContacts.length > 0 && (
@@ -197,7 +197,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
                       <div className="font-medium">
                         {c.firstName} {c.lastName}
                       </div>
-                      <div className="text-xs text-gray-400">{c.email}</div>
+                      <div className="text-xs text-bodyText">{c.email}</div>
                     </div>
                   ))}
                 </div>
@@ -284,18 +284,18 @@ const AddDealModal = ({ onClose, onSuccess }) => {
             </div>
 
             {/* ACTIONS */}
-            <div className="flex justify-end gap-3 pt-6 border-t border-gray-800">
+            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded"
+                className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded"
+                className="bg-brand hover:bg-brand/90 px-5 py-2 rounded"
               >
                 {loading ? "Saving..." : "Save Deal"}
               </button>
@@ -307,8 +307,8 @@ const AddDealModal = ({ onClose, onSuccess }) => {
       <style jsx>{`
         .input {
           width: 100%;
-          background: #111827;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 10px 12px;
           border-radius: 8px;
           transition: all 0.15s ease;
@@ -317,7 +317,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
         .label {
           display: block;
           font-size: 12px;
-          color: #9ca3af;
+          color: #4b5563;
           margin-bottom: 6px;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -326,20 +326,20 @@ const AddDealModal = ({ onClose, onSuccess }) => {
         .dropdown {
           position: absolute;
           width: 100%;
-          background: #0f172a;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           border-radius: 10px;
           margin-top: 6px;
           max-height: 220px;
           overflow-y: auto;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+          box-shadow: 0 10px 30px rgba(2, 29, 84, 0.08);
           z-index: 50;
         }
 
         .dropdown-item {
           padding: 10px 14px;
           cursor: pointer;
-          border-bottom: 1px solid #1f2937;
+          border-bottom: 1px solid #f3f4f6;
           transition: background 0.15s ease;
         }
 
@@ -348,7 +348,7 @@ const AddDealModal = ({ onClose, onSuccess }) => {
         }
 
         .dropdown-item:hover {
-          background: #1f2937;
+          background: #f9fafb;
         }
       `}</style>
     </div>

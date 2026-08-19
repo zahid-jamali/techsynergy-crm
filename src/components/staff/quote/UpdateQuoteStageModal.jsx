@@ -51,11 +51,11 @@ const UpdateQuoteStageModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-md text-white">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-md text-heading">
         {/* Header */}
-        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-red-500">
+        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-brand">
             Update Quote Stage
           </h2>
           <button onClick={onClose}>✕</button>
@@ -64,7 +64,7 @@ const UpdateQuoteStageModal = ({
         {/* Body */}
         <div className="p-5 space-y-4">
           <div>
-            <label className="text-gray-400 text-sm mb-1 block">
+            <label className="text-bodyText text-sm mb-1 block">
               Select Quote Stage
             </label>
             <select
@@ -72,7 +72,7 @@ const UpdateQuoteStageModal = ({
               onChange={(e) => {
                 setQuoteStage(e.target.value);
               }}
-              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full bg-card border border-gray-200 rounded-lg px-4 py-2 focus:border-brand focus:ring-1 focus:ring-brand transition"
             >
               {QUOTE_STAGES.map((stage) => {
                 let isDisabled = false;
@@ -108,15 +108,15 @@ const UpdateQuoteStageModal = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-800">
-          <button onClick={onClose} className="bg-gray-700 px-4 py-2 rounded">
+        <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-200">
+          <button onClick={onClose} className="bg-gray-100 px-4 py-2 rounded">
             Cancel
           </button>
 
           <button
             onClick={handleUpdate}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded disabled:opacity-60"
+            className="bg-brand hover:bg-brand/90 px-4 py-2 rounded disabled:opacity-60"
           >
             {loading ? "Updating..." : "Update"}
           </button>

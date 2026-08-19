@@ -8,17 +8,17 @@ const ViewQuoteModal = ({ quote, onClose }) => {
   const format = (n) => Number(n || 0).toFixed(2);
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-4 py-8">
-        <div className="bg-black border border-gray-800 rounded-xl w-full max-w-4xl text-white shadow-2xl">
+        <div className="bg-card border border-gray-200 rounded-xl w-full max-w-4xl text-heading shadow-2xl">
           {/* HEADER */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-red-500">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-brand">
               Quote Details
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white"
+              className="text-bodyText hover:text-heading"
             >
               ✕
             </button>
@@ -52,11 +52,11 @@ const ViewQuoteModal = ({ quote, onClose }) => {
 
             {/* PRODUCTS */}
             <div>
-              <h3 className="text-gray-400 mb-2">Products</h3>
+              <h3 className="text-bodyText mb-2">Products</h3>
 
-              <div className="border border-gray-800 rounded overflow-x-auto">
+              <div className="border border-gray-200 rounded overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-900 text-gray-400">
+                  <thead className="bg-card text-bodyText">
                     <tr>
                       <th className="p-2">#</th>
                       <th className="p-2 text-left">Product</th>
@@ -70,17 +70,17 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                     {quote.products.map((p, i) => (
                       <Fragment key={i}>
                         {/* MAIN ROW */}
-                        <tr className="border-t border-gray-800">
+                        <tr className="border-t border-gray-200">
                           <td className="p-2 text-center">
                             {p.serialNo || i + 1}
                           </td>
 
                           <td className="p-2">
-                            <div className="font-medium text-white">
+                            <div className="font-medium text-heading">
                               {p.productName}
                             </div>
                             {p.description && (
-                              <div className="text-xs text-gray-400 mt-1">
+                              <div className="text-xs text-bodyText mt-1">
                                 {p.description}
                               </div>
                             )}
@@ -99,21 +99,21 @@ const ViewQuoteModal = ({ quote, onClose }) => {
 
                         {/* PRODUCT TAX */}
                         {p.Tax && p.Tax.length > 0 && (
-                          <tr className="bg-black/40 text-xs">
+                          <tr className="bg-surface text-xs">
                             <td></td>
                             <td colSpan={4} className="px-4 pb-2">
-                              <div className="flex flex-wrap gap-2 text-gray-400">
+                              <div className="flex flex-wrap gap-2 text-bodyText">
                                 {p.Tax.map((t, ti) => (
                                   <span
                                     key={ti}
-                                    className="bg-gray-800 px-2 py-1 rounded"
+                                    className="bg-surface px-2 py-1 rounded"
                                   >
                                     {t.tax} ({t.percent}%)
                                   </span>
                                 ))}
                               </div>
 
-                              <div className="flex justify-end text-gray-300 mt-1">
+                              <div className="flex justify-end text-bodyText mt-1">
                                 Tax: {currency} {format(p.taxAmount)}
                               </div>
                             </td>
@@ -127,7 +127,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
             </div>
 
             {/* TOTALS */}
-            <div className="bg-[#0f172a] border border-gray-800 rounded-lg p-5 space-y-3">
+            <div className="bg-card border border-gray-200 rounded-lg p-5 space-y-3">
               <Info
                 label="Sub Total"
                 value={`${currency} ${format(quote.subTotal)}`}
@@ -136,12 +136,12 @@ const ViewQuoteModal = ({ quote, onClose }) => {
               {/* GLOBAL TAX */}
               {quote.otherTax?.length > 0 && (
                 <>
-                  <div className="border-t border-gray-700 my-2" />
+                  <div className="border-t border-gray-200 my-2" />
 
                   {quote.otherTax.map((t, i) => (
                     <div
                       key={i}
-                      className="flex justify-between text-xs text-gray-400"
+                      className="flex justify-between text-xs text-bodyText"
                     >
                       <span>
                         {t.tax} ({t.percent}%)
@@ -152,7 +152,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                     </div>
                   ))}
 
-                  <div className="flex justify-between text-sm text-gray-300 pt-2">
+                  <div className="flex justify-between text-sm text-bodyText pt-2">
                     <span>Total Tax</span>
                     <span>
                       {currency} {format(quote.taxAmount)}
@@ -161,7 +161,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                 </>
               )}
 
-              <div className="border-t border-gray-700 pt-3">
+              <div className="border-t border-gray-200 pt-3">
                 <Info
                   label="Grand Total"
                   value={`${currency} ${format(quote.grandTotal)}`}
@@ -173,21 +173,21 @@ const ViewQuoteModal = ({ quote, onClose }) => {
             {/* NOTES */}
             {quote.description && (
               <div>
-                <h3 className="text-gray-400 mb-1">Notes</h3>
-                <p className="text-gray-300">{quote.description}</p>
+                <h3 className="text-bodyText mb-1">Notes</h3>
+                <p className="text-bodyText">{quote.description}</p>
               </div>
             )}
 
             {/* TERMS */}
             {quote.termsAndConditions?.length > 0 && (
               <div>
-                <h3 className="text-gray-400 mb-2">Terms & Conditions</h3>
+                <h3 className="text-bodyText mb-2">Terms & Conditions</h3>
 
                 <div className="space-y-2">
                   {quote.termsAndConditions.map((term, i) => (
                     <div
                       key={i}
-                      className="bg-[#0f172a] border border-gray-800 rounded p-3 text-gray-300"
+                      className="bg-card border border-gray-200 rounded p-3 text-bodyText"
                     >
                       {term}
                     </div>
@@ -203,8 +203,8 @@ const ViewQuoteModal = ({ quote, onClose }) => {
 };
 
 const Info = ({ label, value, highlight }) => (
-  <div className="flex justify-between border-b border-gray-800 pb-1">
-    <span className="text-gray-400">{label}</span>
+  <div className="flex justify-between border-b border-gray-200 pb-1">
+    <span className="text-bodyText">{label}</span>
 
     <span className={highlight ? "text-red-400 font-semibold" : ""}>
       {value}

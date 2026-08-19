@@ -110,10 +110,10 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-heading/40 flex items-center justify-center z-50">
       <form
         onSubmit={submit}
-        className="bg-gray-900 text-white w-[950px] rounded-xl p-6"
+        className="bg-card text-heading w-[950px] rounded-xl p-6"
       >
         <h2 className="text-xl font-semibold mb-5">Create Invoice</h2>
 
@@ -154,7 +154,7 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
 
             {/* TERMS */}
             <div>
-              <label className="text-sm text-gray-400">
+              <label className="text-sm text-bodyText">
                 Terms & Conditions
               </label>
 
@@ -176,7 +176,7 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
                       onClick={() =>
                         setTerms(terms.filter((_, idx) => idx !== i))
                       }
-                      className="text-red-500"
+                      className="text-brand"
                     >
                       ✕
                     </button>
@@ -187,7 +187,7 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
               <button
                 type="button"
                 onClick={() => setTerms([...terms, ""])}
-                className="text-sm text-blue-400 mt-2"
+                className="text-sm text-brand mt-2"
               >
                 + Add Term
               </button>
@@ -196,7 +196,7 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
 
           {/* RIGHT */}
           <div>
-            <label className="text-sm text-gray-400">
+            <label className="text-sm text-bodyText">
               Select Sell Order (Confirmed Only)
             </label>
 
@@ -207,19 +207,19 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
               className="input mb-2"
             />
 
-            <div className="h-[420px] overflow-y-auto border border-gray-700 rounded">
+            <div className="h-[420px] overflow-y-auto border border-gray-200 rounded">
               {filteredOrders.map((order) => (
                 <div
                   key={order._id}
                   onClick={() => setSelectedOrder(order)}
-                  className={`p-3 cursor-pointer border-b border-gray-700 hover:bg-gray-700 ${
-                    selectedOrder?._id === order._id ? "bg-gray-700" : ""
+                  className={`p-3 cursor-pointer border-b border-gray-200 hover:bg-gray-100 ${
+                    selectedOrder?._id === order._id ? "bg-gray-100" : ""
                   }`}
                 >
                   <div className="font-medium text-sm">
                     {order.subject || "No Subject"}
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-bodyText">
                     {order.quoteNumber} •{" "}
                     {order.account?.name || order.account?.accountName} •{" "}
                     {order.deal?.name || order.deal?.dealName || "No Deal"}
@@ -228,7 +228,7 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
               ))}
 
               {filteredOrders.length === 0 && (
-                <div className="p-4 text-sm text-gray-400">
+                <div className="p-4 text-sm text-bodyText">
                   No matching sell orders found
                 </div>
               )}
@@ -253,7 +253,7 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
 ============================== */
 const Input = ({ label, children }) => (
   <div>
-    <label className="text-sm text-gray-400">{label}</label>
+    <label className="text-sm text-bodyText">{label}</label>
     {children}
   </div>
 );
@@ -265,12 +265,12 @@ export default CreateInvoiceModal;
 ============================== */
 /*
 .input {
-  @apply w-full bg-gray-800 border border-gray-700 rounded px-3 py-2;
+  @apply w-full bg-surface border border-gray-200 rounded px-3 py-2;
 }
 .btn-primary {
-  @apply px-5 py-2 bg-red-600 rounded;
+  @apply px-5 py-2 bg-brand rounded;
 }
 .btn-secondary {
-  @apply px-4 py-2 border border-gray-600 rounded;
+  @apply px-4 py-2 border border-gray-200 rounded;
 }
 */

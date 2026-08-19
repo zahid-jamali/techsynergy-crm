@@ -104,7 +104,7 @@ const AdminQuotesPage = () => {
   };
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold">Quotes</h1>
@@ -112,26 +112,26 @@ const AdminQuotesPage = () => {
           onClick={() => {
             setShowModal("Add");
           }}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
         >
           + New Quote
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-black border border-gray-800 rounded-lg p-4 mb-6 flex flex-wrap gap-4">
+      <div className="bg-card border border-gray-200 rounded-lg p-4 mb-6 flex flex-wrap gap-4">
         <input
           type="text"
           placeholder="Search subject, deal, account or contact..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-white w-72 focus:outline-none focus:border-red-500"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm text-heading w-72 focus:outline-none focus:border-brand"
         />
 
         <select
           value={stageFilter}
           onChange={(e) => setStageFilter(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
         >
           <option value="all">All Stages</option>
           {[
@@ -165,7 +165,7 @@ const AdminQuotesPage = () => {
         <select
           value={ownerFilter}
           onChange={(e) => setOwnerFilter(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
         >
           <option value="all">All Owners</option>
           {[
@@ -187,19 +187,19 @@ const AdminQuotesPage = () => {
             setStageFilter("all");
             setOwnerFilter("all");
           }}
-          className="text-sm text-gray-400 hover:text-red-400"
+          className="text-sm text-bodyText hover:text-brand"
         >
           Reset
         </button>
       </div>
-      <div className="text-sm text-gray-400 mb-3">
+      <div className="text-sm text-bodyText mb-3">
         Showing {quotes.length} of {total || 0} quotes
       </div>
 
       {/* Table */}
-      <div className="bg-black border border-gray-800 rounded">
+      <div className="bg-card border border-gray-200 rounded">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-400">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="p-3 text-left">Q.No</th>
               <th className="p-3 text-left">Subject</th>
@@ -219,7 +219,7 @@ const AdminQuotesPage = () => {
               <TableSkeleton rows={8} />
             ) : filteredQuotes.length === 0 ? (
               <tr>
-                <td colSpan="10" className="p-6 text-center text-gray-400">
+                <td colSpan="10" className="p-6 text-center text-bodyText">
                   No quotes found
                 </td>
               </tr>
@@ -227,7 +227,7 @@ const AdminQuotesPage = () => {
               filteredQuotes.map((q) => (
                 <tr
                   key={q._id}
-                  className="border-t border-gray-800 hover:bg-gray-900 group"
+                  className="border-t border-gray-200 hover:bg-surface group"
                 >
                   <td onClick={() => View(q)} className="p-3">
                     {q.quoteNumber || "-"}
@@ -289,7 +289,7 @@ const AdminQuotesPage = () => {
                         setShowModal("edit");
                         setSelectedQuote(q);
                       }}
-                      className="text-yellow-400 hover:underline"
+                      className="text-amber-700 hover:underline"
                     >
                       Edit
                     </button>
@@ -299,14 +299,14 @@ const AdminQuotesPage = () => {
                         setShowModal("updateStage");
                         setSelectedQuote(q);
                       }}
-                      className="text-blue-400 hover:underline"
+                      className="text-brand hover:underline"
                     >
                       Update-stage
                     </button>
 
                     <a
                       href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
-                      className="text-green-400 hover:underline"
+                      className="text-emerald-700 hover:underline"
                     >
                       PDF
                     </a>
@@ -318,7 +318,7 @@ const AdminQuotesPage = () => {
         </table>
         <div
           ref={ref}
-          className="flex justify-center py-6 text-gray-400 text-sm"
+          className="flex justify-center py-6 text-bodyText text-sm"
         >
           {loading && <span>Loading more quotes...</span>}
 
@@ -411,45 +411,45 @@ const TableSkeleton = ({ rows = 5 }) => {
   return (
     <>
       {Array.from({ length: rows }).map((_, i) => (
-        <tr key={i} className="animate-pulse border-t border-gray-800">
+        <tr key={i} className="animate-pulse border-t border-gray-200">
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-10"></div>
+            <div className="h-3 bg-gray-100 rounded w-10"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-40"></div>
+            <div className="h-3 bg-gray-100 rounded w-40"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-32 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-32 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-32 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-32 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-24 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-24 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-28 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-28 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-20 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-20 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-24 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-24 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-28 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-28 mx-auto"></div>
           </td>
 
           <td className="p-3">
-            <div className="h-3 bg-gray-700 rounded w-20 mx-auto"></div>
+            <div className="h-3 bg-gray-100 rounded w-20 mx-auto"></div>
           </td>
         </tr>
       ))}

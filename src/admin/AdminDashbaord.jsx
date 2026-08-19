@@ -18,7 +18,15 @@ import {
 } from "recharts";
 import Loading from "../components/Loading";
 
-const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
+const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
+
+const tooltipStyle = {
+  backgroundColor: "#ffffff",
+  border: "1px solid #e5e7eb",
+  borderRadius: "8px",
+  color: "#111827",
+  boxShadow: "0 8px 24px rgba(2, 29, 84, 0.08)",
+};
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("deals");
@@ -54,14 +62,14 @@ const AdminDashboard = () => {
 
   if (loading)
     return (
-      <div className="bg-black min-h-screen flex items-center justify-center text-red-500">
+      <div className="min-h-[50vh] flex items-center justify-center">
         <Loading />
       </div>
     );
 
   if (error)
     return (
-      <div className="bg-black min-h-screen flex items-center justify-center text-red-500">
+      <div className="min-h-[50vh] flex items-center justify-center text-red-600">
         {error}
       </div>
     );
@@ -112,155 +120,149 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="bg-black min-h-screen p-8 text-white">
-      <div className="max-w-screen-2xl mx-auto">
-        {/* ================= HEADER ================= */}
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-red-500">
-            Admin Control Panel
-          </h1>
-          <p className="text-gray-400 text-sm">
-            Primary Currency: PKR | Live USD Rate: {USD_RATE || "-"}
+    <div className="page">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Admin Dashboard</h1>
+          <p className="page-subtitle">
+            Primary currency PKR · Live USD rate: {USD_RATE || "-"}
           </p>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6 mb-12">
-          <ExecutiveCard
-            title="Total Revenue"
-            value={`${Math.round(summaryStats.totalRevenue).toLocaleString()}`}
-            description="Revenue from closed deals"
-          />
-          <ExecutiveCard
-            title="Total Deals"
-            value={summaryStats.totalDeals}
-            description="Active + Closed deals"
-          />
-          <ExecutiveCard
-            title="Pipeline Revenue"
-            value={Math.round(summaryStats.pipelineValue).toLocaleString()}
-            description="Revenue in pipeline"
-          />
-          <ExecutiveCard
-            title="Total Users"
-            value={summaryStats.totalUsers}
-            description="Sales & Admin users"
-          />
-          <ExecutiveCard
-            title="Growth Rate"
-            value={`${summaryStats.growthRate}%`}
-            description="Compared to previous period"
-            highlight
-          />
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+        <ExecutiveCard
+          title="Total Revenue"
+          value={`${Math.round(summaryStats.totalRevenue).toLocaleString()}`}
+          description="Revenue from closed deals"
+        />
+        <ExecutiveCard
+          title="Total Deals"
+          value={summaryStats.totalDeals}
+          description="Active + closed deals"
+        />
+        <ExecutiveCard
+          title="Pipeline Revenue"
+          value={Math.round(summaryStats.pipelineValue).toLocaleString()}
+          description="Revenue in pipeline"
+        />
+        <ExecutiveCard
+          title="Total Users"
+          value={summaryStats.totalUsers}
+          description="Sales and admin users"
+        />
+        <ExecutiveCard
+          title="Growth Rate"
+          value={`${summaryStats.growthRate}%`}
+          description="Compared to previous period"
+          highlight
+        />
+      </div>
 
-        {/* ================= BUSINESS HEALTH ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <HealthCard
-            title="Sales Health"
-            value={
-              summaryStats.totalRevenue === 0
-                ? "High Risk"
-                : summaryStats.winRate < 20
-                ? "Needs Attention"
-                : "Healthy"
-            }
-          />
-          <HealthCard
-            title="Accounts Without Contacts"
-            value={
-              summaryStats.totalAccounts -
-              relationshipOverview.accountsWithContacts
-            }
-          />
-          <HealthCard
-            title="Active Sales Users"
-            value={userPerformance?.length || 0}
-          />
-        </div>
-        <div className=" flex justify-between bg-[#111] border rounded-2xl p-6 transition ">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HealthCard
+          title="Sales Health"
+          value={
+            summaryStats.totalRevenue === 0
+              ? "High Risk"
+              : summaryStats.winRate < 20
+              ? "Needs Attention"
+              : "Healthy"
+          }
+        />
+        <HealthCard
+          title="Accounts Without Contacts"
+          value={
+            summaryStats.totalAccounts -
+            relationshipOverview.accountsWithContacts
+          }
+        />
+        <HealthCard
+          title="Active Sales Users"
+          value={userPerformance?.length || 0}
+        />
+      </div>
+
+      <div className="card p-4 flex flex-wrap gap-3">
+        <button
+          onClick={() => downloadExcel({ excelFile: "pipeline" })}
+          className="btn-secondary"
+        >
+          Download Pipeline
+        </button>
+        <button
+          onClick={() => downloadExcel({ excelFile: "master" })}
+          className="btn-secondary"
+        >
+          Download Master File
+        </button>
+        <button
+          onClick={() => downloadExcel({ excelFile: "revenue" })}
+          className="btn-secondary"
+        >
+          Download Revenue
+        </button>
+        <button
+          onClick={() => downloadExcel({ excelFile: "user" })}
+          className="btn-secondary"
+        >
+          Download Users
+        </button>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {[
+          { key: "deals", label: "Deals" },
+          { key: "revenue", label: "Revenue" },
+          { key: "quotes", label: "Quotes" },
+          { key: "accounts", label: "Accounts" },
+          { key: "contacts", label: "Contacts" },
+        ].map((btn) => (
           <button
-            onClick={() => downloadExcel({ excelFile: "pipeline" })}
-            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
+            key={btn.key}
+            onClick={() => setActiveTab(btn.key)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeTab === btn.key
+                ? "bg-brand text-white shadow-sm"
+                : "bg-card border border-gray-200 text-bodyText hover:border-brand/30 hover:text-brand"
+            }`}
           >
-            Download Pipeline Data
+            {btn.label}
           </button>
-          <button
-            onClick={() => downloadExcel({ excelFile: "master" })}
-            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
-          >
-            Download Master file
-          </button>
-          <button
-            onClick={() => downloadExcel({ excelFile: "revenue" })}
-            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
-          >
-            Download Revenue Data
-          </button>
-          <button
-            onClick={() => downloadExcel({ excelFile: "user" })}
-            className="m-2 bg-red-600 text-white hover:bg-black p-2 rounded-lg"
-          >
-            Download Users Data
-          </button>
-        </div>
+        ))}
+      </div>
 
-        {/* ================= DASHBOARD FILTER BUTTONS ================= */}
-        <div className="flex flex-wrap gap-3 mb-10 pt-4">
-          {[
-            { key: "deals", label: "Deals" },
-            { key: "revenue", label: "Revenue" },
-            { key: "quotes", label: "Quotes" },
-            { key: "accounts", label: "Accounts" },
-            { key: "contacts", label: "Contacts" },
-          ].map((btn) => (
-            <button
-              key={btn.key}
-              onClick={() => setActiveTab(btn.key)}
-              className={`px-5 py-2 rounded-xl text-sm font-medium transition-all
-        ${
-          activeTab === btn.key
-            ? "bg-red-600 text-white shadow-lg"
-            : "bg-[#111] border border-white/10 hover:border-red-500 text-gray-400"
-        }`}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
+      <div>
+        {activeTab === "revenue" && (
+          <RevenueSection
+            revenueTrend={revenueTrend}
+            userPerformance={userPerformance}
+          />
+        )}
 
-        {/* ================= DYNAMIC SECTION ================= */}
-        <div className="mt-6">
-          {activeTab === "revenue" && (
-            <RevenueSection
-              revenueTrend={revenueTrend}
-              userPerformance={userPerformance}
-            />
-          )}
+        {activeTab === "deals" && (
+          <DealsSection
+            dealsByAmount={dealsByAmount}
+            dealsByStageAmount={dealsByStageAmount}
+            dealStages={dealStages}
+          />
+        )}
 
-          {activeTab === "deals" && (
-            <DealsSection
-              dealsByAmount={dealsByAmount}
-              dealsByStageAmount={dealsByStageAmount}
-              dealStages={dealStages}
-            />
-          )}
+        {activeTab === "quotes" && (
+          <QuotesSection quoteStatus={quoteStatus} />
+        )}
 
-          {activeTab === "quotes" && (
-            <QuotesSection quoteStatus={quoteStatus} />
-          )}
+        {activeTab === "accounts" && (
+          <AccountsSection
+            accountsByIndustry={accountsByIndustry}
+            accountsByType={accountsByType}
+            dealsPerAccount={dealsPerAccount}
+          />
+        )}
 
-          {activeTab === "accounts" && (
-            <AccountsSection
-              accountsByIndustry={accountsByIndustry}
-              accountsByType={accountsByType}
-              dealsPerAccount={dealsPerAccount}
-            />
-          )}
-
-          {activeTab === "contacts" && (
-            <ContactsSection contactsPerAccount={contactsPerAccount} />
-          )}
-        </div>
+        {activeTab === "contacts" && (
+          <ContactsSection contactsPerAccount={contactsPerAccount} />
+        )}
       </div>
     </div>
   );
@@ -268,94 +270,53 @@ const AdminDashboard = () => {
 
 export default AdminDashboard;
 
-/* ================= COMPONENTS ================= */
-
 const ExecutiveCard = ({ title, value, description, highlight }) => (
   <div
-    className={`bg-[#111] border rounded-2xl p-6 transition
-    ${highlight ? "border-red-500" : "border-white/10"}`}
+    className={`kpi-card ${highlight ? "ring-1 ring-brand/20" : ""}`}
   >
-    <p className="text-gray-400 text-sm">{title}</p>
-    <h2 className="text-2xl font-bold mt-2 text-red-500">{value}</h2>
-    <p className="text-gray-500 text-xs mt-2">{description}</p>
+    <p className="text-bodyText text-sm">{title}</p>
+    <h2 className="text-2xl font-semibold mt-2 text-brand">{value}</h2>
+    <p className="text-bodyText text-xs mt-2">{description}</p>
   </div>
 );
 
 const SectionTitle = ({ title }) => (
-  <h2 className="text-xl font-semibold mb-6 text-white border-b border-white/10 pb-2">
+  <h2 className="text-lg font-semibold mb-4 text-heading border-b border-gray-100 pb-2">
     {title}
   </h2>
 );
 
-const PerformanceTable = ({ data }) => {
-  if (!data?.length) return <NoData />;
-
-  const sorted = [...data].sort((a, b) => b.revenue - a.revenue);
-
-  return (
-    <div className="bg-[#111] border border-white/10 rounded-2xl p-6">
-      <h3 className="text-lg font-semibold mb-4">Top Performers</h3>
-      <div className="space-y-3">
-        {sorted.map((item, index) => (
-          <div
-            key={index}
-            className={`flex justify-between p-3 rounded-lg
-              ${
-                index === 0
-                  ? "bg-red-500/10 border border-red-500/40"
-                  : "bg-black/30"
-              }`}
-          >
-            <span>{item.name}</span>
-            <span className="text-red-400 font-semibold">
-              Rs {item.revenue.toLocaleString()}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const KpiCard = ({ title, value }) => (
-  <div className="bg-[#111] border border-white/10 rounded-2xl p-6 hover:border-red-500 transition">
-    <p className="text-gray-400 text-sm">{title}</p>
-    <h2 className="text-2xl font-bold mt-2 text-red-500">{value}</h2>
-  </div>
-);
-
 const ChartCard = ({ title, children }) => (
-  <div className="bg-[#111] border border-white/10 rounded-2xl p-6 hover:border-red-500 transition">
-    <h3 className="text-lg font-semibold mb-4">{title}</h3>
+  <div className="card p-5">
+    <h3 className="text-base font-semibold mb-4 text-heading">{title}</h3>
     {children}
   </div>
 );
 
 const NoData = () => (
-  <div className="h-[300px] flex items-center justify-center text-gray-500">
-    No Data Available
+  <div className="h-[300px] flex items-center justify-center text-bodyText">
+    No data available
   </div>
 );
 
 const RevenueSection = ({ revenueTrend, userPerformance }) => (
-  <div className="space-y-10">
+  <div className="space-y-6">
     <SectionTitle title="Revenue Intelligence" />
 
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-      {/* Revenue Trend */}
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <ChartCard title="Revenue Trend (Last 6 Months)">
         {revenueTrend?.length ? (
           <ResponsiveContainer width="100%" height={320}>
             <AreaChart data={revenueTrend}>
-              <CartesianGrid stroke="#222" />
-              <XAxis dataKey="month" stroke="#aaa" />
-              <YAxis stroke="#aaa" />
-              <Tooltip />
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+              <XAxis dataKey="month" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke="#ef4444"
-                fill="#7f1d1d"
+                stroke="#021d54"
+                fill="#93c5fd"
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -364,16 +325,15 @@ const RevenueSection = ({ revenueTrend, userPerformance }) => (
         )}
       </ChartCard>
 
-      {/* User Performance */}
       <ChartCard title="Revenue by Sales User">
         {userPerformance?.length ? (
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={userPerformance}>
-              <CartesianGrid stroke="#222" />
-              <XAxis dataKey="name" stroke="#aaa" />
-              <YAxis stroke="#aaa" />
-              <Tooltip />
-              <Bar dataKey="totalRevenue" fill="#dc2626" />
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+              <XAxis dataKey="name" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="totalRevenue" fill="#021d54" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (
@@ -384,20 +344,22 @@ const RevenueSection = ({ revenueTrend, userPerformance }) => (
   </div>
 );
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
 
     return (
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-lg">
-        <p className="text-red-500 font-semibold mb-1">{data.dealName}</p>
-        <p className="text-gray-300 text-sm">
+      <div className="bg-card border border-gray-200 rounded-lg p-3 shadow-elevate">
+        <p className="text-brand font-semibold mb-1">{data.dealName}</p>
+        <p className="text-bodyText text-sm">
           Account:{" "}
-          <span className="text-white">{data.account?.accountName}</span>
+          <span className="text-heading">{data.account?.accountName}</span>
         </p>
-        <p className="text-gray-300 text-sm">
+        <p className="text-bodyText text-sm">
           Amount:{" "}
-          <span className="text-white">PKR {data.amount.toLocaleString()}</span>
+          <span className="text-heading">
+            PKR {data.amount.toLocaleString()}
+          </span>
         </p>
       </div>
     );
@@ -411,19 +373,17 @@ const CustomPieTooltip = ({ active, payload }) => {
     const data = payload[0].payload;
 
     return (
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-xl">
-        <p className="text-red-500 font-semibold mb-1">{data._id}</p>
-
-        <p className="text-gray-300 text-sm">
+      <div className="bg-card border border-gray-200 rounded-lg p-3 shadow-elevate">
+        <p className="text-brand font-semibold mb-1">{data._id}</p>
+        <p className="text-bodyText text-sm">
           Total Amount:
-          <span className="text-white ml-1">
+          <span className="text-heading ml-1">
             PKR {data.totalAmount.toLocaleString()}
           </span>
         </p>
-
-        <p className="text-gray-300 text-sm">
+        <p className="text-bodyText text-sm">
           Deal Count:
-          <span className="text-white ml-1">{data.dealCount}</span>
+          <span className="text-heading ml-1">{data.dealCount}</span>
         </p>
       </div>
     );
@@ -433,30 +393,29 @@ const CustomPieTooltip = ({ active, payload }) => {
 };
 
 const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
-  <div className="space-y-10">
+  <div className="space-y-6">
     <SectionTitle title="Deal Performance Intelligence" />
 
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-      {/* Top Deals */}
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <ChartCard title="Top Deals by Value">
         {dealsByAmount?.length ? (
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={dealsByAmount}>
-              <CartesianGrid stroke="#222" />
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
               <XAxis
                 dataKey="dealName"
-                stroke="#aaa"
-                tick={{ fill: "#aaa", fontSize: 12 }}
+                stroke="#9ca3af"
+                tick={{ fill: "#4b5563", fontSize: 12 }}
                 interval={0}
                 angle={-20}
                 textAnchor="end"
               />
-              <YAxis stroke="#aaa" />
+              <YAxis stroke="#9ca3af" />
               <Tooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
                 dataKey="amount"
-                stroke="#ef4444"
+                stroke="#021d54"
                 strokeWidth={3}
               />
             </LineChart>
@@ -466,7 +425,6 @@ const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
         )}
       </ChartCard>
 
-      {/* Value by Stage */}
       <ChartCard title="Deal Value Distribution">
         {dealsByStageAmount?.length ? (
           <ResponsiveContainer width="100%" height={320}>
@@ -491,16 +449,15 @@ const DealsSection = ({ dealsByAmount, dealsByStageAmount, dealStages }) => (
       </ChartCard>
     </div>
 
-    {/* Stage Funnel */}
     <ChartCard title="Deal Stage Funnel">
       {dealStages?.length ? (
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={dealStages}>
-            <CartesianGrid stroke="#222" />
-            <XAxis dataKey="stage" stroke="#aaa" />
-            <YAxis stroke="#aaa" />
-            <Tooltip />
-            <Bar dataKey="count" fill="#ef4444" />
+            <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+            <XAxis dataKey="stage" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
+            <Tooltip contentStyle={tooltipStyle} />
+            <Bar dataKey="count" fill="#021d54" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       ) : (
@@ -518,7 +475,7 @@ const QuotesSection = ({ quoteStatus }) => (
       {quoteStatus?.length ? (
         <ResponsiveContainer width="100%" height={320}>
           <PieChart>
-            <Tooltip />
+            <Tooltip contentStyle={tooltipStyle} />
             <Pie
               data={quoteStatus}
               dataKey="value"
@@ -529,6 +486,7 @@ const QuotesSection = ({ quoteStatus }) => (
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
               ))}
             </Pie>
+            <Legend />
           </PieChart>
         </ResponsiveContainer>
       ) : (
@@ -543,14 +501,14 @@ const AccountsSection = ({
   accountsByType,
   dealsPerAccount,
 }) => (
-  <div className="space-y-10">
+  <div className="space-y-6">
     <SectionTitle title="Account Intelligence" />
 
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <ChartCard title="Accounts by Industry">
         <ResponsiveContainer width="100%" height={320}>
           <PieChart>
-            <Tooltip />
+            <Tooltip contentStyle={tooltipStyle} />
             <Pie
               data={accountsByIndustry}
               dataKey="count"
@@ -561,6 +519,7 @@ const AccountsSection = ({
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
               ))}
             </Pie>
+            <Legend />
           </PieChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -568,11 +527,11 @@ const AccountsSection = ({
       <ChartCard title="Deals per Account">
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={dealsPerAccount}>
-            <CartesianGrid stroke="#222" />
-            <XAxis dataKey="accountName" stroke="#aaa" />
-            <YAxis stroke="#aaa" />
-            <Tooltip />
-            <Bar dataKey="dealCount" fill="#dc2626" />
+            <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+            <XAxis dataKey="accountName" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
+            <Tooltip contentStyle={tooltipStyle} />
+            <Bar dataKey="dealCount" fill="#021d54" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -587,11 +546,11 @@ const ContactsSection = ({ contactsPerAccount }) => (
     <ChartCard title="Contacts per Account">
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={contactsPerAccount}>
-          <CartesianGrid stroke="#222" />
-          <XAxis dataKey="accountName" stroke="#aaa" />
-          <YAxis stroke="#aaa" />
-          <Tooltip />
-          <Bar dataKey="contactCount" fill="#ef4444" />
+          <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+          <XAxis dataKey="accountName" stroke="#9ca3af" />
+          <YAxis stroke="#9ca3af" />
+          <Tooltip contentStyle={tooltipStyle} />
+          <Bar dataKey="contactCount" fill="#021d54" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>
@@ -599,8 +558,8 @@ const ContactsSection = ({ contactsPerAccount }) => (
 );
 
 const HealthCard = ({ title, value }) => (
-  <div className="bg-[#0f172a] border border-white/10 p-5 rounded-2xl">
-    <p className="text-xs text-gray-400">{title}</p>
-    <p className="text-xl font-bold text-red-500 mt-2">{value}</p>
+  <div className="kpi-card">
+    <p className="text-xs text-bodyText uppercase tracking-wide">{title}</p>
+    <p className="text-xl font-semibold text-heading mt-2">{value}</p>
   </div>
 );

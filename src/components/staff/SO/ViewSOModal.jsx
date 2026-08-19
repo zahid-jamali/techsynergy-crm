@@ -14,12 +14,12 @@ const ViewSOModal = ({ order, onClose }) => {
   const getStatusBadge = (status) => {
     if (status === "Approved")
       return (
-        <span className="px-2 py-1 text-xs rounded bg-green-600">Approved</span>
+        <span className="px-2 py-1 text-xs rounded bg-emerald-600">Approved</span>
       );
 
     if (status === "Rejected")
       return (
-        <span className="px-2 py-1 text-xs rounded bg-red-600">Rejected</span>
+        <span className="px-2 py-1 text-xs rounded bg-brand">Rejected</span>
       );
 
     return (
@@ -28,19 +28,19 @@ const ViewSOModal = ({ order, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-4 py-8">
-        <div className="bg-black border border-gray-800 rounded-lg w-full max-w-4xl text-white">
+        <div className="bg-card border border-gray-200 rounded-lg w-full max-w-4xl text-heading">
           {/* HEADER */}
 
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-red-500">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-brand">
               Sales Order Details
             </h2>
 
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white"
+              className="text-bodyText hover:text-heading"
             >
               ✕
             </button>
@@ -77,8 +77,8 @@ const ViewSOModal = ({ order, onClose }) => {
                 value={formatDate(order.confirmedDate)}
               />
 
-              <div className="flex justify-between border-b border-gray-800 pb-1">
-                <span className="text-gray-400">Status</span>
+              <div className="flex justify-between border-b border-gray-200 pb-1">
+                <span className="text-bodyText">Status</span>
 
                 {getStatusBadge(order.status)}
               </div>
@@ -87,11 +87,11 @@ const ViewSOModal = ({ order, onClose }) => {
             {/* PRODUCTS */}
 
             <div>
-              <h3 className="text-gray-400 mb-2">Products</h3>
+              <h3 className="text-bodyText mb-2">Products</h3>
 
-              <div className="border border-gray-800 rounded overflow-x-auto">
+              <div className="border border-gray-200 rounded overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-900 text-gray-400">
+                  <thead className="bg-card text-bodyText">
                     <tr>
                       <th className="p-2">#</th>
 
@@ -113,13 +113,13 @@ const ViewSOModal = ({ order, onClose }) => {
                         {/* MAIN ROW */}
                         <tr
                           key={`row-${i}`}
-                          className="border-t border-gray-800 hover:bg-gray-900 transition"
+                          className="border-t border-gray-200 hover:bg-surface transition"
                         >
                           <td className="p-2 text-center">{i + 1}</td>
 
                           <td className="p-2 font-medium">{p.productName}</td>
 
-                          <td className="p-2 text-gray-300">
+                          <td className="p-2 text-bodyText">
                             {p.description || "-"}
                           </td>
 
@@ -136,21 +136,21 @@ const ViewSOModal = ({ order, onClose }) => {
 
                         {/* 🔥 PRODUCT TAX ROW */}
                         {p.Tax?.length > 0 && (
-                          <tr className="bg-black/40 text-xs">
+                          <tr className="bg-surface text-xs">
                             <td></td>
-                            <td colSpan="5" className="px-4 pb-2 text-gray-400">
+                            <td colSpan="5" className="px-4 pb-2 text-bodyText">
                               <div className="flex flex-wrap gap-2">
                                 {p.Tax.map((t, ti) => (
                                   <span
                                     key={ti}
-                                    className="bg-gray-800 px-2 py-1 rounded"
+                                    className="bg-surface px-2 py-1 rounded"
                                   >
                                     {t.tax} ({t.percent}%)
                                   </span>
                                 ))}
                               </div>
 
-                              <div className="flex justify-end mt-1 text-gray-300">
+                              <div className="flex justify-end mt-1 text-bodyText">
                                 Tax: {formatCurrency(p.taxAmount)}
                               </div>
                             </td>
@@ -173,7 +173,7 @@ const ViewSOModal = ({ order, onClose }) => {
                   {order.otherTax.map((t, i) => (
                     <div
                       key={i}
-                      className="flex justify-between text-xs text-gray-400"
+                      className="flex justify-between text-xs text-bodyText"
                     >
                       <span>
                         {t.tax} ({t.percent}%)
@@ -205,9 +205,9 @@ const ViewSOModal = ({ order, onClose }) => {
 
             {order.products?.length > 0 && (
               <div>
-                <h3 className="text-gray-400 mb-1">Summary</h3>
+                <h3 className="text-bodyText mb-1">Summary</h3>
 
-                <p className="text-gray-300">
+                <p className="text-bodyText">
                   {order.products.length} product
                   {order.products.length > 1 ? "s" : ""} included in this sales
                   order.
@@ -222,8 +222,8 @@ const ViewSOModal = ({ order, onClose }) => {
 };
 
 const Info = ({ label, value, highlight }) => (
-  <div className="flex justify-between border-b border-gray-800 pb-1">
-    <span className="text-gray-400">{label}</span>
+  <div className="flex justify-between border-b border-gray-200 pb-1">
+    <span className="text-bodyText">{label}</span>
 
     <span className={highlight ? "text-red-400 font-semibold" : ""}>
       {value || "-"}

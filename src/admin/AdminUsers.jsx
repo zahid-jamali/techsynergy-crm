@@ -80,7 +80,7 @@ export default function AdminUsers() {
   };
 
   if (loading) {
-    return <p className="text-gray-400">Loading users...</p>;
+    return <p className="text-bodyText">Loading users...</p>;
   }
 
   if (error) {
@@ -88,19 +88,22 @@ export default function AdminUsers() {
   }
 
   return (
-    <div className="text-white">
+    <div className="text-heading">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-red-500">User Management</h1>
+        <div>
+          <h1 className="page-title">User Management</h1>
+          <p className="page-subtitle">Manage admin and staff access</p>
+        </div>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
+          className="btn-primary"
         >
-          + Add Users
+          + Add User
         </button>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-zinc-800">
+      <div className="table-wrap">
         <table className="w-full text-sm text-left">
-          <thead className="bg-zinc-900 text-gray-300">
+          <thead className="bg-surface text-bodyText">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Email</th>
@@ -110,7 +113,7 @@ export default function AdminUsers() {
             </tr>
           </thead>
 
-          <tbody className="bg-zinc-950 divide-y divide-zinc-800">
+          <tbody className="bg-card divide-y divide-gray-100">
             {users.map((user) => (
               <tr key={user._id}>
                 <td className="px-4 py-3">
@@ -118,7 +121,7 @@ export default function AdminUsers() {
                     {user.name}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-gray-400">
+                <td className="px-4 py-3 text-bodyText">
                   <Link to={`/admin/singleUserPerformance/${user._id}`}>
                     {user.email}
                   </Link>
@@ -129,8 +132,8 @@ export default function AdminUsers() {
                   <span
                     className={`px-2 py-1 rounded text-xs font-semibold ${
                       user.isSuperUser
-                        ? "bg-red-600 text-white"
-                        : "bg-zinc-700 text-gray-200"
+                        ? "bg-brand text-white"
+                        : "bg-gray-100 text-bodyText"
                     }`}
                   >
                     <Link to={`/admin/singleUserPerformance/${user._id}`}>
@@ -144,8 +147,8 @@ export default function AdminUsers() {
                   <span
                     className={`px-2 py-1 rounded text-xs ${
                       user.isActive
-                        ? "bg-green-600 text-white"
-                        : "bg-zinc-700 text-gray-300"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-gray-100 text-bodyText"
                     }`}
                   >
                     <Link to={`/admin/singleUserPerformance/${user._id}`}>
@@ -156,14 +159,14 @@ export default function AdminUsers() {
                 {/* Actions */}
                 <td className="px-4 py-3 text-right space-x-2">
                   <button
-                    className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded"
+                    className="px-3 py-1 bg-surface hover:bg-gray-100 rounded"
                     onClick={() => setSelectedUser(user)}
                   >
                     Edit
                   </button>
 
                   <button
-                    className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded"
+                    className="px-3 py-1 btn-danger rounded"
                     onClick={() => alert("Users cannot be deleted!")}
                   >
                     Delete

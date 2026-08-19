@@ -4,17 +4,17 @@ const ViewContactModal = ({ contact, onClose }) => {
   const formatDate = (date) => new Date(date).toLocaleString();
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-heading/40 backdrop-blur-sm overflow-y-auto">
       <div className="flex justify-center px-4 py-8">
-        <div className="bg-black border border-gray-800 rounded-lg w-full max-w-2xl text-white">
+        <div className="bg-card border border-gray-200 rounded-lg w-full max-w-2xl text-heading">
           {/* Header */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-red-500">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-brand">
               Contact Details
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-xl"
+              className="text-bodyText hover:text-heading text-xl"
             >
               ✕
             </button>
@@ -44,7 +44,7 @@ const ViewContactModal = ({ contact, onClose }) => {
             {contact.description && (
               <div>
                 <h3 className="section-title">Description</h3>
-                <div className="bg-gray-900 border border-gray-800 p-4 rounded">
+                <div className="bg-card border border-gray-200 p-4 rounded">
                   {contact.description}
                 </div>
               </div>
@@ -54,7 +54,7 @@ const ViewContactModal = ({ contact, onClose }) => {
             {contact.meta && Object.keys(contact.meta).length > 0 && (
               <div>
                 <h3 className="section-title">Meta Data</h3>
-                <pre className="bg-gray-900 border border-gray-800 p-4 rounded text-xs overflow-x-auto">
+                <pre className="bg-card border border-gray-200 p-4 rounded text-xs overflow-x-auto">
                   {JSON.stringify(contact.meta, null, 2)}
                 </pre>
               </div>
@@ -77,10 +77,10 @@ const ViewContactModal = ({ contact, onClose }) => {
             </div>
 
             {/* ACTION */}
-            <div className="flex justify-end pt-4 border-t border-gray-800">
+            <div className="flex justify-end pt-4 border-t border-gray-200">
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+                className="px-4 py-2 bg-brand hover:bg-brand/90 rounded"
               >
                 Close
               </button>
@@ -93,7 +93,7 @@ const ViewContactModal = ({ contact, onClose }) => {
       <style jsx>{`
         .section-title {
           font-size: 12px;
-          color: #9ca3af;
+          color: #4b5563;
           margin-bottom: 12px;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -104,10 +104,10 @@ const ViewContactModal = ({ contact, onClose }) => {
 };
 
 const Field = ({ label, value, highlight }) => (
-  <div className="bg-gray-900 border border-gray-800 rounded p-3">
-    <div className="text-gray-400 text-xs mb-1">{label}</div>
+  <div className="bg-card border border-gray-200 rounded p-3">
+    <div className="text-bodyText text-xs mb-1">{label}</div>
     <div
-      className={`font-medium ${highlight ? "text-green-400" : "text-white"}`}
+      className={`font-medium ${highlight ? "text-emerald-700" : "text-heading"}`}
     >
       {value || "-"}
     </div>

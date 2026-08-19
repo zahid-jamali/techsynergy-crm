@@ -136,20 +136,20 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-md z-50 overflow-y-auto">
       <div className="flex justify-center px-6 py-10">
-        <div className="bg-[#0f172a] border border-gray-800 rounded-2xl w-full max-w-3xl text-white shadow-2xl">
+        <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-3xl text-heading shadow-2xl">
           {/* HEADER */}
-          <div className="flex justify-between items-center px-8 py-6 border-b border-gray-800">
+          <div className="flex justify-between items-center px-8 py-6 border-b border-gray-200">
             <div>
-              <h2 className="text-2xl font-semibold text-red-500">Edit Deal</h2>
-              <p className="text-sm text-gray-400 mt-1">
+              <h2 className="text-2xl font-semibold text-brand">Edit Deal</h2>
+              <p className="text-sm text-bodyText mt-1">
                 Update opportunity details and pipeline information
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition text-lg"
+              className="text-bodyText hover:text-heading transition text-lg"
             >
               ✕
             </button>
@@ -205,7 +205,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                           className="dropdown-item"
                         >
                           <div className="font-medium">{a.accountName}</div>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-bodyText">
                             {a.industry || "No Industry"}
                           </div>
                         </div>
@@ -250,7 +250,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                           <div className="font-medium">
                             {c.firstName} {c.lastName}
                           </div>
-                          <div className="text-xs text-gray-400">{c.email}</div>
+                          <div className="text-xs text-bodyText">{c.email}</div>
                         </div>
                       ))
                     ) : (
@@ -327,9 +327,9 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                 {/* <div className="space-y-3">
                   <label className="label">Win Probability</label>
 
-                  <div className="flex justify-between text-sm text-gray-400">
+                  <div className="flex justify-between text-sm text-bodyText">
                     <span>Confidence</span>
-                    <span className="text-red-500 font-semibold">
+                    <span className="text-brand font-semibold">
                       {formData.probability}%
                     </span>
                   </div>
@@ -345,9 +345,9 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                     className="w-full accent-red-600"
                   />
 
-                  <div className="w-full bg-gray-800 rounded-full h-2">
+                  <div className="w-full bg-surface rounded-full h-2">
                     <div
-                      className="h-2 bg-red-600 rounded-full transition-all"
+                      className="h-2 bg-brand rounded-full transition-all"
                       style={{ width: `${formData.probability}%` }}
                     />
                   </div>
@@ -369,17 +369,17 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
             </div>
 
             {/* ACTIONS */}
-            <div className="flex justify-end gap-4 pt-6 border-t border-gray-800">
+            <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-lg transition"
+                className="bg-gray-100 hover:bg-gray-200 px-5 py-2 rounded-lg transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-medium transition"
+                className="bg-brand hover:bg-brand/90 px-6 py-2 rounded-lg font-medium transition"
               >
                 Save Changes
               </button>
@@ -391,22 +391,22 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
       <style jsx>{`
         .input {
           width: 100%;
-          background: #111827;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 10px 12px;
           border-radius: 8px;
           transition: all 0.2s ease;
         }
         .input:focus {
           outline: none;
-          border-color: #dc2626;
-          box-shadow: 0 0 0 1px #dc2626;
+          border-color: #1e4a8a;
+          box-shadow: 0 0 0 1px #1e4a8a;
         }
         .dropdown {
           position: absolute;
           width: 100%;
-          background: #0f172a;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           border-radius: 8px;
           margin-top: 6px;
           max-height: 200px;
@@ -419,7 +419,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
           transition: background 0.2s;
         }
         .dropdown-item:hover {
-          background: #1f2937;
+          background: #f9fafb;
         }
         .section-title {
           font-size: 14px;

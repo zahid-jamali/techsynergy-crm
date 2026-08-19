@@ -57,18 +57,18 @@ const DeleteOrderModal = ({ orderId, onClose, onSuccess }) => {
   */
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-[#020617] border border-gray-800 rounded-2xl w-full max-w-md text-white shadow-2xl">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-md text-heading shadow-2xl">
         {/* HEADER */}
 
-        <div className="px-6 py-4 border-b border-gray-800">
-          <h2 className="text-xl font-semibold text-red-500">Delete Order</h2>
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-brand">Delete Order</h2>
         </div>
 
         {/* BODY */}
 
         <div className="p-6 space-y-4">
-          <p className="text-gray-300">
+          <p className="text-bodyText">
             Are you sure you want to delete this order?
           </p>
 
@@ -77,17 +77,17 @@ const DeleteOrderModal = ({ orderId, onClose, onSuccess }) => {
             deleted.
           </p>
 
-          {error && <div className="text-red-500 text-sm">{error}</div>}
+          {error && <div className="text-brand text-sm">{error}</div>}
         </div>
 
         {/* ACTIONS */}
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-800">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
+            className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg"
           >
             Cancel
           </button>
@@ -96,7 +96,7 @@ const DeleteOrderModal = ({ orderId, onClose, onSuccess }) => {
             type="button"
             onClick={handleDelete}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg font-semibold"
+            className="btn-danger px-5 py-2 rounded-lg font-semibold"
           >
             {loading ? "Deleting..." : "Delete Order"}
           </button>

@@ -38,11 +38,11 @@ const DeleteTargetModal = ({ target, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-black border border-red-900 rounded-lg w-full max-w-md text-white shadow-2xl">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm flex justify-center items-center z-50">
+      <div className="bg-card border border-red-900 rounded-lg w-full max-w-md text-heading shadow-2xl">
         {/* HEADER */}
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-red-500">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-brand">
             Delete Sales Target
           </h2>
           <button onClick={onClose}>✕</button>
@@ -51,45 +51,45 @@ const DeleteTargetModal = ({ target, onClose, onSuccess }) => {
         {/* CONTENT */}
         <div className="p-6 space-y-4">
           {/* Warning Box */}
-          <div className="bg-red-900/30 border border-red-800 rounded-lg p-4 text-sm text-red-400">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
             ⚠️ This action cannot be undone.
           </div>
 
-          <p className="text-gray-300 text-sm">
+          <p className="text-bodyText text-sm">
             Are you sure you want to delete the sales target for:
           </p>
 
           {/* Target Info */}
-          <div className="bg-[#0f172a] border border-gray-800 rounded-lg p-4 space-y-2 text-sm">
+          <div className="bg-card border border-gray-200 rounded-lg p-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-400">User</span>
+              <span className="text-bodyText">User</span>
               <span>{target.user?.name || "Unknown"}</span>
             </div>
 
             <div className="flex justify-between">
-              <span className="text-gray-400">Month</span>
+              <span className="text-bodyText">Month</span>
               <span>
                 {monthName} {target.year}
               </span>
             </div>
 
             <div className="flex justify-between">
-              <span className="text-gray-400">Target</span>
+              <span className="text-bodyText">Target</span>
               <span>₹ {target.targetAmount}</span>
             </div>
 
             <div className="flex justify-between">
-              <span className="text-gray-400">Forecast</span>
+              <span className="text-bodyText">Forecast</span>
               <span>₹ {target.forecastAmount}</span>
             </div>
           </div>
 
           {/* ACTIONS */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
             <button
               onClick={onClose}
               disabled={loading}
-              className="bg-gray-700 px-4 py-2 rounded"
+              className="bg-gray-100 px-4 py-2 rounded"
             >
               Cancel
             </button>
@@ -97,7 +97,7 @@ const DeleteTargetModal = ({ target, onClose, onSuccess }) => {
             <button
               onClick={handleDelete}
               disabled={loading}
-              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+              className="btn-danger px-4 py-2 rounded"
             >
               {loading ? "Deleting..." : "Confirm Delete"}
             </button>
@@ -107,11 +107,11 @@ const DeleteTargetModal = ({ target, onClose, onSuccess }) => {
         <style jsx>{`
           .input {
             width: 100%;
-            background: #111827;
-            border: 1px solid #374151;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
             padding: 8px 10px;
             border-radius: 6px;
-            color: white;
+            color: #111827;
           }
         `}</style>
       </div>

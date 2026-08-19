@@ -102,12 +102,12 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-2xl text-white max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 z-50 flex items-center justify-center">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-2xl text-heading max-h-[90vh] overflow-y-auto">
         {/* Header */}
 
-        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-red-500">Add Vendor</h2>
+        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-brand">Add Vendor</h2>
 
           <button onClick={onClose}>✕</button>
         </div>
@@ -118,14 +118,14 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
           {/* BASIC INFO */}
 
           <div className="space-y-3">
-            <h3 className="text-red-400 font-semibold">Basic Information</h3>
+            <h3 className="text-brand font-semibold">Basic Information</h3>
 
             <input
               type="text"
               placeholder="Vendor Name *"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+              className="w-full bg-card border border-gray-200 rounded px-3 py-2"
             />
 
             <input
@@ -133,21 +133,21 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
               placeholder="Vendor Code (optional)"
               value={form.code}
               onChange={(e) => handleChange("code", e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+              className="w-full bg-card border border-gray-200 rounded px-3 py-2"
             />
 
             <textarea
               placeholder="Notes"
               value={form.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+              className="w-full bg-card border border-gray-200 rounded px-3 py-2"
             />
           </div>
 
           {/* CONTACT */}
 
           <div className="space-y-3">
-            <h3 className="text-red-400 font-semibold">Contact</h3>
+            <h3 className="text-brand font-semibold">Contact</h3>
 
             {form.contacts.map((contact, index) => (
               <div key={index} className="grid grid-cols-2 gap-3">
@@ -158,7 +158,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleContactChange(index, "name", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
 
                 <input
@@ -168,7 +168,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleContactChange(index, "email", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
 
                 <input
@@ -178,7 +178,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleContactChange(index, "phone", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
 
                 <input
@@ -188,7 +188,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleContactChange(index, "designation", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
 
                 <label className="flex items-center gap-2 col-span-2">
@@ -208,7 +208,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
           {/* ADDRESS */}
 
           <div className="space-y-3">
-            <h3 className="text-red-400 font-semibold">Address</h3>
+            <h3 className="text-brand font-semibold">Address</h3>
 
             {form.addresses.map((address, index) => (
               <div key={index} className="grid grid-cols-2 gap-3">
@@ -217,7 +217,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleAddressChange(index, "type", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 >
                   <option>Office</option>
                   <option>Billing</option>
@@ -231,7 +231,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleAddressChange(index, "addressLine1", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
 
                 <input
@@ -241,7 +241,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleAddressChange(index, "city", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
 
                 <input
@@ -251,7 +251,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                   onChange={(e) =>
                     handleAddressChange(index, "country", e.target.value)
                   }
-                  className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                  className="bg-card border border-gray-200 rounded px-3 py-2"
                 />
               </div>
             ))}
@@ -260,7 +260,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
           {/* BANK */}
 
           <div className="space-y-3">
-            <h3 className="text-red-400 font-semibold">Bank Details</h3>
+            <h3 className="text-brand font-semibold">Bank Details</h3>
 
             <div className="grid grid-cols-2 gap-3">
               <input
@@ -270,7 +270,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                 onChange={(e) =>
                   handleBankChange("accountTitle", e.target.value)
                 }
-                className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                className="bg-card border border-gray-200 rounded px-3 py-2"
               />
 
               <input
@@ -280,7 +280,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                 onChange={(e) =>
                   handleBankChange("accountNumber", e.target.value)
                 }
-                className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                className="bg-card border border-gray-200 rounded px-3 py-2"
               />
 
               <input
@@ -288,7 +288,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                 placeholder="Bank Name"
                 value={form.bankDetails.bankName}
                 onChange={(e) => handleBankChange("bankName", e.target.value)}
-                className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                className="bg-card border border-gray-200 rounded px-3 py-2"
               />
 
               <input
@@ -296,7 +296,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                 placeholder="IBAN"
                 value={form.bankDetails.iban}
                 onChange={(e) => handleBankChange("iban", e.target.value)}
-                className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                className="bg-card border border-gray-200 rounded px-3 py-2"
               />
 
               <input
@@ -304,7 +304,7 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
                 placeholder="Branch"
                 value={form.bankDetails.branch}
                 onChange={(e) => handleBankChange("branch", e.target.value)}
-                className="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                className="bg-card border border-gray-200 rounded px-3 py-2"
               />
             </div>
           </div>
@@ -314,15 +314,15 @@ const AddVendorModal = ({ onClose, onSuccess }) => {
 
         {/* Footer */}
 
-        <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-800">
-          <button onClick={onClose} className="bg-gray-700 px-4 py-2 rounded">
+        <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-200">
+          <button onClick={onClose} className="bg-gray-100 px-4 py-2 rounded">
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
           >
             {loading ? "Saving..." : "Save"}
           </button>

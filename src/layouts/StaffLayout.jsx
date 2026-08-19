@@ -17,32 +17,45 @@ export default function StaffLayout({ children }) {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   return (
-    <div className="min-h-screen flex bg-[#0b0f19] text-gray-200">
-      {/* ===== SIDEBAR ===== */}
+    <div className="min-h-screen flex bg-surface text-bodyText">
       <aside
         className={`${
-          collapsed ? "w-20" : "w-72"
-        } bg-[#111827] border-r border-gray-800 flex flex-col transition-all duration-300`}
+          collapsed ? "w-[76px]" : "w-72"
+        } bg-brand text-white flex flex-col transition-all duration-300 shrink-0`}
       >
-        {/* Logo */}
-        <div className="px-4 py-6 border-b border-gray-800 flex items-center justify-between">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
           {!collapsed && (
             <div>
-              <h1 className="text-xl font-bold tracking-wide">
-                <span className="text-white">Tech</span>
-                <span className="text-red-500">Synergy</span>
+              <h1 className="text-lg font-semibold tracking-tight">
+                Tech<span className="text-white/80">Synergy</span>
               </h1>
-              <p className="text-xs text-gray-500">Staff Panel</p>
+              <p className="text-[11px] text-white/50">Staff Workspace</p>
             </div>
           )}
-
           {collapsed && (
-            <div className="text-red-500 font-bold text-xl mx-auto">TS</div>
+            <span className="mx-auto text-sm font-bold tracking-wide">TS</span>
+          )}
+          {!collapsed && (
+            <button
+              onClick={() => setCollapsed(true)}
+              className="text-white/60 hover:text-white p-1.5 rounded-md hover:bg-white/10"
+              aria-label="Collapse sidebar"
+            >
+              <Menu size={18} />
+            </button>
           )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-2 py-6 space-y-2">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {collapsed && (
+            <button
+              onClick={() => setCollapsed(false)}
+              className="w-full mb-3 flex justify-center text-white/60 hover:text-white p-2 rounded-md hover:bg-white/10"
+              aria-label="Expand sidebar"
+            >
+              <Menu size={18} />
+            </button>
+          )}
           <SidebarLink
             collapsed={collapsed}
             to="/staff/dashboard"
@@ -87,8 +100,7 @@ export default function StaffLayout({ children }) {
           />
         </nav>
 
-        {/* Logout */}
-        <div className="p-3 border-t border-gray-800">
+        <div className="p-3 border-t border-white/10">
           <button
             onClick={() => {
               sessionStorage.clear();
@@ -96,7 +108,7 @@ export default function StaffLayout({ children }) {
             }}
             className={`flex items-center ${
               collapsed ? "justify-center" : "gap-2"
-            } w-full px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition text-sm`}
+            } w-full px-3 py-2.5 rounded-lg bg-white text-brand hover:bg-white/90 transition text-sm font-medium`}
           >
             <LogOut size={16} />
             {!collapsed && "Logout"}
@@ -104,74 +116,57 @@ export default function StaffLayout({ children }) {
         </div>
       </aside>
 
-      {/* ===== MAIN AREA ===== */}
-      <div className="flex-1 flex flex-col">
-        {/* TOPBAR */}
-        <header className="h-16 bg-[#111827] border-b border-gray-800 flex items-center justify-between px-6">
-          {/* Left Section */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="p-2 rounded-lg hover:bg-gray-800 transition"
-            >
-              <Menu size={20} />
-            </button>
-
-            <div>
-              <h2 className="text-lg font-semibold tracking-wide">
-                Staff Workspace
-              </h2>
-              <p className="text-xs text-gray-500">
-                Manage deals, quotes & customers
-              </p>
-            </div>
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 bg-card border-b border-gray-200 flex items-center justify-between px-6">
+          <div>
+            <h2 className="text-base font-semibold tracking-tight text-heading">
+              Staff Workspace
+            </h2>
+            <p className="text-xs text-bodyText">
+              Manage deals, quotes and customers
+            </p>
           </div>
 
-          {/* Profile */}
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium capitalize">{user?.name}</p>
-              <p className="text-xs text-gray-500">
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium text-heading capitalize">
+                {user?.name || "Staff"}
+              </p>
+              <p className="text-xs text-bodyText">
                 {user?.designation || "Sales Executive"}
               </p>
             </div>
 
-            <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center font-bold">
-              {user?.name?.[0]?.toUpperCase()}
+            <div className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center text-sm font-semibold">
+              {(user?.name?.[0] || "S").toUpperCase()}
             </div>
           </div>
         </header>
 
-        {/* CONTENT */}
-        <main className="flex-1 p-8 bg-[#0b0f19] overflow-y-auto transition-all duration-300">
-          <div className="bg-[#111827] rounded-2xl border border-gray-800 p-6 shadow-xl">
-            {children}
-          </div>
-        </main>
+        <main className="flex-1 p-6 bg-surface overflow-y-auto">{children}</main>
       </div>
     </div>
   );
 }
 
-/* ===== SidebarLink ===== */
-
 const SidebarLink = ({ to, icon, label, collapsed }) => {
   return (
     <NavLink
       to={to}
+      title={label}
       className={({ isActive }) =>
         `flex items-center ${
-          collapsed ? "justify-center" : "gap-3"
-        } px-4 py-3 rounded-xl transition-all duration-200 ${
+          collapsed ? "justify-center px-2" : "gap-3 px-3"
+        } py-2.5 rounded-lg transition-all duration-200 ${
           isActive
-            ? "bg-red-600 text-white shadow-lg"
-            : "text-gray-400 hover:bg-gray-800 hover:text-white"
+            ? "bg-white text-brand shadow-sm"
+            : "text-white/70 hover:bg-white/10 hover:text-white"
         }`
       }
     >
-      {icon}
+      <span className="shrink-0">{icon}</span>
       {!collapsed && (
-        <span className="text-sm font-medium tracking-wide">{label}</span>
+        <span className="text-sm font-medium truncate">{label}</span>
       )}
     </NavLink>
   );

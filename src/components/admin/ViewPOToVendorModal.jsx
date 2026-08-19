@@ -1,10 +1,10 @@
 const ViewPOToVendorModal = ({ po, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-4xl text-white">
+    <div className="fixed inset-0 bg-heading/40 z-50 flex items-center justify-center">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-4xl text-heading">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-800 flex justify-between">
-          <h2 className="text-red-500 font-semibold">
+        <div className="px-5 py-4 border-b border-gray-200 flex justify-between">
+          <h2 className="text-brand font-semibold">
             Purchase Order — {po.poToNumber}
           </h2>
           <button onClick={onClose}>✕</button>
@@ -15,31 +15,31 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">
             <p>
-              <span className="text-gray-400">Subject:</span> {po.subject}
+              <span className="text-bodyText">Subject:</span> {po.subject}
             </p>
 
             <p>
-              <span className="text-gray-400">Created On:</span>{" "}
+              <span className="text-bodyText">Created On:</span>{" "}
               {new Date(po.createdAt).toLocaleDateString()}
             </p>
 
             <p>
-              <span className="text-gray-400">Deal:</span>{" "}
+              <span className="text-bodyText">Deal:</span>{" "}
               {po.refQuote?.deal?.dealName || "-"}
             </p>
 
             <p>
-              <span className="text-gray-400">Account:</span>{" "}
+              <span className="text-bodyText">Account:</span>{" "}
               {po.refQuote?.account?.accountName || "-"}
             </p>
 
             <p>
-              <span className="text-gray-400">Contact Email:</span>{" "}
+              <span className="text-bodyText">Contact Email:</span>{" "}
               {po.refQuote?.contact?.email || "-"}
             </p>
 
             <p>
-              <span className="text-gray-400">Contact Phone:</span>{" "}
+              <span className="text-bodyText">Contact Phone:</span>{" "}
               {po.refQuote?.contact?.phone || "-"}
             </p>
           </div>
@@ -47,8 +47,8 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
           {/* Description */}
           {po.description && (
             <div>
-              <p className="text-gray-400 mb-1">Description</p>
-              <p className="bg-gray-900 border border-gray-800 rounded p-3">
+              <p className="text-bodyText mb-1">Description</p>
+              <p className="bg-card border border-gray-200 rounded p-3">
                 {po.description}
               </p>
             </div>
@@ -56,11 +56,11 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
 
           {/* Products */}
           <div>
-            <p className="text-gray-400 mb-2">Products</p>
+            <p className="text-bodyText mb-2">Products</p>
 
-            <div className="border border-gray-800 rounded overflow-hidden">
+            <div className="border border-gray-200 rounded overflow-hidden">
               <table className="w-full text-sm">
-                <thead className="bg-gray-900 text-gray-400">
+                <thead className="bg-card text-bodyText">
                   <tr>
                     <th className="p-2 text-left">#</th>
                     <th className="p-2 text-left">Product</th>
@@ -73,7 +73,7 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
 
                 <tbody>
                   {po.products?.map((p, index) => (
-                    <tr key={index} className="border-t border-gray-800">
+                    <tr key={index} className="border-t border-gray-200">
                       <td className="p-2">{p.serialNo}</td>
 
                       <td className="p-2">{p.productName}</td>
@@ -101,9 +101,9 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
           {/* Taxes */}
           {po.Tax?.length > 0 && (
             <div>
-              <p className="text-gray-400 mb-2">Taxes</p>
+              <p className="text-bodyText mb-2">Taxes</p>
 
-              <div className="border border-gray-800 rounded p-3 bg-gray-900 space-y-1">
+              <div className="border border-gray-200 rounded p-3 bg-card space-y-1">
                 {po.Tax.map((t, i) => (
                   <div key={i} className="flex justify-between">
                     <span>
@@ -123,14 +123,14 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
           <div className="flex justify-end">
             <div className="w-72 space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-400">Subtotal</span>
+                <span className="text-bodyText">Subtotal</span>
 
                 <span>{po.subTotal?.toLocaleString()}</span>
               </div>
 
               {po.Tax?.map((t, i) => (
                 <div key={i} className="flex justify-between">
-                  <span className="text-gray-400">
+                  <span className="text-bodyText">
                     {t.tax} ({t.percent}%)
                   </span>
 
@@ -140,7 +140,7 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
                 </div>
               ))}
 
-              <div className="flex justify-between font-semibold border-t border-gray-700 pt-2 text-red-500">
+              <div className="flex justify-between font-semibold border-t border-gray-200 pt-2 text-brand">
                 <span>Grand Total</span>
 
                 <span>{po.grandTotal?.toLocaleString()}</span>
@@ -150,10 +150,10 @@ const ViewPOToVendorModal = ({ po, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-gray-800 flex justify-end">
+        <div className="px-5 py-4 border-t border-gray-200 flex justify-end">
           <button
             onClick={onClose}
-            className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded"
+            className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded"
           >
             Close
           </button>

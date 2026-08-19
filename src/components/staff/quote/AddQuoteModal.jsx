@@ -260,12 +260,12 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
   ================================= */
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-6 py-10">
-        <div className="bg-black border border-gray-800 rounded-xl w-full max-w-6xl text-white">
+        <div className="bg-card border border-gray-200 rounded-xl w-full max-w-6xl text-heading">
           {/* HEADER */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-            <h2 className="text-xl font-semibold text-red-500">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-brand">
               Create New Quote
             </h2>
             <button onClick={onClose}>✕</button>
@@ -339,23 +339,23 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
               {/* PRODUCTS */}
               <div className="col-span-3 space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-gray-300 font-semibold">
+                  <h3 className="text-bodyText font-semibold">
                     Products & Services
                   </h3>
                   <button
                     type="button"
                     onClick={addProduct}
-                    className="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm"
+                    className="bg-brand hover:bg-brand/90 px-3 py-1.5 rounded text-sm"
                   >
                     + Add Product
                   </button>
                 </div>
 
-                <div className="max-h-[350px] overflow-y-auto border border-gray-800 rounded-lg p-4 space-y-3">
+                <div className="max-h-[350px] overflow-y-auto border border-gray-200 rounded-lg p-4 space-y-3">
                   {formData.products.map((p, i) => (
                     <div
                       key={i}
-                      className="border border-gray-800 rounded-lg p-4 bg-[#0f172a]"
+                      className="border border-gray-200 rounded-lg p-4 bg-card"
                     >
                       {/* TOP ROW */}
                       <div className="grid grid-cols-12 gap-3 mb-3">
@@ -402,8 +402,8 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                             }
                             className={`px-2 py-1 text-xs rounded ${
                               p.pricingMode === "direct"
-                                ? "bg-red-600"
-                                : "bg-gray-700"
+                                ? "bg-brand"
+                                : "bg-gray-100"
                             }`}
                           >
                             Direct
@@ -416,8 +416,8 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                             }
                             className={`px-2 py-1 text-xs rounded ${
                               p.pricingMode === "margin"
-                                ? "bg-red-600"
-                                : "bg-gray-700"
+                                ? "bg-brand"
+                                : "bg-gray-100"
                             }`}
                           >
                             Margin
@@ -427,7 +427,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                         <button
                           type="button"
                           onClick={() => removeProduct(i)}
-                          className="col-span-1 text-red-500"
+                          className="col-span-1 text-brand"
                         >
                           ✕
                         </button>
@@ -456,7 +456,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                             className="input"
                           />
 
-                          <div className="text-sm text-gray-400">
+                          <div className="text-sm text-bodyText">
                             Line Total
                           </div>
 
@@ -487,11 +487,11 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                             className="input"
                           />
 
-                          <div className="col-span-2 text-sm text-gray-400">
+                          <div className="col-span-2 text-sm text-bodyText">
                             Auto List Price
                           </div>
 
-                          <div className="col-span-2 text-green-400 font-semibold">
+                          <div className="col-span-2 text-emerald-700 font-semibold">
                             {formData.currency}.{" "}
                             {Number(p.listPrice || 0).toFixed(2)}
                           </div>
@@ -505,7 +505,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
 
                       <div className="mt-3 space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-bodyText">
                             Product Tax
                           </span>
 
@@ -519,7 +519,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                               ];
                               setFormData({ ...formData, products: updated });
                             }}
-                            className="text-xs text-red-500"
+                            className="text-xs text-brand"
                           >
                             + Add Tax
                           </button>
@@ -606,7 +606,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                                 );
                                 setFormData({ ...formData, products: updated });
                               }}
-                              className="text-red-500 text-xs"
+                              className="text-brand text-xs"
                             >
                               ✕
                             </button>
@@ -615,7 +615,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
 
                         {/* TAX PREVIEW */}
                         {(p.Tax || []).length > 0 && (
-                          <div className="text-xs text-gray-400 flex justify-between">
+                          <div className="text-xs text-bodyText flex justify-between">
                             <span>Total Product Tax</span>
                             <span>
                               {formData.currency}.{" "}
@@ -646,21 +646,21 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
 
               {/* SUMMARY */}
               <div className="col-span-1">
-                <div className="sticky top-6 bg-[#0f172a] border border-gray-800 rounded-xl p-5 space-y-4">
-                  <div className="flex justify-between text-sm text-gray-400">
+                <div className="sticky top-6 bg-card border border-gray-200 rounded-xl p-5 space-y-4">
+                  <div className="flex justify-between text-sm text-bodyText">
                     <span>Subtotal</span>
                     <span>
                       {formData.currency}. {subtotal.toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="border-t border-gray-700 pt-3 space-y-2">
+                  <div className="border-t border-gray-200 pt-3 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400">Apply Taxes</span>
+                      <span className="text-sm text-bodyText">Apply Taxes</span>
                       <button
                         type="button"
                         onClick={addOtherTax}
-                        className="text-xs text-red-500"
+                        className="text-xs text-brand"
                       >
                         + Add
                       </button>
@@ -732,14 +732,14 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                           <button
                             type="button"
                             onClick={() => removeOtherTax(i)}
-                            className="text-red-500 text-xs"
+                            className="text-brand text-xs"
                           >
                             ✕
                           </button>
                         </div>
 
                         {t.percent > 0 && (
-                          <div className="flex justify-between text-xs text-gray-400">
+                          <div className="flex justify-between text-xs text-bodyText">
                             <span>
                               {t.tax === "Custom"
                                 ? t.customName || "Custom Tax"
@@ -756,7 +756,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     ))}
 
                     {otherTaxAmount > 0 && (
-                      <div className="flex justify-between text-sm text-gray-400">
+                      <div className="flex justify-between text-sm text-bodyText">
                         <span>Total Other Tax</span>
                         <span>
                           {formData.currency}. {otherTaxAmount.toFixed(2)}
@@ -765,9 +765,9 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     )}
                   </div>
 
-                  <div className="border-t border-gray-700 pt-3 flex justify-between text-lg font-bold">
+                  <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span className="text-red-500">
+                    <span className="text-brand">
                       {formData.currency}. {finalTotal.toFixed(2)}
                     </span>
                   </div>
@@ -776,16 +776,16 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
             </div>
 
             {/* ================= TERMS & CONDITIONS ================= */}
-            <div className="border-t border-gray-800 pt-6 space-y-4">
+            <div className="border-t border-gray-200 pt-6 space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-gray-300 font-semibold">
+                <h3 className="text-bodyText font-semibold">
                   Terms & Conditions
                 </h3>
 
                 <button
                   type="button"
                   onClick={addTerm}
-                  className="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm"
+                  className="bg-brand hover:bg-brand/90 px-3 py-1.5 rounded text-sm"
                 >
                   + Add Term
                 </button>
@@ -809,7 +809,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
                     <button
                       type="button"
                       onClick={() => removeTerm(i)}
-                      className="text-red-500 mt-2"
+                      className="text-brand mt-2"
                     >
                       ✕
                     </button>
@@ -819,18 +819,18 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
             </div>
 
             {/* ACTIONS */}
-            <div className="flex justify-end gap-4 border-t border-gray-800 pt-6">
+            <div className="flex justify-end gap-4 border-t border-gray-200 pt-6">
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-700 px-4 py-2 rounded"
+                className="bg-gray-100 px-4 py-2 rounded"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded"
+                className="bg-brand hover:bg-brand/90 px-5 py-2 rounded"
               >
                 {loading ? "Saving..." : "Create Quote"}
               </button>
@@ -842,8 +842,8 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
       <style jsx>{`
         .input {
           width: 100%;
-          background: #111827;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 8px 10px;
           border-radius: 6px;
         }
@@ -858,7 +858,7 @@ const AddQuoteModal = ({ onClose, onSuccess }) => {
 
 const Input = ({ label, value, onChange, type = "text", required }) => (
   <div>
-    <label className="text-sm text-gray-400 block mb-1">{label}</label>
+    <label className="text-sm text-bodyText block mb-1">{label}</label>
     <input
       type={type}
       required={required}
@@ -875,7 +875,7 @@ const Input = ({ label, value, onChange, type = "text", required }) => (
 
 const Select = ({ label, value, onChange }) => (
   <div>
-    <label className="text-sm text-gray-400 block mb-1">{label}</label>
+    <label className="text-sm text-bodyText block mb-1">{label}</label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -913,7 +913,7 @@ const EntitySelect = ({
 
   return (
     <div className="relative" ref={wrapperRef}>
-      <label className="text-sm text-gray-400 block mb-1">{label}</label>
+      <label className="text-sm text-bodyText block mb-1">{label}</label>
 
       <input
         value={value}
@@ -927,13 +927,13 @@ const EntitySelect = ({
         className={`input transition-all duration-150 ${
           disabled
             ? "opacity-50 cursor-not-allowed"
-            : "focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            : "focus:border-brand focus:ring-1 focus:ring-brand"
         }`}
       />
 
       {/* Dropdown */}
       {!disabled && open && value && options.length > 0 && (
-        <div className="absolute z-50 w-full bg-[#0f172a] border border-gray-700 rounded-xl mt-2 shadow-2xl overflow-hidden">
+        <div className="absolute z-50 w-full bg-card border border-gray-200 rounded-xl mt-2 shadow-2xl overflow-hidden">
           <div className="max-h-60 overflow-y-auto">
             {options.slice(0, 6).map((item) => (
               <div
@@ -942,11 +942,11 @@ const EntitySelect = ({
                   onSelect(item);
                   setOpen(false); // ✅ CLOSE AFTER SELECT
                 }}
-                className="px-4 py-3 hover:bg-gray-800 cursor-pointer transition border-b border-gray-800 last:border-0"
+                className="px-4 py-3 hover:bg-surface cursor-pointer transition border-b border-gray-200 last:border-0"
               >
-                <div className="font-medium text-white">{getDisplay(item)}</div>
+                <div className="font-medium text-heading">{getDisplay(item)}</div>
                 {getMeta && (
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-xs text-bodyText mt-1">
                     {getMeta(item)}
                   </div>
                 )}

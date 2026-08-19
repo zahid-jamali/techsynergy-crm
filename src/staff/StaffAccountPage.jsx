@@ -54,20 +54,20 @@ const StaffAccountsPage = () => {
     );
   }
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-red-500">Accounts</h1>
+        <h1 className="text-2xl font-bold text-brand">Accounts</h1>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold"
         >
           + Add Account
         </button>
       </div>
 
-      <div className="bg-black rounded-lg border border-gray-800 overflow-x-auto">
+      <div className="bg-card rounded-lg border border-gray-200 overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-300">
+          <thead className="bg-surface text-bodyText">
             <tr>
               <th className="px-4 py-3 text-left">Account Name</th>
               <th className="px-4 py-3 text-left">Type</th>
@@ -80,13 +80,13 @@ const StaffAccountsPage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-gray-400">
+                <td colSpan="5" className="text-center py-6 text-bodyText">
                   Loading accounts...
                 </td>
               </tr>
             ) : accounts.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-gray-400">
+                <td colSpan="5" className="text-center py-6 text-bodyText">
                   No accounts found
                 </td>
               </tr>
@@ -94,7 +94,7 @@ const StaffAccountsPage = () => {
               accounts.map((account) => (
                 <tr
                   key={account._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-200 hover:bg-surface"
                 >
                   <td onClick={() => View(account)} className="px-4 py-3">
                     {account.accountName}
@@ -114,7 +114,7 @@ const StaffAccountsPage = () => {
                         setShowModal("Edit");
                         setSelectedAccount(account);
                       }}
-                      className="text-yellow-400 hover:underline"
+                      className="text-amber-700 hover:underline"
                     >
                       Edit
                     </button>

@@ -36,24 +36,24 @@ const AdminPOToVendorPage = () => {
   }, [fetchPOs]);
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold text-red-500">
+        <h1 className="text-xl font-semibold text-brand">
           Purchase Orders (Vendors)
         </h1>
         <button
           onClick={() => setShowAdd(true)}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm"
         >
           + New PO
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-black border border-gray-800 rounded-lg">
+      <div className="bg-card border border-gray-200 rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-400">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="p-3 text-left">PO No</th>
               <th className="p-3">Subject</th>
@@ -72,13 +72,13 @@ const AdminPOToVendorPage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="p-6 text-center text-gray-400">
+                <td colSpan="6" className="p-6 text-center text-bodyText">
                   Loading...
                 </td>
               </tr>
             ) : pos.length === 0 ? (
               <tr>
-                <td colSpan="6" className="p-6 text-center text-gray-400">
+                <td colSpan="6" className="p-6 text-center text-bodyText">
                   No purchase orders found
                 </td>
               </tr>
@@ -86,7 +86,7 @@ const AdminPOToVendorPage = () => {
               pos.map((po) => (
                 <tr
                   key={po._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-200 hover:bg-surface"
                 >
                   <td className="p-3">{po.poToNumber}</td>
                   <td className="p-3">{po.subject}</td>
@@ -106,13 +106,13 @@ const AdminPOToVendorPage = () => {
                   <td className="p-3 flex gap-3">
                     <button
                       onClick={() => setViewPO(po)}
-                      className="text-blue-400 hover:underline"
+                      className="text-brand hover:underline"
                     >
                       View
                     </button>
                     <button
                       onClick={() => setEditPO(po)}
-                      className="text-yellow-400 hover:underline"
+                      className="text-amber-700 hover:underline"
                     >
                       Edit
                     </button>
@@ -124,7 +124,7 @@ const AdminPOToVendorPage = () => {
                     </button>
                     <a
                       href={`${process.env.REACT_APP_BACKEND_URL}potovendor/${po._id}/pdf`}
-                      className="text-green-400 hover:underline"
+                      className="text-emerald-700 hover:underline"
                     >
                       Download
                     </a>

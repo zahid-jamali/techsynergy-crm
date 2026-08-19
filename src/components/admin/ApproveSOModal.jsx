@@ -53,16 +53,16 @@ const ApproveSOModal = ({ order, onClose, onSuccess }) => {
   */
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-black border border-gray-800 rounded-lg w-full max-w-sm text-white shadow-xl">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-card border border-gray-200 rounded-lg w-full max-w-sm text-heading shadow-xl">
         {/* HEADER */}
 
-        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-red-500">
+        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-brand">
             Sales Order Decision
           </h2>
 
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button onClick={onClose} className="text-bodyText hover:text-heading">
             ✕
           </button>
         </div>
@@ -70,11 +70,11 @@ const ApproveSOModal = ({ order, onClose, onSuccess }) => {
         {/* BODY */}
 
         <div className="p-5 space-y-3">
-          <h2 className="text-lg font-semibold text-red-500">
+          <h2 className="text-lg font-semibold text-brand">
             {order.finalQuote?.subject || ""} -{" "}
             {order.finalQuote?.account?.accountName}
           </h2>
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-bodyText">
             Please choose an action for this Sales Order.
           </p>
 
@@ -87,11 +87,11 @@ const ApproveSOModal = ({ order, onClose, onSuccess }) => {
 
         {/* FOOTER */}
 
-        <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-800">
+        <div className="flex justify-end gap-3 px-5 py-4 border-t border-gray-200">
           <button
             onClick={onClose}
             disabled={loading}
-            className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded"
+            className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded"
           >
             Cancel
           </button>
@@ -99,7 +99,7 @@ const ApproveSOModal = ({ order, onClose, onSuccess }) => {
           <button
             onClick={() => handleAction("Rejected")}
             disabled={loading}
-            className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded"
+            className="bg-gray-600 hover:bg-gray-100 px-4 py-2 rounded"
           >
             {loading ? "Processing..." : "Reject"}
           </button>
@@ -107,7 +107,7 @@ const ApproveSOModal = ({ order, onClose, onSuccess }) => {
           <button
             onClick={() => handleAction("Accepted")}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
           >
             {loading ? "Processing..." : "Approve"}
           </button>

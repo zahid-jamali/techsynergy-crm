@@ -16,7 +16,7 @@ import { useState } from "react";
 import ViewDealModal from "../../staff/deals/ViewDealModal";
 import DealsAnalyticsModal from "../../staff/charts/DealsAnalyticsModal";
 
-const COLORS = ["#ef4444", "#dc2626", "#b91c1c", "#7f1d1d"];
+const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
 
 const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
   const [showModal, setShowModal] = useState("");
@@ -33,15 +33,15 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
 
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-semibold text-white">
+          <h2 className="text-xl font-semibold text-heading">
             Deals Performance
           </h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-bodyText">
             Pipeline insights and deal analytics
           </p>
         </div>
 
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-bodyText">
           {filteredDeals.length} Deals • PKR {totalAmount.toLocaleString()}
         </div>
       </div>
@@ -53,13 +53,13 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={dealsByAmount}>
               <CartesianGrid stroke="#1f1f1f" />
-              <XAxis dataKey="dealName" stroke="#aaa" />
-              <YAxis stroke="#aaa" />
+              <XAxis dataKey="dealName" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
               <Tooltip />
               <Line
                 type="monotone"
                 dataKey="amount"
-                stroke="#ef4444"
+                stroke="#021d54"
                 strokeWidth={3}
                 dot={{ r: 4 }}
               />
@@ -89,20 +89,20 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
 
       {/* TABLE */}
 
-      <div className="bg-[#0c0c0c] border border-gray-800 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
-          <h3 className="font-semibold text-white text-sm tracking-wide">
+      <div className="bg-card border border-gray-200 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <h3 className="font-semibold text-heading text-sm tracking-wide">
             Deals List
           </h3>
 
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-bodyText">
               Showing {filteredDeals.length} deals
             </span>
 
             <button
               onClick={() => setShowModal("Analytics")}
-              className="flex items-center gap-2 text-sm px-3 py-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-md text-gray-300 hover:text-white transition"
+              className="flex items-center gap-2 text-sm px-3 py-1.5 bg-card hover:bg-surface border border-gray-200 rounded-md text-bodyText hover:text-heading transition"
             >
               Show Analytics
             </button>
@@ -111,7 +111,7 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
 
         <div className="overflow-x-auto max-h-[600px]">
           <table className="w-full text-sm">
-            <thead className="bg-black text-gray-400 uppercase text-xs tracking-wider sticky top-0">
+            <thead className="bg-card text-bodyText uppercase text-xs tracking-wider sticky top-0">
               <tr>
                 <th className="px-6 py-3 text-left">Deal</th>
                 <th className="px-6 py-3 text-left">Account</th>
@@ -125,21 +125,21 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-gray-100">
               {filteredDeals.map((deal) => (
                 <tr
                   key={deal._id}
-                  className="hover:bg-[#151515] transition group cursor-pointer"
+                  className="hover:bg-surface transition group cursor-pointer"
                   onClick={() => {
                     setSelectedDeal(deal);
                     setShowModal("View");
                   }}
                 >
-                  <td className="px-6 py-4 font-medium text-white">
+                  <td className="px-6 py-4 font-medium text-heading">
                     {deal.dealName}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {deal.account?.accountName}
                   </td>
 
@@ -151,19 +151,19 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
                     {deal.amount?.toLocaleString() || 0} {deal.currency}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {deal.contact?.firstName} {deal.contact?.lastName}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {new Date(deal.closingDate).toLocaleDateString()}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {deal.probability}%
                   </td>
 
-                  <td className="px-6 py-4 text-gray-300">
+                  <td className="px-6 py-4 text-bodyText">
                     {deal.dealOwner?.name}
                   </td>
 
@@ -175,21 +175,21 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
                   >
                     <button
                       onClick={() => onView(deal)}
-                      className="text-blue-400 hover:text-blue-300"
+                      className="text-brand hover:text-blue-300"
                     >
                       <Eye size={16} />
                     </button>
 
                     <button
                       onClick={() => onPipeline(deal)}
-                      className="text-purple-400 hover:text-purple-300"
+                      className="text-bodyText hover:text-purple-300"
                     >
                       <Workflow size={16} />
                     </button>
 
                     <button
                       onClick={() => onEdit(deal)}
-                      className="text-yellow-400 hover:text-yellow-300"
+                      className="text-amber-700 hover:text-yellow-300"
                     >
                       <Pencil size={16} />
                     </button>
@@ -222,25 +222,25 @@ const DealsTab = ({ filteredDeals, dealsByAmount, dealsByStage }) => {
 export default DealsTab;
 
 const ChartCard = ({ title, children }) => (
-  <div className="bg-[#111] border border-white/10 rounded-xl p-6">
-    <h3 className="text-white font-semibold mb-5">{title}</h3>
+  <div className="bg-card border border-gray-200 rounded-xl p-6">
+    <h3 className="text-heading font-semibold mb-5">{title}</h3>
     {children}
   </div>
 );
 
 const StageBadge = ({ stage }) => {
   const colors = {
-    Qualification: "bg-blue-500/10 text-blue-400",
-    Proposal: "bg-yellow-500/10 text-yellow-400",
-    Negotiation: "bg-purple-500/10 text-purple-400",
-    "Closed Won": "bg-green-500/10 text-green-400",
-    "Closed Lost": "bg-red-500/10 text-red-400",
+    Qualification: "bg-blue-500/10 text-brand",
+    Proposal: "bg-yellow-500/10 text-amber-700",
+    Negotiation: "bg-purple-500/10 text-bodyText",
+    "Closed Won": "bg-green-500/10 text-emerald-700",
+    "Closed Lost": "bg-brand/10 text-red-400",
   };
 
   return (
     <span
       className={`px-3 py-1 rounded-full text-xs font-medium ${
-        colors[stage] || "bg-gray-700 text-gray-300"
+        colors[stage] || "bg-gray-100 text-bodyText"
       }`}
     >
       {stage}

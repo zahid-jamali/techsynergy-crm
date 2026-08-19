@@ -3,41 +3,20 @@ const Loading = () => {
     <>
       <style>{`
           .loader {
-            width: 64px;
-            height: 64px;
-            position: relative;
-            animation: rotate 1.5s ease-in infinite alternate;
+            width: 48px;
+            height: 48px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #021d54;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
           }
-  
-          .loader::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            color: #ff3d00;
-            background: currentColor;
-            width: 64px;
-            height: 32px;
-            border-radius: 0 0 50px 50px;
-          }
-  
-          .loader::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 10%;
-            background: #fff;
-            width: 8px;
-            height: 64px;
-            animation: rotate 1.2s linear infinite alternate-reverse;
-          }
-  
-          @keyframes rotate {
-            100% { transform: rotate(360deg); }
+
+          @keyframes spin {
+            to { transform: rotate(360deg); }
           }
         `}</style>
 
-      <span className="loader"></span>
+      <span className="loader" aria-label="Loading" />
     </>
   );
 };

@@ -4,29 +4,29 @@ const ViewDealModal = ({ deal, onClose }) => {
   const stageColor = (stage) => {
     switch (stage) {
       case "Closed Won":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
+        return "bg-emerald-50 text-emerald-700 border-green-500/30";
       case "Closed Lost":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
+        return "bg-red-50 text-red-400 border-brand/20";
       case "Proposal/Price Quote":
-        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
+        return "bg-gray-100 text-bodyText border-purple-500/30";
       case "Qualification":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+        return "bg-brand/10 text-brand border-blue-500/30";
       default:
-        return "bg-gray-700/30 text-gray-300 border-gray-600";
+        return "bg-gray-100/30 text-bodyText border-gray-200";
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-md z-50 overflow-y-auto">
       <div className="flex justify-center px-6 py-10">
-        <div className="bg-[#0f172a] border border-gray-800 rounded-2xl w-full max-w-5xl text-white shadow-2xl overflow-hidden">
+        <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-5xl text-heading shadow-2xl overflow-hidden">
           {/* ================= HEADER ================= */}
-          <div className="px-8 py-6 border-b border-gray-800 bg-gradient-to-r from-[#0f172a] to-[#111827]">
+          <div className="px-8 py-6 border-b border-gray-200 bg-surface">
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-2xl font-semibold">{deal.dealName}</h2>
 
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-bodyText mt-1">
                   {deal.account?.accountName || "No Account"}
                 </p>
 
@@ -41,13 +41,13 @@ const ViewDealModal = ({ deal, onClose }) => {
 
                   {/* Probability Progress */}
                   <div className="flex items-center gap-3">
-                    <div className="w-40 bg-gray-800 h-2 rounded-full">
+                    <div className="w-40 bg-surface h-2 rounded-full">
                       <div
-                        className="bg-red-500 h-2 rounded-full transition-all"
+                        className="bg-brand h-2 rounded-full transition-all"
                         style={{ width: `${deal.probability || 0}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-bodyText">
                       {deal.probability || 0}%
                     </span>
                   </div>
@@ -56,7 +56,7 @@ const ViewDealModal = ({ deal, onClose }) => {
 
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-white transition text-lg"
+                className="text-bodyText hover:text-heading transition text-lg"
               >
                 ✕
               </button>
@@ -130,7 +130,7 @@ const ViewDealModal = ({ deal, onClose }) => {
             <div>
               <SectionTitle title="Description" />
 
-              <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-6 text-sm text-gray-300 leading-relaxed">
+              <div className="bg-card/60 border border-gray-200 rounded-xl p-6 text-sm text-bodyText leading-relaxed">
                 {deal.description || "No additional details provided."}
               </div>
             </div>
@@ -144,15 +144,15 @@ const ViewDealModal = ({ deal, onClose }) => {
 /* ================= COMPONENTS ================= */
 
 const KpiCard = ({ label, value }) => (
-  <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-6 hover:border-red-500/40 transition">
-    <p className="text-xs text-gray-400 uppercase tracking-wider">{label}</p>
+  <div className="bg-card/60 border border-gray-200 rounded-xl p-6 hover:border-brand/20 transition">
+    <p className="text-xs text-bodyText uppercase tracking-wider">{label}</p>
     <p className="text-2xl font-bold mt-3">{value || "-"}</p>
   </div>
 );
 
 const InfoBlock = ({ label, children }) => (
   <div>
-    <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+    <p className="text-xs text-bodyText uppercase tracking-wider mb-1">
       {label}
     </p>
     <p className="text-sm font-medium">{children || "-"}</p>
@@ -160,7 +160,7 @@ const InfoBlock = ({ label, children }) => (
 );
 
 const SectionTitle = ({ title }) => (
-  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-800 pb-2">
+  <h3 className="text-sm font-semibold text-bodyText uppercase tracking-wider border-b border-gray-200 pb-2">
     {title}
   </h3>
 );

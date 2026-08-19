@@ -55,22 +55,22 @@ const StaffContactsPage = () => {
   }
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-red-500">Contacts</h1>
+        <h1 className="text-2xl font-bold text-brand">Contacts</h1>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold"
         >
           + Add Contact
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-black border border-gray-800 rounded-lg overflow-x-auto">
+      <div className="bg-card border border-gray-200 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-300">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="px-4 py-3 text-left">Name</th>
               <th className="px-4 py-3 text-left">Email</th>
@@ -83,13 +83,13 @@ const StaffContactsPage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-gray-400">
+                <td colSpan="5" className="text-center py-6 text-bodyText">
                   Loading contacts...
                 </td>
               </tr>
             ) : contacts.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-gray-400">
+                <td colSpan="5" className="text-center py-6 text-bodyText">
                   No contacts found
                 </td>
               </tr>
@@ -97,7 +97,7 @@ const StaffContactsPage = () => {
               contacts.map((c) => (
                 <tr
                   key={c._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-200 hover:bg-surface"
                 >
                   <td onClick={() => View(c)} className="px-4 py-3">
                     {c.firstName} {c.lastName}
@@ -123,7 +123,7 @@ const StaffContactsPage = () => {
                         setShowModal("Edit");
                         setSelectedContact(c);
                       }}
-                      className="text-yellow-400 hover:underline"
+                      className="text-amber-700 hover:underline"
                     >
                       Edit
                     </button>

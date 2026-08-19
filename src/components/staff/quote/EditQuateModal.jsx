@@ -229,11 +229,11 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
   /* ================= UI ================= */
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-md z-50 overflow-y-auto">
       <div className="flex justify-center px-6 py-10">
-        <div className="bg-black border border-gray-800 rounded-2xl w-full max-w-7xl text-white shadow-2xl">
-          <div className="flex justify-between items-center px-8 py-5 border-b border-gray-800">
-            <h2 className="text-2xl font-semibold text-red-500">Edit Quote</h2>
+        <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-7xl text-heading shadow-2xl">
+          <div className="flex justify-between items-center px-8 py-5 border-b border-gray-200">
+            <h2 className="text-2xl font-semibold text-brand">Edit Quote</h2>
             <button onClick={onClose}>✕</button>
           </div>
 
@@ -297,12 +297,12 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
             <div className="grid grid-cols-4 gap-8">
               <div className="col-span-3 space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-gray-300 font-semibold">Products</h3>
+                  <h3 className="text-bodyText font-semibold">Products</h3>
 
                   <button
                     type="button"
                     onClick={addProduct}
-                    className="bg-red-600 px-3 py-1 rounded text-sm"
+                    className="bg-brand px-3 py-1 rounded text-sm"
                   >
                     + Add Product
                   </button>
@@ -311,7 +311,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                 {formData.products.map((p, i) => (
                   <div
                     key={i}
-                    className="bg-[#0f172a] border border-gray-800 rounded-xl p-5"
+                    className="bg-card border border-gray-200 rounded-xl p-5"
                   >
                     <div className="grid grid-cols-12 gap-3 mb-4">
                       <input
@@ -353,15 +353,15 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                       <button
                         type="button"
                         onClick={() => removeProduct(i)}
-                        className="col-span-1 text-red-500"
+                        className="col-span-1 text-brand"
                       >
                         ✕
                       </button>
                     </div>
 
-                    <div className="mt-3 border-t border-gray-800 pt-3">
+                    <div className="mt-3 border-t border-gray-200 pt-3">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs text-gray-400">Tax</span>
+                        <span className="text-xs text-bodyText">Tax</span>
 
                         <button
                           type="button"
@@ -373,7 +373,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                             ];
                             setFormData({ ...formData, products: updated });
                           }}
-                          className="text-xs text-red-500"
+                          className="text-xs text-brand"
                         >
                           + Add
                         </button>
@@ -383,7 +383,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                         {(p.Tax || []).map((t, ti) => (
                           <div
                             key={ti}
-                            className="flex items-center gap-2 text-xs bg-black/40 px-2 py-1.5 rounded border border-gray-800"
+                            className="flex items-center gap-2 text-xs bg-surface px-2 py-1.5 rounded border border-gray-200"
                           >
                             {/* SELECT */}
                             <select
@@ -406,7 +406,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
 
                                 setFormData({ ...formData, products: updated });
                               }}
-                              className="bg-[#111827] border border-gray-700 rounded px-2 py-1 flex-1 focus:border-red-500"
+                              className="bg-card border border-gray-200 rounded px-2 py-1 flex-1 focus:border-brand"
                             >
                               <option value="">Tax</option>
                               {TAX_OPTIONS.map((opt) => (
@@ -430,7 +430,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                                     products: updated,
                                   });
                                 }}
-                                className="bg-[#111827] border border-gray-700 rounded px-2 py-1 w-24"
+                                className="bg-card border border-gray-200 rounded px-2 py-1 w-24"
                               />
                             )}
 
@@ -444,14 +444,14 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                                 updated[i].Tax[ti].percent = e.target.value;
                                 setFormData({ ...formData, products: updated });
                               }}
-                              className={`bg-[#111827] border border-gray-700 rounded px-1 text-center w-14 ${
+                              className={`bg-card border border-gray-200 rounded px-1 text-center w-14 ${
                                 t.tax !== "Custom"
                                   ? "opacity-60 cursor-not-allowed"
                                   : ""
                               }`}
                             />
 
-                            <span className="text-gray-400">%</span>
+                            <span className="text-bodyText">%</span>
 
                             {/* REMOVE */}
                             <button
@@ -463,7 +463,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                                 );
                                 setFormData({ ...formData, products: updated });
                               }}
-                              className="text-red-500"
+                              className="text-brand"
                             >
                               ✕
                             </button>
@@ -472,7 +472,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                       </div>
 
                       {(p.Tax || []).length > 0 && (
-                        <div className="flex justify-between text-xs text-gray-400 mt-2">
+                        <div className="flex justify-between text-xs text-bodyText mt-2">
                           <span>Tax Total</span>
                           <span>
                             {formData.currency}{" "}
@@ -506,22 +506,22 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
               {/* SUMMARY */}
 
               <div className="col-span-1">
-                <div className="sticky top-6 bg-[#0f172a] border border-gray-800 rounded-xl p-6 space-y-5">
-                  <div className="flex justify-between text-sm text-gray-400">
+                <div className="sticky top-6 bg-card border border-gray-200 rounded-xl p-6 space-y-5">
+                  <div className="flex justify-between text-sm text-bodyText">
                     <span>Subtotal</span>
                     <span>
                       {formData.currency} {subtotal.toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="border-t border-gray-700 pt-4 space-y-3">
+                  <div className="border-t border-gray-200 pt-4 space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400">Other Taxes</span>
+                      <span className="text-sm text-bodyText">Other Taxes</span>
 
                       <button
                         type="button"
                         onClick={addOtherTax}
-                        className="text-xs text-red-500"
+                        className="text-xs text-brand"
                       >
                         + Add Tax
                       </button>
@@ -530,7 +530,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                     {formData.otherTax.map((t, i) => (
                       <div
                         key={i}
-                        className="space-y-2 bg-black/40 p-3 rounded-lg border border-gray-800"
+                        className="space-y-2 bg-surface p-3 rounded-lg border border-gray-200"
                       >
                         <div className="flex gap-2">
                           <input
@@ -555,14 +555,14 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                           <button
                             type="button"
                             onClick={() => removeOtherTax(i)}
-                            className="text-red-500 text-xs"
+                            className="text-brand text-xs"
                           >
                             ✕
                           </button>
                         </div>
 
                         {Number(t.percent) > 0 && (
-                          <div className="flex justify-between text-xs text-gray-400">
+                          <div className="flex justify-between text-xs text-bodyText">
                             <span>
                               {t.tax || "Tax"} ({t.percent}%)
                             </span>
@@ -577,7 +577,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                     ))}
 
                     {taxAmount > 0 && (
-                      <div className="flex justify-between text-sm text-gray-400">
+                      <div className="flex justify-between text-sm text-bodyText">
                         <span>Total Tax</span>
                         <span>
                           {formData.currency} {taxAmount.toFixed(2)}
@@ -586,10 +586,10 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
                     )}
                   </div>
 
-                  <div className="border-t border-gray-700 pt-4 flex justify-between text-lg font-bold">
+                  <div className="border-t border-gray-200 pt-4 flex justify-between text-lg font-bold">
                     <span>Total</span>
 
-                    <span className="text-red-500">
+                    <span className="text-brand">
                       {formData.currency} {grandTotal.toFixed(2)}
                     </span>
                   </div>
@@ -600,7 +600,7 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
             {/* TERMS */}
 
             <div>
-              <h3 className="text-gray-300 font-semibold mb-4">
+              <h3 className="text-bodyText font-semibold mb-4">
                 Terms & Conditions
               </h3>
 
@@ -616,22 +616,22 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
               <button
                 type="button"
                 onClick={addTerm}
-                className="bg-red-600 px-4 py-2 rounded"
+                className="bg-brand px-4 py-2 rounded"
               >
                 + Add Term
               </button>
             </div>
 
-            <div className="flex justify-end gap-4 border-t border-gray-800 pt-6">
+            <div className="flex justify-end gap-4 border-t border-gray-200 pt-6">
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-700 px-4 py-2 rounded"
+                className="bg-gray-100 px-4 py-2 rounded"
               >
                 Cancel
               </button>
 
-              <button type="submit" className="bg-red-600 px-6 py-2 rounded">
+              <button type="submit" className="bg-brand px-6 py-2 rounded">
                 Save Changes
               </button>
             </div>
@@ -642,16 +642,16 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
       <style jsx>{`
         .input {
           width: 100%;
-          background: #111827;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 10px 12px;
           border-radius: 8px;
         }
 
         .input:focus {
           outline: none;
-          border-color: #dc2626;
-          box-shadow: 0 0 0 1px #dc2626;
+          border-color: #1e4a8a;
+          box-shadow: 0 0 0 1px #1e4a8a;
         }
       `}</style>
     </div>

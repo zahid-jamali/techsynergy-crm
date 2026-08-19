@@ -80,18 +80,18 @@ export default function StaffUpdateProfile() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto text-white">
-      <h1 className="text-2xl font-bold mb-6">Update Profile</h1>
+    <div className="max-w-3xl mx-auto text-heading">
+      <h1 className="page-title mb-6">Update Profile</h1>
 
       {/* Alerts */}
       {error && (
-        <div className="mb-4 bg-red-950 border border-red-800 text-red-400 px-4 py-2 rounded">
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 bg-green-950 border border-green-800 text-green-400 px-4 py-2 rounded">
+        <div className="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2 rounded">
           {success}
         </div>
       )}
@@ -99,47 +99,47 @@ export default function StaffUpdateProfile() {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-6"
+        className="bg-card border border-gray-200 rounded-lg p-6 space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Name */}
           <div>
-            <label className="block text-sm text-gray-300 mb-1">Name</label>
+            <label className="block text-sm text-bodyText mb-1">Name</label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full bg-zinc-800 border border-zinc-700 px-3 py-2 rounded"
+              className="w-full bg-surface border border-gray-200 px-3 py-2 rounded"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm text-gray-300 mb-1">Email</label>
+            <label className="block text-sm text-bodyText mb-1">Email</label>
             <input
               name="email"
               type="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full bg-zinc-800 border border-zinc-700 px-3 py-2 rounded"
+              className="w-full bg-surface border border-gray-200 px-3 py-2 rounded"
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm text-gray-300 mb-1">Phone</label>
+            <label className="block text-sm text-bodyText mb-1">Phone</label>
             <input
               name="phone"
               value={form.phone}
               onChange={handleChange}
-              className="w-full bg-zinc-800 border border-zinc-700 px-3 py-2 rounded"
+              className="w-full bg-surface border border-gray-200 px-3 py-2 rounded"
             />
           </div>
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-sm text-gray-300 mb-1">
+          <label className="block text-sm text-bodyText mb-1">
             New Password
           </label>
           <input
@@ -148,7 +148,7 @@ export default function StaffUpdateProfile() {
             placeholder="Leave blank to keep current password"
             value={form.password}
             onChange={handleChange}
-            className="w-full bg-zinc-800 border border-zinc-700 px-3 py-2 rounded"
+            className="w-full bg-surface border border-gray-200 px-3 py-2 rounded"
           />
           <p className="text-xs text-gray-500 mt-1">
             Optional — only fill if you want to change your password
@@ -158,7 +158,7 @@ export default function StaffUpdateProfile() {
         {/* Submit */}
         <button
           disabled={loading}
-          className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded font-semibold disabled:opacity-60"
+          className="btn-primary disabled:opacity-60"
         >
           {loading ? "Updating..." : "Save Changes"}
         </button>

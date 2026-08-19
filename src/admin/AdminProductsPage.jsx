@@ -95,15 +95,15 @@ const AdminProductsPage = () => {
   };
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
-      <h1 className="text-xl font-semibold text-red-500 mb-6">
+      <h1 className="text-xl font-semibold text-brand mb-6">
         Product Management
       </h1>
 
       {/* Create Product */}
-      <div className="bg-black border border-gray-800 rounded-lg p-5 mb-6">
-        <h2 className="text-sm font-semibold mb-4 text-gray-300">
+      <div className="bg-card border border-gray-200 rounded-lg p-5 mb-6">
+        <h2 className="text-sm font-semibold mb-4 text-bodyText">
           Add New Product
         </h2>
 
@@ -116,7 +116,7 @@ const AdminProductsPage = () => {
             placeholder="Product title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+            className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
           />
 
           <input
@@ -124,7 +124,7 @@ const AdminProductsPage = () => {
             placeholder="Previous Quote Price"
             value={previousQuotePrice}
             onChange={(e) => setPreviousQuotePrice(e.target.value)}
-            className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+            className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
           />
 
           <input
@@ -132,12 +132,12 @@ const AdminProductsPage = () => {
             placeholder="Previous Vendor Price"
             value={previousVenderPrice}
             onChange={(e) => setPreviousVenderPrice(e.target.value)}
-            className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+            className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
           />
 
           <button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm"
+            className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm"
           >
             Add
           </button>
@@ -147,9 +147,9 @@ const AdminProductsPage = () => {
       </div>
 
       {/* Products Table */}
-      <div className="bg-black border border-gray-800 rounded-lg">
+      <div className="bg-card border border-gray-200 rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-400">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="p-3 text-left">Title</th>
               <th className="p-3">Prev Quote Price</th>
@@ -161,13 +161,13 @@ const AdminProductsPage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="4" className="p-6 text-center text-gray-400">
+                <td colSpan="4" className="p-6 text-center text-bodyText">
                   Loading...
                 </td>
               </tr>
             ) : products.length === 0 ? (
               <tr>
-                <td colSpan="4" className="p-6 text-center text-gray-400">
+                <td colSpan="4" className="p-6 text-center text-bodyText">
                   No products found
                 </td>
               </tr>
@@ -175,7 +175,7 @@ const AdminProductsPage = () => {
               products.map((p) => (
                 <tr
                   key={p._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-200 hover:bg-surface"
                 >
                   <td className="p-3">{p.title}</td>
                   <td className="p-3">{p.previousQuotePrice ?? "-"}</td>

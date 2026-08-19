@@ -284,25 +284,25 @@ PO FILE HANDLING
   */
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-6 py-10">
-        <div className="bg-[#020617] border border-gray-800 rounded-2xl w-full max-w-7xl text-white shadow-2xl">
+        <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-7xl text-heading shadow-2xl">
           {/* HEADER */}
 
-          <div className="flex justify-between items-center px-8 py-5 border-b border-gray-800">
+          <div className="flex justify-between items-center px-8 py-5 border-b border-gray-200">
             <div>
-              <h2 className="text-2xl font-bold text-red-500">
+              <h2 className="text-2xl font-bold text-brand">
                 Create Sales Order
               </h2>
 
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-bodyText mt-1">
                 Generate order from confirmed quotation
               </p>
             </div>
 
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-xl"
+              className="text-bodyText hover:text-heading text-xl"
             >
               ✕
             </button>
@@ -312,12 +312,12 @@ PO FILE HANDLING
             {/* LOADING */}
 
             {fetching && (
-              <div className="text-gray-400">
+              <div className="text-bodyText">
                 Loading confirmed quotations...
               </div>
             )}
 
-            {error && <div className="text-red-500">{error}</div>}
+            {error && <div className="text-brand">{error}</div>}
 
             {/* QUOTE SELECT */}
 
@@ -341,14 +341,14 @@ PO FILE HANDLING
 
             {formData.products.length > 0 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-300">
+                <h3 className="text-lg font-semibold text-bodyText">
                   Products
                 </h3>
 
-                <div className="overflow-x-auto border border-gray-800 rounded-xl">
+                <div className="overflow-x-auto border border-gray-200 rounded-xl">
                   <table className="w-full text-sm">
-                    <thead className="bg-[#020617] border-b border-gray-800">
-                      <tr className="text-left text-gray-400">
+                    <thead className="bg-card border-b border-gray-200">
+                      <tr className="text-left text-bodyText">
                         <th className="p-3">Product</th>
 
                         <th className="p-3">Description</th>
@@ -381,7 +381,7 @@ PO FILE HANDLING
                             {/* MAIN ROW */}
                             <tr
                               key={`row-${i}`}
-                              className="border-b border-gray-800 hover:bg-[#020617]"
+                              className="border-b border-gray-200 hover:bg-card"
                             >
                               <td className="p-3 font-medium">
                                 {p.productName}
@@ -434,7 +434,7 @@ PO FILE HANDLING
                                   {(amount + productTax).toFixed(2)}
                                 </div>
 
-                                <div className="text-xs text-gray-400">
+                                <div className="text-xs text-bodyText">
                                   Tax: {productTax.toFixed(2)}
                                 </div>
                               </td>
@@ -443,7 +443,7 @@ PO FILE HANDLING
                                 <button
                                   type="button"
                                   onClick={() => removeProduct(i)}
-                                  className="text-red-500"
+                                  className="text-brand"
                                 >
                                   ✕
                                 </button>
@@ -451,13 +451,13 @@ PO FILE HANDLING
                             </tr>
 
                             {/* TAX ROW */}
-                            <tr key={`tax-${i}`} className="bg-black/30">
+                            <tr key={`tax-${i}`} className="bg-surface">
                               <td colSpan="6" className="px-3 pb-3 pt-2">
                                 <div className="flex flex-wrap gap-2 items-center">
                                   {(p.Tax || []).map((t, ti) => (
                                     <div
                                       key={ti}
-                                      className="flex items-center gap-1 bg-gray-900 px-2 py-1 rounded text-xs border border-gray-800"
+                                      className="flex items-center gap-1 bg-card px-2 py-1 rounded text-xs border border-gray-200"
                                     >
                                       <input
                                         placeholder="Tax"
@@ -508,7 +508,7 @@ PO FILE HANDLING
                                             products: updated,
                                           });
                                         }}
-                                        className="text-red-500"
+                                        className="text-brand"
                                       >
                                         ✕
                                       </button>
@@ -528,7 +528,7 @@ PO FILE HANDLING
                                         products: updated,
                                       });
                                     }}
-                                    className="text-xs text-red-500"
+                                    className="text-xs text-brand"
                                   >
                                     + Add Tax
                                   </button>
@@ -549,7 +549,7 @@ PO FILE HANDLING
                 {/* PURCHASE ORDER */}
 
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-300">
+                  <h3 className="text-lg font-semibold text-bodyText">
                     Purchase Order
                   </h3>
 
@@ -560,13 +560,13 @@ PO FILE HANDLING
                   />
 
                   {purchaseOrderFile && (
-                    <div className="flex justify-between items-center bg-gray-900 p-2 rounded">
+                    <div className="flex justify-between items-center bg-card p-2 rounded">
                       <span className="text-sm">{purchaseOrderFile.name}</span>
 
                       <button
                         type="button"
                         onClick={() => setPurchaseOrderFile(null)}
-                        className="text-red-500 hover:text-red-400"
+                        className="text-brand hover:text-red-400"
                       >
                         Remove
                       </button>
@@ -578,14 +578,14 @@ PO FILE HANDLING
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-semibold text-gray-400">
+                    <h3 className="text-sm font-semibold text-bodyText">
                       Order Tax
                     </h3>
 
                     <button
                       type="button"
                       onClick={addTax}
-                      className="text-xs text-red-500"
+                      className="text-xs text-brand"
                     >
                       + Add
                     </button>
@@ -595,7 +595,7 @@ PO FILE HANDLING
                     {formData.otherTax.map((t, i) => (
                       <div
                         key={i}
-                        className="grid grid-cols-[1fr_80px_30px] items-center gap-2 bg-black/40 px-3 py-2 rounded border border-gray-800 text-xs"
+                        className="grid grid-cols-[1fr_80px_30px] items-center gap-2 bg-surface px-3 py-2 rounded border border-gray-200 text-xs"
                       >
                         {/* TAX NAME */}
                         <input
@@ -615,14 +615,14 @@ PO FILE HANDLING
                             }
                             className="input w-full text-center"
                           />
-                          <span className="text-gray-400">%</span>
+                          <span className="text-bodyText">%</span>
                         </div>
 
                         {/* REMOVE */}
                         <button
                           type="button"
                           onClick={() => removeTax(i)}
-                          className="text-red-500 text-center"
+                          className="text-brand text-center"
                         >
                           ✕
                         </button>
@@ -637,7 +637,7 @@ PO FILE HANDLING
 
             {formData.products.length > 0 && (
               <div className="flex justify-end">
-                <div className="bg-[#020617] border border-gray-800 rounded-xl p-6 w-80 space-y-3">
+                <div className="bg-card border border-gray-200 rounded-xl p-6 w-80 space-y-3">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
                     <span>
@@ -652,7 +652,7 @@ PO FILE HANDLING
                     </span>
                   </div>
 
-                  <div className="border-t border-gray-700 pt-3 flex justify-between font-bold text-red-500 text-lg">
+                  <div className="border-t border-gray-200 pt-3 flex justify-between font-bold text-brand text-lg">
                     <span>Grand Total</span>
                     <span>
                       {formData.currency} {grandTotal.toFixed(2)}
@@ -664,11 +664,11 @@ PO FILE HANDLING
 
             {/* ACTIONS */}
 
-            <div className="flex justify-end gap-4 border-t border-gray-800 pt-6">
+            <div className="flex justify-end gap-4 border-t border-gray-200 pt-6">
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-lg"
+                className="bg-gray-100 hover:bg-gray-200 px-5 py-2 rounded-lg"
               >
                 Cancel
               </button>
@@ -676,7 +676,7 @@ PO FILE HANDLING
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold"
+                className="bg-brand hover:bg-brand/90 px-6 py-2 rounded-lg font-semibold"
               >
                 {loading ? "Creating Order..." : "Create Order"}
               </button>
@@ -688,16 +688,16 @@ PO FILE HANDLING
       <style jsx>{`
         .input {
           width: 100%;
-          background: #020617;
-          border: 1px solid #374151;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
           padding: 8px 10px;
           border-radius: 6px;
-          color: white;
+          color: #111827;
         }
 
         .input:focus {
           outline: none;
-          border-color: #ef4444;
+          border-color: #021d54;
         }
       `}</style>
     </div>
@@ -740,7 +740,7 @@ const EntitySelect = ({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <label className="text-sm text-gray-400 block mb-1">{label}</label>
+      <label className="text-sm text-bodyText block mb-1">{label}</label>
 
       <input
         value={value}
@@ -755,7 +755,7 @@ const EntitySelect = ({
       />
 
       {open && value && options.length > 0 && (
-        <div className="absolute z-50 w-full bg-[#020617] border border-gray-700 rounded-xl mt-2 shadow-2xl">
+        <div className="absolute z-50 w-full bg-card border border-gray-200 rounded-xl mt-2 shadow-2xl">
           <div className="max-h-60 overflow-y-auto">
             {options.slice(0, 6).map((item) => (
               <div
@@ -764,12 +764,12 @@ const EntitySelect = ({
                   onSelect(item);
                   setOpen(false);
                 }}
-                className="px-4 py-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800"
+                className="px-4 py-3 hover:bg-surface cursor-pointer border-b border-gray-200"
               >
-                <div className="font-medium text-white">{getDisplay(item)}</div>
+                <div className="font-medium text-heading">{getDisplay(item)}</div>
 
                 {getMeta && (
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-xs text-bodyText mt-1">
                     {getMeta(item)}
                   </div>
                 )}

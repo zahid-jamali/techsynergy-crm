@@ -82,7 +82,7 @@ const StaffQuotePage = () => {
   }
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold">Quotes</h1>
@@ -90,26 +90,26 @@ const StaffQuotePage = () => {
           onClick={() => {
             setShowModal("Add");
           }}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded"
         >
           + New Quote
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-black border border-gray-800 rounded-lg p-4 mb-6 flex flex-wrap gap-4 items-center">
+      <div className="bg-card border border-gray-200 rounded-lg p-4 mb-6 flex flex-wrap gap-4 items-center">
         <input
           type="text"
           placeholder="Search subject or account..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-white w-64 focus:outline-none focus:border-red-500"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm text-heading w-64 focus:outline-none focus:border-brand"
         />
 
         <select
           value={stageFilter}
           onChange={(e) => setStageFilter(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
         >
           <option value="all">All Stages</option>
           <option value="Draft">Draft</option>
@@ -124,8 +124,8 @@ const StaffQuotePage = () => {
           onClick={() => setShowAll((prev) => !prev)}
           className={`px-4 py-2 rounded text-sm border ${
             showAll
-              ? "bg-red-600 border-red-600"
-              : "bg-gray-900 border-gray-700"
+              ? "bg-brand border-red-600"
+              : "bg-card border-gray-200"
           }`}
         >
           {showAll ? "Hide Closed Quotes" : "Show All"}
@@ -133,9 +133,9 @@ const StaffQuotePage = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-black border border-gray-800 rounded">
+      <div className="bg-card border border-gray-200 rounded">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-400">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="p-3 text-left">Subject</th>
               <th className="p-3">Deal</th>
@@ -150,13 +150,13 @@ const StaffQuotePage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="p-6 text-center text-gray-400">
+                <td colSpan="6" className="p-6 text-center text-bodyText">
                   Loading...
                 </td>
               </tr>
             ) : filteredQuotes.length === 0 ? (
               <tr>
-                <td colSpan="6" className="p-6 text-center text-gray-400">
+                <td colSpan="6" className="p-6 text-center text-bodyText">
                   No quotes found
                 </td>
               </tr>
@@ -164,7 +164,7 @@ const StaffQuotePage = () => {
               filteredQuotes.map((q) => (
                 <tr
                   key={q._id}
-                  className="border-t border-gray-800 hover:bg-gray-900"
+                  className="border-t border-gray-200 hover:bg-surface"
                 >
                   <td onClick={() => View(q)} className="p-3">
                     {q.subject}
@@ -191,7 +191,7 @@ const StaffQuotePage = () => {
                   <td className="p-3 flex gap-2">
                     {/* <button
                       onClick={}
-                      className="text-blue-400 hover:underline"
+                      className="text-brand hover:underline"
                     >
                       View
                     </button> */}
@@ -203,7 +203,7 @@ const StaffQuotePage = () => {
                             setShowModal("Edit");
                             setSelectedQuote(q);
                           }}
-                          className="text-yellow-400 hover:underline"
+                          className="text-amber-700 hover:underline"
                         >
                           Edit
                         </button>
@@ -213,7 +213,7 @@ const StaffQuotePage = () => {
                             setShowModal("stage");
                             setSelectedQuote(q);
                           }}
-                          className="text-blue-400 hover:underline"
+                          className="text-brand hover:underline"
                         >
                           Update-stage
                         </button>
@@ -224,14 +224,14 @@ const StaffQuotePage = () => {
 
                     {/* <button
                       onClick={}
-                      className="text-yellow-400 hover:underline"
+                      className="text-amber-700 hover:underline"
                     ></button> */}
 
                     <a
                       href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
                       //   target="_blank"
                       //   rel="noreferrer"
-                      className="text-green-400 hover:underline"
+                      className="text-emerald-700 hover:underline"
                     >
                       PDF
                     </a>

@@ -98,14 +98,14 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
       >
         {/* Error */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-2 rounded text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded text-sm">
             {error}
           </div>
         )}
 
         {/* BASIC INFO */}
         <div>
-          <h3 className="text-sm text-gray-400 mb-3 uppercase tracking-wide">
+          <h3 className="text-sm text-bodyText mb-3 uppercase tracking-wide">
             Basic Information
           </h3>
 
@@ -147,7 +147,7 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
 
         {/* CLASSIFICATION */}
         <div>
-          <h3 className="text-sm text-gray-400 mb-3 uppercase tracking-wide">
+          <h3 className="text-sm text-bodyText mb-3 uppercase tracking-wide">
             Classification
           </h3>
 
@@ -240,7 +240,7 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {["billingAddress", "shippingAddress"].map((type) => (
             <div key={type}>
-              <h3 className="text-sm text-gray-400 mb-3 uppercase tracking-wide">
+              <h3 className="text-sm text-bodyText mb-3 uppercase tracking-wide">
                 {type === "billingAddress"
                   ? "Billing Address"
                   : "Shipping Address"}
@@ -266,7 +266,7 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
 
         {/* DESCRIPTION */}
         <div>
-          <h3 className="text-sm text-gray-400 mb-2 uppercase tracking-wide">
+          <h3 className="text-sm text-bodyText mb-2 uppercase tracking-wide">
             Description
           </h3>
           <textarea
@@ -279,11 +279,11 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
         </div>
 
         {/* ACTION BUTTONS */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
           >
             Cancel
           </button>
@@ -291,7 +291,7 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded disabled:opacity-60"
+            className="px-4 py-2 bg-brand hover:bg-brand/90 rounded disabled:opacity-60"
           >
             {loading ? "Updating..." : "Update Account"}
           </button>
@@ -301,11 +301,11 @@ const EditAccountModal = ({ account, onClose, onSuccess }) => {
         <style jsx>{`
           .input {
             width: 100%;
-            background: #111827;
-            border: 1px solid #374151;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
             padding: 8px 10px;
             border-radius: 6px;
-            color: white;
+            color: #111827;
           }
         `}</style>
       </form>

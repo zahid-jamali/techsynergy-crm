@@ -143,7 +143,7 @@ const styles = {
   overlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,0.7)",
+    background: "rgba(17, 24, 39, 0.4)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -152,14 +152,15 @@ const styles = {
 
   modal: {
     width: "600px",
-    background: "#000",
-    color: "#fff",
-    borderRadius: "8px",
+    background: "#ffffff",
+    color: "#111827",
+    borderRadius: "16px",
     padding: "20px",
     maxHeight: "85vh",
     display: "flex",
     flexDirection: "column",
-    border: "1px solid #333",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 10px 30px rgba(2, 29, 84, 0.08)",
   },
 
   header: {
@@ -167,7 +168,7 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "15px",
-    borderBottom: "1px solid #333",
+    borderBottom: "1px solid #e5e7eb",
     paddingBottom: "10px",
   },
 
@@ -181,7 +182,7 @@ const styles = {
     justifyContent: "flex-end",
     gap: "10px",
     marginTop: "15px",
-    borderTop: "1px solid #333",
+    borderTop: "1px solid #e5e7eb",
     paddingTop: "10px",
   },
 
@@ -199,50 +200,54 @@ const styles = {
 
   input: {
     flex: 1,
-    padding: "8px",
-    background: "#111",
-    color: "#fff",
-    border: "1px solid #444",
-    borderRadius: "4px",
+    padding: "8px 12px",
+    background: "#ffffff",
+    color: "#111827",
+    border: "1px solid #e5e7eb",
+    borderRadius: "8px",
   },
 
   addBtn: {
-    background: "#e53935",
+    background: "#021d54",
     color: "#fff",
     padding: "8px 16px",
     border: "none",
     cursor: "pointer",
+    borderRadius: "8px",
   },
 
   deleteBtn: {
-    background: "#e53935",
+    background: "#dc2626",
     color: "#fff",
     padding: "8px 12px",
     border: "none",
     cursor: "pointer",
+    borderRadius: "8px",
   },
 
   saveBtn: {
-    background: "#e53935",
+    background: "#021d54",
     color: "#fff",
     padding: "8px 18px",
     border: "none",
     cursor: "pointer",
-    fontWeight: "bold",
+    fontWeight: "600",
+    borderRadius: "8px",
   },
 
   cancelBtn: {
-    background: "#444",
-    color: "#fff",
+    background: "#f9fafb",
+    color: "#111827",
     padding: "8px 16px",
-    border: "none",
+    border: "1px solid #e5e7eb",
     cursor: "pointer",
+    borderRadius: "8px",
   },
 
   closeBtn: {
     background: "transparent",
     border: "none",
-    color: "#fff",
+    color: "#4b5563",
     fontSize: "18px",
     cursor: "pointer",
   },

@@ -41,7 +41,7 @@ const StaffSellOrderPage = () => {
   const getStatusBadge = (approved) => {
     if (approved)
       return (
-        <span className="px-2 py-1 text-xs rounded bg-green-600">Approved</span>
+        <span className="px-2 py-1 text-xs rounded bg-emerald-600">Approved</span>
       );
 
     return (
@@ -50,21 +50,21 @@ const StaffSellOrderPage = () => {
   };
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* HEADER */}
 
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Sales Orders</h1>
 
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-bodyText">
             Manage and track all sales orders
           </p>
         </div>
 
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg shadow transition"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded-lg shadow transition"
         >
           + New Sales Order
         </button>
@@ -72,12 +72,12 @@ const StaffSellOrderPage = () => {
 
       {/* TABLE CONTAINER */}
 
-      <div className="bg-[#0f172a] border border-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-card border border-gray-200 rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           {/* HEADER */}
 
-          <thead className="bg-black border-b border-gray-800">
-            <tr className="text-left text-gray-400">
+          <thead className="bg-card border-b border-gray-200">
+            <tr className="text-left text-bodyText">
               <th className="px-4 py-3">Subject</th>
 
               <th className="px-4 py-3">Account</th>
@@ -101,7 +101,7 @@ const StaffSellOrderPage = () => {
           <tbody>
             {loading && (
               <tr>
-                <td colSpan="8" className="text-center py-8 text-gray-400">
+                <td colSpan="8" className="text-center py-8 text-bodyText">
                   Loading orders...
                 </td>
               </tr>
@@ -119,7 +119,7 @@ const StaffSellOrderPage = () => {
               orders.map((order) => (
                 <tr
                   key={order._id}
-                  className="border-t border-gray-800 hover:bg-gray-900 transition"
+                  className="border-t border-gray-200 hover:bg-surface transition"
                 >
                   <td className="px-4 py-3 font-medium">
                     {order.finalQuote?.subject || "-"}
@@ -161,7 +161,7 @@ const StaffSellOrderPage = () => {
                           setSelectedOrder(order);
                           setShowModal("View");
                         }}
-                        className="px-3 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600"
+                        className="px-3 py-1 text-xs rounded bg-gray-100 hover:bg-gray-200"
                       >
                         View
                       </button>
@@ -177,7 +177,7 @@ const StaffSellOrderPage = () => {
                               setShowModal("Delete");
                               setSelectedOrder(order);
                             }}
-                            className="px-3 py-1 text-xs rounded bg-red-600 hover:bg-red-700"
+                            className="px-3 py-1 text-xs rounded bg-brand hover:bg-brand/90"
                           >
                             Delete
                           </button>
@@ -192,7 +192,7 @@ const StaffSellOrderPage = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <button className="px-3 py-1 text-xs rounded bg-green-500 hover:bg-green-600 text-white">
+                          <button className="px-3 py-1 text-xs rounded bg-green-500 hover:bg-emerald-600 text-white">
                             PO
                           </button>
                         </a>

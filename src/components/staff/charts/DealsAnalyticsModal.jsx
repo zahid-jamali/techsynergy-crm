@@ -68,7 +68,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
 
   // Color palette for charts
   const COLORS = [
-    "#ef4444",
+    "#021d54",
     "#f97316",
     "#eab308",
     "#3b82f6",
@@ -425,13 +425,13 @@ https://flagcdn.com/48x36/pk.png 3x"
   // Handle empty state
   if (!deals || deals.length === 0) {
     return (
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex justify-center items-center px-4 py-6">
-        <div className="bg-[#0B0F1A] border border-gray-800 rounded-2xl w-full max-w-7xl text-white shadow-2xl flex flex-col max-h-[95vh]">
-          <div className="px-8 py-6 border-b border-gray-800 flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-red-500">Deals Analytics</h2>
+      <div className="fixed inset-0 bg-heading/40 backdrop-blur-md z-50 flex justify-center items-center px-4 py-6">
+        <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-7xl text-heading shadow-2xl flex flex-col max-h-[95vh]">
+          <div className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-brand">Deals Analytics</h2>
             <button
               onClick={onClose}
-              className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg"
+              className="p-2 bg-surface hover:bg-gray-100 rounded-lg"
             >
               ✕
             </button>
@@ -439,7 +439,7 @@ https://flagcdn.com/48x36/pk.png 3x"
           <div className="flex-1 flex items-center justify-center p-12">
             <div className="text-center">
               <Activity size={48} className="text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-lg">No deals data available</p>
+              <p className="text-bodyText text-lg">No deals data available</p>
               <p className="text-gray-500 text-sm mt-2">
                 Add some deals to see analytics
               </p>
@@ -497,21 +497,21 @@ https://flagcdn.com/48x36/pk.png 3x"
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex justify-center items-center px-4 py-6">
-      <div className="bg-[#0B0F1A] border border-gray-800 rounded-2xl w-full max-w-7xl text-white shadow-2xl flex flex-col max-h-[95vh] animate-fadeIn">
+    <div className="fixed inset-0 bg-heading/40 backdrop-blur-md z-50 flex justify-center items-center px-4 py-6">
+      <div className="bg-card border border-gray-200 rounded-2xl w-full max-w-7xl text-heading shadow-2xl flex flex-col max-h-[95vh] animate-fadeIn">
         {/* Header with Actions */}
-        <div className="px-8 py-6 border-b border-gray-800 flex justify-between items-center bg-gradient-to-r from-[#0F1421] to-[#0B0F1A]">
+        <div className="px-8 py-6 border-b border-gray-200 flex justify-between items-center bg-gradient-to-r from-surface to-card">
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-heading">
                 Deals Analytics
               </h2>
-              <span className="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300 border border-gray-700">
+              <span className="px-3 py-1 bg-surface rounded-full text-xs text-bodyText border border-gray-200">
                 PKR Primary
               </span>
             </div>
-            <p className="text-sm text-gray-400 mt-1 flex items-center gap-2">
-              <Activity size={14} className="text-red-500" />
+            <p className="text-sm text-bodyText mt-1 flex items-center gap-2">
+              <Activity size={14} className="text-brand" />
               All amounts shown in PKR (1 USD = {exchangeRate} PKR)
               {lastUpdated && (
                 <span className="text-xs text-gray-500">
@@ -529,7 +529,7 @@ https://flagcdn.com/48x36/pk.png 3x"
             <select
               value={selectedCurrency}
               onChange={(e) => setSelectedCurrency(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+              className="bg-surface border border-gray-200 rounded-lg px-4 py-2 text-sm text-bodyText focus:outline-none focus:ring-2 focus:ring-brand/50"
             >
               <option value="all">All Currencies (Converted to PKR)</option>
               {availableCurrencies.map((currency) => (
@@ -543,7 +543,7 @@ https://flagcdn.com/48x36/pk.png 3x"
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+              className="bg-surface border border-gray-200 rounded-lg px-4 py-2 text-sm text-bodyText focus:outline-none focus:ring-2 focus:ring-brand/50"
             >
               <option value="all">All Time</option>
               <option value="month">Last 30 Days</option>
@@ -554,16 +554,16 @@ https://flagcdn.com/48x36/pk.png 3x"
             {/* Export Button */}
             <button
               onClick={handleExport}
-              className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700"
+              className="p-2 bg-surface hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
               title="Export Data"
             >
-              <Download size={18} className="text-gray-400" />
+              <Download size={18} className="text-bodyText" />
             </button>
 
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700"
+              className="p-2 bg-surface hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
             >
               ✕
             </button>
@@ -587,16 +587,16 @@ https://flagcdn.com/48x36/pk.png 3x"
                     alt="Pakistan"
                   ></img>
 
-                  <span className="text-gray-300">
+                  <span className="text-bodyText">
                     All amounts are displayed in{" "}
                     <span className="font-bold text-yellow-500">
                       Pakistani Rupees (PKR)
                     </span>
                   </span>
                 </div>
-                <div className="text-gray-400">
+                <div className="text-bodyText">
                   Exchange Rate:{" "}
-                  <span className="text-white font-medium">
+                  <span className="text-heading font-medium">
                     1 USD = {exchangeRate} PKR
                   </span>
                 </div>
@@ -613,12 +613,12 @@ https://flagcdn.com/48x36/pk.png 3x"
                 return (
                   <div
                     key={currency}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-lg border border-gray-700"
+                    className="flex items-center gap-2 px-4 py-2 bg-surface/50 rounded-lg border border-gray-200"
                     style={{ borderLeftColor: color, borderLeftWidth: "4px" }}
                   >
                     <Icon size={16} style={{ color }} />
                     <span className="text-sm font-medium">{currency}</span>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-bodyText">
                       {formatOriginalAmount(data.totalAmount, currency)}
                     </span>
                     <span className="text-xs text-gray-500">
@@ -642,7 +642,7 @@ https://flagcdn.com/48x36/pk.png 3x"
               label="Total Deals"
               value={kpis.totalDeals}
               subValue={`${kpis.activeDeals} active`}
-              accent="from-blue-500 to-blue-600"
+              accent="from-brand to-[#1e4a8a]"
             />
             <KpiCard
               icon={
@@ -658,7 +658,7 @@ https://flagcdn.com/48x36/pk.png 3x"
               label="Pipeline Value (PKR)"
               value={formatPKR(kpis.totalAmountPKR)}
               // subValue={`Avg: ${formatPKR(kpis.avgDealSizePKR)}`}
-              accent="from-black to-white"
+              accent="from-brand to-[#3b6fb6]"
             />
 
             {/* <KpiCard
@@ -683,8 +683,8 @@ https://flagcdn.com/48x36/pk.png 3x"
               onClick={() => setChartType("bar")}
               className={`p-2 rounded-lg transition-colors ${
                 chartType === "bar"
-                  ? "bg-red-500/20 text-red-500"
-                  : "bg-gray-800 text-gray-400"
+                  ? "bg-red-50 text-brand"
+                  : "bg-surface text-bodyText"
               }`}
             >
               <BarChart3 size={18} />
@@ -693,8 +693,8 @@ https://flagcdn.com/48x36/pk.png 3x"
               onClick={() => setChartType("area")}
               className={`p-2 rounded-lg transition-colors ${
                 chartType === "area"
-                  ? "bg-red-500/20 text-red-500"
-                  : "bg-gray-800 text-gray-400"
+                  ? "bg-red-50 text-brand"
+                  : "bg-surface text-bodyText"
               }`}
             >
               <Activity size={18} />
@@ -703,8 +703,8 @@ https://flagcdn.com/48x36/pk.png 3x"
               onClick={() => setChartType("pie")}
               className={`p-2 rounded-lg transition-colors ${
                 chartType === "pie"
-                  ? "bg-red-500/20 text-red-500"
-                  : "bg-gray-800 text-gray-400"
+                  ? "bg-red-50 text-brand"
+                  : "bg-surface text-bodyText"
               }`}
             >
               <PieChartIcon size={18} />
@@ -756,7 +756,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                       layout="vertical"
                       margin={{ left: 100 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                       <XAxis type="number" stroke="#9CA3AF" />
                       <YAxis
                         type="category"
@@ -774,7 +774,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                       />
                       <Bar
                         dataKey="count"
-                        fill="#ef4444"
+                        fill="#021d54"
                         radius={[0, 4, 4, 0]}
                       />
                     </BarChart>
@@ -791,7 +791,7 @@ https://flagcdn.com/48x36/pk.png 3x"
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={amountData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis
                       dataKey="stage"
                       stroke="#9CA3AF"
@@ -850,7 +850,7 @@ https://flagcdn.com/48x36/pk.png 3x"
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="month" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
                     <Tooltip
@@ -873,8 +873,8 @@ https://flagcdn.com/48x36/pk.png 3x"
                     <Area
                       type="monotone"
                       dataKey="deals"
-                      stroke="#ef4444"
-                      fill="#ef4444"
+                      stroke="#021d54"
+                      fill="#021d54"
                       fillOpacity={0.3}
                       name="# of Deals"
                     />
@@ -899,7 +899,7 @@ https://flagcdn.com/48x36/pk.png 3x"
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={probabilityData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="range" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
                     <Tooltip
@@ -936,7 +936,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                   topAccounts.map((account, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
+                      className="flex items-center justify-between p-3 bg-surface/50 rounded-lg border border-gray-200 hover:border-brand/20 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -949,7 +949,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                         />
                         <div>
                           <p className="font-medium">{account.name}</p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-bodyText">
                             {account.deals} deals
                           </p>
                         </div>
@@ -972,7 +972,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-center py-4">
+                  <p className="text-bodyText text-center py-4">
                     No account data available
                   </p>
                 )}
@@ -989,22 +989,22 @@ https://flagcdn.com/48x36/pk.png 3x"
                   upcomingClosures.map((deal, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
+                      className="flex items-center justify-between p-3 bg-surface/50 rounded-lg border border-gray-200 hover:border-brand/20 transition-colors"
                     >
                       <div>
                         <p className="font-medium">
                           {deal.dealName || "Unnamed Deal"}
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-bodyText">
                           {deal.account?.accountName || "No Account"} •{" "}
                           {deal.currency || "USD"}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-purple-400">
+                        <p className="font-semibold text-bodyText">
                           {formatPKR(deal.amountInPKR)}
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-bodyText">
                           {formatOriginalAmount(deal.amount, deal.currency)}
                         </p>
                         <p className="text-xs text-gray-500">
@@ -1022,7 +1022,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-center py-4">
+                  <p className="text-bodyText text-center py-4">
                     No upcoming closures
                   </p>
                 )}
@@ -1037,15 +1037,15 @@ https://flagcdn.com/48x36/pk.png 3x"
           width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: #1f2937;
+          background: #f9fafb;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #ef4444;
+          background: #021d54;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #dc2626;
+          background: #1e4a8a;
         }
         @keyframes fadeIn {
           from {
@@ -1066,33 +1066,33 @@ https://flagcdn.com/48x36/pk.png 3x"
 };
 
 const KpiCard = ({ icon, label, value, subValue, accent }) => (
-  <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700 rounded-xl p-6 overflow-hidden group hover:border-gray-600 transition-all duration-300">
+  <div className="relative bg-gradient-to-br from-surface to-card border border-gray-200 rounded-xl p-6 overflow-hidden group hover:border-brand/20 transition-all duration-300">
     <div
       className={`absolute inset-0 bg-gradient-to-r ${accent} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
     />
     <div className="relative z-10">
       <div className="flex items-start justify-between">
         <div
-          className={`p-2 bg-gradient-to-br ${accent} rounded-lg bg-opacity-20 text-white`}
+          className={`p-2 bg-gradient-to-br ${accent} rounded-lg bg-opacity-20 text-brand`}
         >
           {icon}
         </div>
-        <span className="text-xs text-gray-400">Current</span>
+        <span className="text-xs text-bodyText">Current</span>
       </div>
       <div className="mt-4">
-        <p className="text-sm text-gray-400">{label}</p>
+        <p className="text-sm text-bodyText">{label}</p>
         <p className="text-2xl font-bold mt-1">{value}</p>
-        <p className="text-xs text-gray-400 mt-1">{subValue}</p>
+        <p className="text-xs text-bodyText mt-1">{subValue}</p>
       </div>
     </div>
   </div>
 );
 
 const ChartCard = ({ title, subtitle, children }) => (
-  <div className="bg-gray-800/30 border border-gray-700 rounded-xl p-6 hover:border-gray-600 transition-colors">
+  <div className="bg-surface/30 border border-gray-200 rounded-xl p-6 hover:border-brand/20 transition-colors">
     <div className="mb-4">
-      <h3 className="text-lg font-semibold text-white">{title}</h3>
-      <p className="text-xs text-gray-400 mt-1">{subtitle}</p>
+      <h3 className="text-lg font-semibold text-heading">{title}</h3>
+      <p className="text-xs text-bodyText mt-1">{subtitle}</p>
     </div>
     {children}
   </div>

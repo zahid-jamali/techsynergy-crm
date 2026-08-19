@@ -16,41 +16,41 @@ const TableSkeleton = ({ rows = 8 }) => {
   return (
     <>
       {Array.from({ length: rows }).map((_, i) => (
-        <tr key={i} className="animate-pulse border-t border-gray-800">
+        <tr key={i} className="animate-pulse border-t border-gray-200">
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-40"></div>
+            <div className="h-3 bg-gray-100 rounded w-40"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-28"></div>
+            <div className="h-3 bg-gray-100 rounded w-28"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-20"></div>
+            <div className="h-3 bg-gray-100 rounded w-20"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-20"></div>
+            <div className="h-3 bg-gray-100 rounded w-20"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-20"></div>
+            <div className="h-3 bg-gray-100 rounded w-20"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-24"></div>
+            <div className="h-3 bg-gray-100 rounded w-24"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-24"></div>
+            <div className="h-3 bg-gray-100 rounded w-24"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-24"></div>
+            <div className="h-3 bg-gray-100 rounded w-24"></div>
           </td>
 
           <td className="px-4 py-3">
-            <div className="h-3 bg-gray-700 rounded w-28"></div>
+            <div className="h-3 bg-gray-100 rounded w-28"></div>
           </td>
         </tr>
       ))}
@@ -139,14 +139,14 @@ const AdminDealsPage = () => {
   };
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-heading">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-red-500">Deals</h1>
+        <h1 className="text-2xl font-bold text-brand">Deals</h1>
         <div className="flex gap-3">
           <button
             onClick={() => setShowModal("Analytics")}
-            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg border border-gray-700"
+            className="flex items-center gap-2 bg-surface hover:bg-gray-100 px-4 py-2 rounded-lg border border-gray-200"
           >
             <BarChart3 size={16} />
             Analytics
@@ -154,7 +154,7 @@ const AdminDealsPage = () => {
 
           <button
             onClick={() => setShowModal("Add")}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold"
+            className="flex items-center gap-2 bg-brand hover:bg-brand/90 px-4 py-2 rounded-lg font-semibold"
           >
             <Plus size={16} />
             Add Deal
@@ -163,19 +163,19 @@ const AdminDealsPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-black border border-gray-800 rounded-lg p-4 mb-6 flex flex-wrap gap-4">
+      <div className="bg-card border border-gray-200 rounded-lg p-4 mb-6 flex flex-wrap gap-4">
         <input
           type="text"
           placeholder="Search deal, account or contact..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-white w-64 focus:outline-none focus:border-red-500"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm text-heading w-64 focus:outline-none focus:border-brand"
         />
 
         <select
           value={stageFilter}
           onChange={(e) => setStageFilter(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
         >
           <option value="all">All Stages</option>
           <option value="Prospecting">Prospecting</option>
@@ -189,7 +189,7 @@ const AdminDealsPage = () => {
         <select
           value={ownerFilter}
           onChange={(e) => setOwnerFilter(e.target.value)}
-          className="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm"
+          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
         >
           <option value="all">All Owners</option>
           {[
@@ -211,20 +211,20 @@ const AdminDealsPage = () => {
             setStageFilter("all");
             setOwnerFilter("all");
           }}
-          className="text-sm text-gray-400 hover:text-red-400"
+          className="text-sm text-bodyText hover:text-brand"
         >
           Reset
         </button>
       </div>
 
-      <div className="text-sm text-gray-400 mb-3">
+      <div className="text-sm text-bodyText mb-3">
         Showing {deals.length} of {total} deals
       </div>
 
       {/* Table */}
-      <div className="bg-black border border-gray-800 rounded-lg overflow-x-auto">
+      <div className="bg-card border border-gray-200 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-gray-300">
+          <thead className="bg-card text-bodyText">
             <tr>
               <th className="px-4 py-3 text-left">Deal Name</th>
               <th className="px-4 py-3 text-left">Account</th>
@@ -244,7 +244,7 @@ const AdminDealsPage = () => {
               <TableSkeleton />
             ) : filteredDeals.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-400">
+                <td colSpan="6" className="text-center py-6 text-bodyText">
                   No deals found
                 </td>
               </tr>
@@ -252,7 +252,7 @@ const AdminDealsPage = () => {
               filteredDeals.map((deal) => (
                 <tr
                   key={deal._id}
-                  className="border-t border-gray-800 hover:bg-gray-900 group"
+                  className="border-t border-gray-200 hover:bg-surface group"
                 >
                   <td onClick={() => View(deal)} className="px-4 py-3">
                     {deal.dealName}
@@ -262,7 +262,7 @@ const AdminDealsPage = () => {
                       setShowModal("account");
                       setSelectedAccount(deal.account);
                     }}
-                    className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-700"
+                    className="px-4 py-3 hover:underline cursor-pointer hover:text-brand"
                   >
                     {deal.account?.accountName || "-"}
                   </td>
@@ -294,13 +294,13 @@ const AdminDealsPage = () => {
                   </td>
                   <td onClick={() => View(deal)} className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-gray-800 rounded">
+                      <div className="w-24 h-2 bg-surface rounded">
                         <div
                           className="h-2 bg-green-500 rounded"
                           style={{ width: `${deal.probability}%` }}
                         />
                       </div>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-bodyText">
                         {deal.probability}%
                       </span>
                     </div>
@@ -317,7 +317,7 @@ const AdminDealsPage = () => {
                     <div className="flex gap-3 text-xs opacity-0 group-hover:opacity-100 transition">
                       <button
                         onClick={() => View(deal)}
-                        className="text-blue-400 hover:text-blue-300"
+                        className="text-brand hover:text-blue-300"
                       >
                         View
                       </button>
@@ -327,7 +327,7 @@ const AdminDealsPage = () => {
                           setShowModal("Pipeline");
                           setSelectedDeal(deal);
                         }}
-                        className="text-purple-400 hover:text-purple-300"
+                        className="text-bodyText hover:text-purple-300"
                       >
                         Pipeline
                       </button>
@@ -337,7 +337,7 @@ const AdminDealsPage = () => {
                           setShowModal("Edit");
                           setSelectedDeal(deal);
                         }}
-                        className="text-yellow-400 hover:text-yellow-300"
+                        className="text-amber-700 hover:text-yellow-300"
                       >
                         Edit
                       </button>
@@ -350,7 +350,7 @@ const AdminDealsPage = () => {
         </table>
         <div
           ref={ref}
-          className="flex justify-center py-6 text-gray-400 text-sm"
+          className="flex justify-center py-6 text-bodyText text-sm"
         >
           {loading && deals.length > 0 && <span>Loading more deals...</span>}
 
