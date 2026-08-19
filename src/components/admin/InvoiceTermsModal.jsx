@@ -18,6 +18,7 @@ const InvoiceTermsModal = ({
 
     setTerms(Array.isArray(existingTerms) ? [...existingTerms] : []);
     setNewTerm("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!isOpen) return null;

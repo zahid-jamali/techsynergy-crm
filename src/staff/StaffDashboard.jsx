@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -27,7 +27,7 @@ const StaffDashboard = () => {
 
   const [dashboard, setDashboard] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}dashboard/staff`,
@@ -41,11 +41,11 @@ const StaffDashboard = () => {
     } catch (err) {
       console.error("Dashboard fetch error", err);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   if (!dashboard) {
     return (

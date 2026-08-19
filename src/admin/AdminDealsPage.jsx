@@ -10,7 +10,6 @@ import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import Loading from "../components/Loading";
 
 const TableSkeleton = ({ rows = 8 }) => {
   return (
@@ -111,10 +110,12 @@ const AdminDealsPage = () => {
     if (inView && hasMore && !loading) {
       fetchDeals(page + 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   useEffect(() => {
     fetchDeals(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredDeals = deals.filter((deal) => {

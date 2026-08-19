@@ -26,7 +26,6 @@ const AdminQuotesPage = () => {
   const [selectedDeal, setSelectedDeal] = useState();
   const [selectedQuote, setSelectedQuote] = useState();
 
-  const [stagePipeline, setStagePipeline] = useState(null);
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
   const [ownerFilter, setOwnerFilter] = useState("all");
@@ -70,12 +69,14 @@ const AdminQuotesPage = () => {
 
   useEffect(() => {
     fetchQuotes(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (inView && hasMore && !loading) {
       fetchQuotes(page + 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   const filteredQuotes = quotes.filter((q) => {

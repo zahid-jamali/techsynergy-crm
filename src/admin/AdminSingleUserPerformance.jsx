@@ -10,7 +10,6 @@ export default function AdminSingleUserPerformance() {
 
   const { userId } = useParams();
   const token = sessionStorage.getItem("token");
-  const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,15 +28,19 @@ export default function AdminSingleUserPerformance() {
     };
 
     fetchData();
-  }, [userId]);
+  }, [userId, token]);
 
   const user = data?.user || {};
   const stats = data?.stats || {};
-  const tables = data?.tables || {};
 
-  const filteredDeals = tables?.activeDeals || [];
-  const filteredQuotes = tables?.activeQuotes || [];
-  const confirmedQuotes = tables?.activeSellOrders || [];
+  const filteredDeals = useMemo(
+    () => data?.tables?.activeDeals || [],
+    [data]
+  );
+  const filteredQuotes = useMemo(
+    () => data?.tables?.activeQuotes || [],
+    [data]
+  );
 
   /* ================= CHART DATA ================= */
 
@@ -59,23 +62,6 @@ export default function AdminSingleUserPerformance() {
     return Object.keys(stageMap).map((stage) => ({
       name: stage,
       value: stageMap[stage],
-    }));
-  }, [filteredDeals]);
-
-  const revenueTrend = useMemo(() => {
-    const monthMap = {};
-    filteredDeals
-      .filter((d) => d.stage === "Closed Won")
-      .forEach((d) => {
-        const month = new Date(d.createdAt).toLocaleString("default", {
-          month: "short",
-        });
-        monthMap[month] = (monthMap[month] || 0) + (d.amount || 0);
-      });
-
-    return Object.keys(monthMap).map((m) => ({
-      month: m,
-      revenue: monthMap[m],
     }));
   }, [filteredDeals]);
 

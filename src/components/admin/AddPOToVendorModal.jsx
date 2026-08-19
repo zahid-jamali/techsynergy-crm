@@ -8,7 +8,7 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
   /* ================= BASIC ================= */
 
   const [subject, setSubject] = useState("");
-  const [description, setDescription] = useState("");
+  const description = "";
 
   /* ================= VENDOR SEARCH ================= */
 
@@ -34,7 +34,7 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
 
   /* ================= TERMS ================= */
 
-  const [terms, setTerms] = useState([""]);
+  const [terms] = useState([""]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,6 +46,7 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
       fetchVendors();
       fetchOrders();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const fetchVendors = async () => {
@@ -153,16 +154,6 @@ const AddPOToVendorModal = ({ onClose, onSuccess }) => {
 
   const removeTax = (index) => {
     setTaxes(taxes.filter((_, i) => i !== index));
-  };
-
-  /* ================= TERMS ================= */
-
-  const updateTerm = (index, value) => {
-    const updated = [...terms];
-
-    updated[index] = value;
-
-    setTerms(updated);
   };
 
   /* ================= CALCULATIONS ================= */

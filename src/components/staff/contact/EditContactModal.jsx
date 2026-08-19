@@ -45,16 +45,6 @@ const EditContactModal = ({ contact, onClose, onSuccess }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleAddressChange = (e) => {
-    setFormData({
-      ...formData,
-      postalAddress: {
-        ...formData.postalAddress,
-        [e.target.name]: e.target.value,
-      },
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

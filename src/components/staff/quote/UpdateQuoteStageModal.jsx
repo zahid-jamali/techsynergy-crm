@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const QUOTE_STAGES = ["Draft", "Submit", "On Hold", "Confirmed"];
 
@@ -105,6 +105,7 @@ const UpdateQuoteStageModal = ({
               })}
             </select>
           </div>
+          {error && <p className="text-red-400 text-sm">{error}</p>}
         </div>
 
         {/* Footer */}

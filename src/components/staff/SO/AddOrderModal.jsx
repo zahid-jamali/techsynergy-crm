@@ -156,18 +156,6 @@ PO FILE HANDLING
 ===============================
 */
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      setPurchaseOrderFile(file);
-    }
-  };
-
-  const removeFile = () => {
-    setPurchaseOrderFile(null);
-  };
-
   /*
   ===============================
   CALCULATIONS

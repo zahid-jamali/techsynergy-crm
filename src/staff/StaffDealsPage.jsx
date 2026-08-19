@@ -83,23 +83,10 @@ const StaffDealsPage = () => {
     return deal.amount;
   };
 
-  const convertExpectedToPKR = (deal) => {
-    if (!deal.expectedRevenue) return 0;
-    if ((deal.currency || "PKR") === "USD") {
-      return usdRate ? deal.expectedRevenue * usdRate : 0;
-    }
-    return deal.expectedRevenue;
-  };
-
   /* ================= KPI (PRIMARY CURRENCY PKR) ================= */
 
   const totalPipeline = filteredDeals.reduce(
     (acc, d) => acc + convertToPKR(d),
-    0
-  );
-
-  const totalExpected = filteredDeals.reduce(
-    (acc, d) => acc + convertExpectedToPKR(d),
     0
   );
 

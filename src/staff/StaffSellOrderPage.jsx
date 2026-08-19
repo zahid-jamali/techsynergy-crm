@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fileUrl } from "../lib/roles";
 import AddOrderModal from "../components/staff/SO/AddOrderModal";
 import DeleteOrderModal from "../components/staff/SO/DeleteOrderModal";
@@ -12,7 +12,7 @@ const StaffSellOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -33,11 +33,11 @@ const StaffSellOrderPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [fetchOrders]);
 
   const getStatusBadge = (approved) => {
     if (approved)

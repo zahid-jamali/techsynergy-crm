@@ -51,6 +51,8 @@ const AdminContactsPage = () => {
     } finally {
       setLoading(false);
     }
+    // hasMore/loading are pagination guards; adding them retriggers fetches.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, token]);
 
   useEffect(() => {

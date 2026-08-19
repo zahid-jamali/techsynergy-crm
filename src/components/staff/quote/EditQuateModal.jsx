@@ -605,12 +605,20 @@ const EditQuoteModal = ({ quote, onClose, onSuccess }) => {
               </h3>
 
               {formData.termsAndConditions.map((term, i) => (
-                <textarea
-                  key={i}
-                  value={term}
-                  onChange={(e) => updateTerm(i, e.target.value)}
-                  className="input mb-3"
-                />
+                <div key={i} className="flex gap-2 mb-3">
+                  <textarea
+                    value={term}
+                    onChange={(e) => updateTerm(i, e.target.value)}
+                    className="input flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeTerm(i)}
+                    className="text-red-400 px-2"
+                  >
+                    Remove
+                  </button>
+                </div>
               ))}
 
               <button

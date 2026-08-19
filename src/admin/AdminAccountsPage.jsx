@@ -20,7 +20,6 @@ const AdminAccountsPage = () => {
   const [selectedOwner, setSelectedOwner] = useState("all");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [total, setTotal] = useState(0);
   const { ref, inView } = useInView({ threshold: 1 });
   const token = sessionStorage.getItem("token");
 
@@ -43,13 +42,14 @@ const AdminAccountsPage = () => {
 
       setAccounts((prev) => [...prev, ...data.accounts]);
       setHasMore(data.hasMore);
-      setTotal(data.total);
       setPage((prev) => prev + 1);
     } catch (err) {
       console.log(err);
     } finally {
       setLoading(false);
     }
+    // hasMore/loading are pagination guards; adding them retriggers fetches.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, page]);
 
   useEffect(() => {

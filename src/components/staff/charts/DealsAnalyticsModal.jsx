@@ -17,13 +17,11 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   TrendingUp,
   DollarSign,
-  Target,
   Calendar,
   Download,
   PieChart as PieChartIcon,
   BarChart3,
   Activity,
-  IndianRupee,
   RefreshCw,
 } from "lucide-react";
 
@@ -85,7 +83,7 @@ const DealsAnalyticsModal = ({ deals, onClose }) => {
       icon: () => (
         <img
           src="https://flagcdn.com/16x12/pk.png"
-          srcset="https://flagcdn.com/32x24/pk.png 2x,
+          srcSet="https://flagcdn.com/32x24/pk.png 2x,
 https://flagcdn.com/48x36/pk.png 3x"
           width="16"
           height="12"
@@ -580,7 +578,7 @@ https://flagcdn.com/48x36/pk.png 3x"
                   {/* <IndianRupee size={16} className="text-yellow-500" /> */}
                   <img
                     src="https://flagcdn.com/16x12/pk.png"
-                    srcset="https://flagcdn.com/32x24/pk.png 2x,
+                    srcSet="https://flagcdn.com/32x24/pk.png 2x,
     https://flagcdn.com/48x36/pk.png 3x"
                     width="16"
                     height="12"
