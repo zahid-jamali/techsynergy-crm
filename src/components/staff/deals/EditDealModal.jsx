@@ -115,25 +115,25 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
               />
 
               <LookupPicker
-                label="POC"
+                label="POC (any teammate's contact)"
                 endpoint="contact/lookup"
                 extraParams={
                   selectedAccount?._id ? { account: selectedAccount._id } : {}
                 }
-                placeholder={
-                  selectedAccount
-                    ? "Search contacts on this account..."
-                    : "Select an account first"
-                }
-                disabled={!selectedAccount}
+                placeholder="Search any team contact..."
                 value={selectedContact}
                 displayValue={selectedContact ? contactName(selectedContact) : ""}
-                onSelect={setSelectedContact}
+                onSelect={(contact) => {
+                  setSelectedContact(contact);
+                  if (contact?.account && typeof contact.account === "object") {
+                    setSelectedAccount(contact.account);
+                  }
+                }}
                 renderItem={(c) => (
                   <div>
                     <div className="font-medium">{contactName(c)}</div>
                     <div className="text-xs text-bodyText">
-                      {c.email || c.phone || "Contact"}
+                      {c.account?.accountName || c.email || c.phone || "Contact"}
                       {c.contactOwner?.name ? ` · ${c.contactOwner.name}` : ""}
                     </div>
                   </div>

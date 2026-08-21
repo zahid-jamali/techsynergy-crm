@@ -4,11 +4,13 @@ import {
   Image as ImageIcon,
   Loader2,
   Paperclip,
+  Reply,
   Send,
   Trash2,
   X,
 } from "lucide-react";
 import { api } from "../lib/api";
+import LookupPicker from "../components/lists/LookupPicker";
 import { getUserRole, ROLE_LABELS } from "../lib/roles";
 
 const POLL_MS = 7000;
@@ -84,6 +86,8 @@ export default function PriceQueriesPage() {
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
   const [pendingNew, setPendingNew] = useState(0);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [replyTo, setReplyTo] = useState(null);
 
   const scrollerRef = useRef(null);
   const bottomRef = useRef(null);
@@ -278,8 +282,17 @@ export default function PriceQueriesPage() {
     e.preventDefault();
     if (sending) return;
     if (!body.trim() && files.length === 0) return;
-    if (isInbox && (!activeThreadId || activeThreadId === ALL_THREAD)) {
-      setError("Select a staff member first");
+    const replyOwner = String(
+      replyTo?.threadOwner?._id || replyTo?.threadOwner || "",
+    );
+    const threadForSend =
+      isInbox && activeThreadId === ALL_THREAD ? replyOwner : activeThreadId;
+    if (isInbox && (!threadForSend || threadForSend === ALL_THREAD)) {
+      setError("Select a staff member, or reply to a specific message");
+      return;
+    }
+    if (!isInbox && !selectedAccount?._id) {
+      setError("Search and select an account before sending a price query");
       return;
     }
     setSending(true);
@@ -287,7 +300,9 @@ export default function PriceQueriesPage() {
     try {
       const form = new FormData();
       form.append("body", body.trim());
-      if (isInbox) form.append("threadOwner", activeThreadId);
+      if (isInbox) form.append("threadOwner", threadForSend);
+      if (selectedAccount?._id) form.append("account", selectedAccount._id);
+      if (replyTo?._id) form.append("replyTo", replyTo._id);
       files.forEach((file) => form.append("files", file));
       const data = await api("price-queries/messages", {
         method: "POST",
@@ -295,6 +310,7 @@ export default function PriceQueriesPage() {
       });
       setBody("");
       setFiles([]);
+      setReplyTo(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       if (data.data) {
         setMessages((prev) => {
@@ -354,8 +370,11 @@ export default function PriceQueriesPage() {
     }
   };
 
-  const composerReady = !isInbox || (Boolean(activeThreadId) && activeThreadId !== ALL_THREAD);
   const viewingAll = isInbox && activeThreadId === ALL_THREAD;
+  const composerReady =
+    (!isInbox && Boolean(selectedAccount?._id)) ||
+    (isInbox && Boolean(activeThreadId) && activeThreadId !== ALL_THREAD) ||
+    (isInbox && Boolean(replyTo?._id));
   const totalUnread = threads.reduce((sum, row) => sum + (Number(row.unread) || 0), 0);
 
   return (
@@ -383,6 +402,7 @@ export default function PriceQueriesPage() {
                 setMessages([]);
                 setSearchInput("");
                 setSearch("");
+                setReplyTo(null);
                 stickToBottom.current = true;
               }}
               className={`w-full text-left px-4 py-3 border-b border-gray-100 transition ${
@@ -420,6 +440,7 @@ export default function PriceQueriesPage() {
                     setMessages([]);
                     setSearchInput("");
                     setSearch("");
+                    setReplyTo(null);
                     stickToBottom.current = true;
                   }}
                   className={`w-full text-left px-4 py-3 border-b border-gray-100 transition ${
@@ -461,9 +482,9 @@ export default function PriceQueriesPage() {
             <p className="text-sm text-bodyText mt-0.5">
               {isInbox
                 ? viewingAll
-                  ? "All staff queries are listed here. Open a person on the left to reply."
-                  : "This thread is private to this staff member. Reply with pricing here."
-                : "Your queries are private. Operations and admin can reply here."}
+                  ? "All staff queries in one feed. Reply on a specific message, or open a person on the left."
+                  : "This thread is private to this staff member. Reply normally, or tap Reply on a specific message."
+                : "Search an account first, then send your query. Operations and admin can reply here."}
             </p>
           </div>
           <input
@@ -576,6 +597,29 @@ export default function PriceQueriesPage() {
                               {formatTime(message.createdAt)}
                             </span>
                           </div>
+                          {message.account?.accountName ? (
+                            <p
+                              className={`text-[11px] mb-1 ${mine ? "text-white/80" : "text-bodyText"}`}
+                            >
+                              Account: {message.account.accountName}
+                            </p>
+                          ) : null}
+                          {message.replyTo ? (
+                            <div
+                              className={`mb-2 rounded-lg px-2.5 py-1.5 text-[11px] border-l-2 ${
+                                mine
+                                  ? "bg-white/10 border-white/60 text-white/85"
+                                  : "bg-surface border-brand/40 text-bodyText"
+                              }`}
+                            >
+                              <span className="font-semibold">
+                                {message.replyTo.sender?.name || "Message"}
+                              </span>
+                              <p className="truncate mt-0.5">
+                                {previewText(message.replyTo.body)}
+                              </p>
+                            </div>
+                          ) : null}
                           {message.body ? (
                             <p className="text-sm whitespace-pre-wrap break-words">
                               {message.body}
@@ -615,20 +659,37 @@ export default function PriceQueriesPage() {
                               )}
                             </div>
                           )}
-                          {canDelete && (
+                          <div className="mt-2 flex items-center gap-3">
                             <button
                               type="button"
-                              onClick={() => removeMessage(message)}
-                              className={`mt-2 inline-flex items-center gap-1 text-[11px] ${
+                              onClick={() => {
+                                setReplyTo(message);
+                                setError("");
+                              }}
+                              className={`inline-flex items-center gap-1 text-[11px] ${
                                 mine
                                   ? "text-white/70 hover:text-white"
-                                  : "text-bodyText hover:text-red-600"
+                                  : "text-bodyText hover:text-brand"
                               }`}
                             >
-                              <Trash2 size={12} />
-                              Remove
+                              <Reply size={12} />
+                              Reply
                             </button>
-                          )}
+                            {canDelete && (
+                              <button
+                                type="button"
+                                onClick={() => removeMessage(message)}
+                                className={`inline-flex items-center gap-1 text-[11px] ${
+                                  mine
+                                    ? "text-white/70 hover:text-white"
+                                    : "text-bodyText hover:text-red-600"
+                                }`}
+                              >
+                                <Trash2 size={12} />
+                                Remove
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
@@ -662,6 +723,47 @@ export default function PriceQueriesPage() {
           {error && (
             <div className="mb-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
               {error}
+            </div>
+          )}
+          {!isInbox && (
+            <div className="mb-3">
+              <LookupPicker
+                label="Account"
+                endpoint="account/lookup"
+                placeholder="Search account before sending..."
+                value={selectedAccount}
+                displayValue={selectedAccount?.accountName || ""}
+                onSelect={setSelectedAccount}
+                renderItem={(a) => (
+                  <div>
+                    <div className="font-medium">{a.accountName}</div>
+                    <div className="text-xs text-bodyText">
+                      {a.industry || "Account"}
+                      {a.accountOwner?.name ? ` · ${a.accountOwner.name}` : ""}
+                    </div>
+                  </div>
+                )}
+              />
+            </div>
+          )}
+          {replyTo && (
+            <div className="mb-3 flex items-start justify-between gap-3 rounded-lg border border-brand/20 bg-brand/5 px-3 py-2">
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-wide text-brand font-semibold">
+                  Replying to {replyTo.sender?.name || "message"}
+                </p>
+                <p className="text-sm text-bodyText truncate">
+                  {previewText(replyTo.body)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReplyTo(null)}
+                className="text-bodyText hover:text-heading"
+                title="Cancel reply"
+              >
+                <X size={14} />
+              </button>
             </div>
           )}
           {files.length > 0 && (
@@ -717,11 +819,13 @@ export default function PriceQueriesPage() {
               rows={2}
               disabled={!composerReady}
               placeholder={
-                viewingAll
-                  ? "Open a staff member on the left to reply with pricing..."
-                  : isInbox
-                    ? "Reply with vendor rates, availability or a datasheet..."
-                    : "Ask for a price, share a spec, or attach a datasheet..."
+                !isInbox && !selectedAccount
+                  ? "Select an account first, then type your price query..."
+                  : viewingAll && !replyTo
+                    ? "Tap Reply on a message, or open a staff member on the left..."
+                    : isInbox
+                      ? "Reply with vendor rates, availability or a datasheet..."
+                      : "Ask for a price, share a spec, or attach a datasheet..."
               }
               className="input flex-1 min-h-[44px] max-h-40 resize-y bg-card border border-gray-200 px-3 py-2 rounded-lg"
             />

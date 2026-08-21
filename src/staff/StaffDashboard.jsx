@@ -84,9 +84,19 @@ const StaffDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
         <KpiCard title="Total SO" value={summaryStats.totalSellOrders} />
         <KpiCard title="Approved SO" value={summaryStats.approvedSellOrders} />
-        <KpiCard title="Total Revenue" value={summaryStats.totalSell} />
+        <KpiCard
+          title="Total Revenue"
+          value={`Rs ${Number(summaryStats.totalSell || 0).toLocaleString()}`}
+        />
         <KpiCard title="Deals" value={summaryStats.totalDeals} />
-        <KpiCard title="Quotes" value={summaryStats.totalQuotes} />
+        <KpiCard
+          title="Quotes"
+          value={`${summaryStats.totalQuotes || 0}${
+            summaryStats.confirmedQuotes
+              ? ` · ${summaryStats.confirmedQuotes} confirmed`
+              : ""
+          }`}
+        />
         <KpiCard title="Accounts" value={summaryStats.accounts} />
       </div>
 
@@ -134,7 +144,7 @@ const StaffDashboard = () => {
                 innerRadius={60}
                 paddingAngle={4}
               >
-                {quoteStageData.map((_, i) => (
+                {quoteStageData?.map((_, i) => (
                   <Cell key={i} fill={i % 2 === 0 ? "#021d54" : "#93c5fd"} />
                 ))}
               </Pie>
@@ -171,7 +181,7 @@ const StaffDashboard = () => {
 
         <ChartCard title="Top Deals">
           <div className="divide-y divide-gray-100">
-            {topDeals.map((deal) => (
+            {topDeals?.map((deal) => (
               <div
                 key={deal._id}
                 className="flex justify-between py-2.5 items-center"
@@ -187,7 +197,7 @@ const StaffDashboard = () => {
 
         <ChartCard title="Recent Quotes">
           <div className="divide-y divide-gray-100">
-            {recentQuotes.map((quote) => (
+            {recentQuotes?.map((quote) => (
               <div
                 key={quote._id}
                 className="flex justify-between py-2.5 items-center"

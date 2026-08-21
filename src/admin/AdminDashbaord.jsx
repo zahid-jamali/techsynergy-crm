@@ -83,14 +83,17 @@ const AdminDashboard = () => {
     userAnalytics,
     relationshipOverview,
     USD_RATE,
-  } = data;
-  const { quoteStatus } = data;
+    quoteStatus,
+  } = data || {};
 
   const { dealsByAmount, dealsByStageAmount, dealStages } = dealAnalytics || {};
-  const { accountsByIndustry, accountsByType, dealsPerAccount } =
+  const { accountsByIndustry, accountsByType, dealsPerAccount, topAccountsByRevenue } =
     accountAnalytics || {};
   const { contactsPerAccount } = contactAnalytics || {};
   const { userPerformance } = userAnalytics || {};
+
+  const money = (value) =>
+    `PKR ${Math.round(Number(value || 0)).toLocaleString()}`;
 
   const downloadExcel = async ({ excelFile }) => {
     try {
@@ -132,30 +135,61 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         <ExecutiveCard
-          title="Total Revenue"
-          value={`${Math.round(summaryStats.totalRevenue).toLocaleString()}`}
-          description="Revenue from closed deals"
+          title="Closed-won revenue"
+          value={money(summaryStats?.totalRevenue)}
+          description="Won deals, converted to PKR"
         />
         <ExecutiveCard
-          title="Total Deals"
-          value={summaryStats.totalDeals}
-          description="Active + closed deals"
+          title="Pipeline"
+          value={money(summaryStats?.pipelineValue)}
+          description="Open deal value"
         />
         <ExecutiveCard
-          title="Pipeline Revenue"
-          value={Math.round(summaryStats.pipelineValue).toLocaleString()}
-          description="Revenue in pipeline"
-        />
-        <ExecutiveCard
-          title="Total Users"
-          value={summaryStats.totalUsers}
-          description="Sales and admin users"
-        />
-        <ExecutiveCard
-          title="Growth Rate"
-          value={`${summaryStats.growthRate}%`}
-          description="Compared to previous period"
+          title="This month"
+          value={money(summaryStats?.thisMonthRevenue)}
+          description={`Growth ${summaryStats?.growthRate || 0}% vs last month`}
           highlight
+        />
+        <ExecutiveCard
+          title="Win rate"
+          value={`${summaryStats?.winRate || 0}%`}
+          description={`${summaryStats?.totalDeals || 0} deals · avg ${money(summaryStats?.avgDealSize)}`}
+        />
+        <ExecutiveCard
+          title="Team"
+          value={summaryStats?.totalUsers || 0}
+          description={`${summaryStats?.totalAccounts || 0} accounts · ${summaryStats?.totalContacts || 0} contacts`}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+        <ExecutiveCard
+          title="Quotes"
+          value={summaryStats?.totalQuotes || 0}
+          description={`${summaryStats?.confirmedQuotes || 0} confirmed`}
+        />
+        <ExecutiveCard
+          title="Sell orders"
+          value={summaryStats?.totalOrders || 0}
+          description={`${summaryStats?.approvedOrders || 0} approved`}
+        />
+        <ExecutiveCard
+          title="Delivered / billed"
+          value={summaryStats?.deliveredOrders || 0}
+          description="Delivered, finance or invoiced"
+        />
+        <ExecutiveCard
+          title="Expected revenue"
+          value={money(summaryStats?.expectedRevenue)}
+          description="Weighted pipeline"
+        />
+        <ExecutiveCard
+          title="Accounts without contacts"
+          value={
+            (summaryStats?.totalAccounts || 0) -
+            (relationshipOverview?.accountsWithContacts || 0)
+          }
+          description={`${relationshipOverview?.accountsWithDeals || 0} accounts with deals`}
         />
       </div>
 
@@ -163,7 +197,7 @@ const AdminDashboard = () => {
         <HealthCard
           title="Sales Health"
           value={
-            summaryStats.totalRevenue === 0
+            !summaryStats?.totalRevenue
               ? "High Risk"
               : summaryStats.winRate < 20
               ? "Needs Attention"
@@ -171,11 +205,8 @@ const AdminDashboard = () => {
           }
         />
         <HealthCard
-          title="Accounts Without Contacts"
-          value={
-            summaryStats.totalAccounts -
-            relationshipOverview.accountsWithContacts
-          }
+          title="Accounts With Contacts"
+          value={relationshipOverview?.accountsWithContacts || 0}
         />
         <HealthCard
           title="Active Sales Users"
@@ -217,6 +248,7 @@ const AdminDashboard = () => {
           { key: "quotes", label: "Quotes" },
           { key: "accounts", label: "Accounts" },
           { key: "contacts", label: "Contacts" },
+          { key: "users", label: "Users" },
         ].map((btn) => (
           <button
             key={btn.key}
@@ -257,11 +289,16 @@ const AdminDashboard = () => {
             accountsByIndustry={accountsByIndustry}
             accountsByType={accountsByType}
             dealsPerAccount={dealsPerAccount}
+            topAccountsByRevenue={topAccountsByRevenue}
           />
         )}
 
         {activeTab === "contacts" && (
           <ContactsSection contactsPerAccount={contactsPerAccount} />
+        )}
+
+        {activeTab === "users" && (
+          <UsersSection userPerformance={userPerformance} />
         )}
       </div>
     </div>
@@ -497,63 +534,162 @@ const QuotesSection = ({ quoteStatus }) => (
 );
 
 const AccountsSection = ({
-  accountsByIndustry,
-  accountsByType,
-  dealsPerAccount,
+  accountsByIndustry = [],
+  accountsByType = [],
+  dealsPerAccount = [],
+  topAccountsByRevenue = [],
 }) => (
   <div className="space-y-6">
     <SectionTitle title="Account Intelligence" />
 
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <ChartCard title="Accounts by Industry">
-        <ResponsiveContainer width="100%" height={320}>
-          <PieChart>
-            <Tooltip contentStyle={tooltipStyle} />
-            <Pie
-              data={accountsByIndustry}
-              dataKey="count"
-              nameKey="_id"
-              outerRadius={110}
-            >
-              {accountsByIndustry.map((_, i) => (
-                <Cell key={i} fill={COLORS[i % COLORS.length]} />
-              ))}
-            </Pie>
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        {accountsByIndustry?.length ? (
+          <ResponsiveContainer width="100%" height={320}>
+            <PieChart>
+              <Tooltip contentStyle={tooltipStyle} />
+              <Pie
+                data={accountsByIndustry}
+                dataKey="count"
+                nameKey="_id"
+                outerRadius={110}
+              >
+                {accountsByIndustry.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                ))}
+              </Pie>
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoData />
+        )}
       </ChartCard>
 
+      <ChartCard title="Accounts by Type">
+        {accountsByType?.length ? (
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={accountsByType}>
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+              <XAxis dataKey="_id" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="count" fill="#021d54" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoData />
+        )}
+      </ChartCard>
+    </div>
+
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <ChartCard title="Deals per Account">
-        <ResponsiveContainer width="100%" height={320}>
-          <BarChart data={dealsPerAccount}>
-            <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
-            <XAxis dataKey="accountName" stroke="#9ca3af" />
-            <YAxis stroke="#9ca3af" />
-            <Tooltip contentStyle={tooltipStyle} />
-            <Bar dataKey="dealCount" fill="#021d54" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        {dealsPerAccount?.length ? (
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={dealsPerAccount}>
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+              <XAxis dataKey="accountName" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="dealCount" fill="#021d54" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoData />
+        )}
+      </ChartCard>
+
+      <ChartCard title="Top Accounts by Won Revenue">
+        {topAccountsByRevenue?.length ? (
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={topAccountsByRevenue}>
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+              <XAxis dataKey="accountName" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="totalRevenue" fill="#3b6fb6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoData />
+        )}
       </ChartCard>
     </div>
   </div>
 );
 
-const ContactsSection = ({ contactsPerAccount }) => (
+const ContactsSection = ({ contactsPerAccount = [] }) => (
   <div>
     <SectionTitle title="Contact Distribution by Account" />
 
     <ChartCard title="Contacts per Account">
-      <ResponsiveContainer width="100%" height={320}>
-        <BarChart data={contactsPerAccount}>
-          <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
-          <XAxis dataKey="accountName" stroke="#9ca3af" />
-          <YAxis stroke="#9ca3af" />
-          <Tooltip contentStyle={tooltipStyle} />
-          <Bar dataKey="contactCount" fill="#021d54" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+      {contactsPerAccount?.length ? (
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={contactsPerAccount}>
+            <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+            <XAxis dataKey="accountName" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
+            <Tooltip contentStyle={tooltipStyle} />
+            <Bar dataKey="contactCount" fill="#021d54" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <NoData />
+      )}
     </ChartCard>
+  </div>
+);
+
+const UsersSection = ({ userPerformance = [] }) => (
+  <div className="space-y-6">
+    <SectionTitle title="Sales user performance" />
+    <ChartCard title="Won revenue by user">
+      {userPerformance?.length ? (
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={userPerformance}>
+            <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+            <XAxis dataKey="name" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
+            <Tooltip contentStyle={tooltipStyle} />
+            <Bar dataKey="totalRevenue" fill="#021d54" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <NoData />
+      )}
+    </ChartCard>
+    <div className="card overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-bodyText border-b border-gray-100">
+            <th className="px-4 py-3">User</th>
+            <th className="px-4 py-3">Won revenue</th>
+            <th className="px-4 py-3">Pipeline</th>
+            <th className="px-4 py-3">Deals</th>
+            <th className="px-4 py-3">Won</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(userPerformance || []).map((row) => (
+            <tr key={row._id || row.email} className="border-b border-gray-50">
+              <td className="px-4 py-3">
+                <div className="font-medium text-heading">{row.name}</div>
+                <div className="text-xs text-bodyText">{row.email}</div>
+              </td>
+              <td className="px-4 py-3">
+                PKR {Math.round(row.totalRevenue || 0).toLocaleString()}
+              </td>
+              <td className="px-4 py-3">
+                PKR {Math.round(row.pipelineValue || 0).toLocaleString()}
+              </td>
+              <td className="px-4 py-3">{row.totalDeals || 0}</td>
+              <td className="px-4 py-3">{row.wonDeals || 0}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </div>
 );
 
