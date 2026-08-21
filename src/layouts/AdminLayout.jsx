@@ -14,12 +14,16 @@ import {
   Calendar,
   CheckSquare,
   BookOpen,
+  Wallet,
+  ShieldAlert,
+  MessagesSquare,
   LogOut,
   Menu,
 } from "lucide-react";
 import { useState } from "react";
+import PriceQueryUnreadBadge from "../components/PriceQueryUnreadBadge";
 
-const NavItem = ({ to, icon: Icon, label, collapsed }) => (
+const NavItem = ({ to, icon: Icon, label, collapsed, badge }) => (
   <NavLink
     to={to}
     title={label}
@@ -35,6 +39,7 @@ const NavItem = ({ to, icon: Icon, label, collapsed }) => (
   >
     <Icon size={18} className="shrink-0" />
     {!collapsed && <span className="truncate">{label}</span>}
+    {badge}
   </NavLink>
 );
 
@@ -52,13 +57,13 @@ export default function AdminLayout({ children }) {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   return (
-    <div className="min-h-screen flex bg-surface text-bodyText">
+    <div className="h-screen overflow-hidden flex bg-surface text-bodyText">
       <aside
         className={`${
           collapsed ? "w-[76px]" : "w-72"
-        } bg-brand text-white flex flex-col transition-all duration-300 shrink-0`}
+        } h-full overflow-hidden bg-brand text-white flex flex-col transition-all duration-300 shrink-0 shadow-[4px_0_24px_rgba(2,29,84,0.12)]`}
       >
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+        <div className="h-16 shrink-0 flex items-center justify-between px-4 border-b border-white/10">
           {!collapsed && (
             <div>
               <h1 className="text-lg font-semibold tracking-tight">
@@ -81,7 +86,7 @@ export default function AdminLayout({ children }) {
           )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav className="crm-sidebar-nav flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-3 py-4">
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
@@ -98,6 +103,13 @@ export default function AdminLayout({ children }) {
             icon={LayoutDashboard}
             label="Dashboard"
             collapsed={collapsed}
+          />
+          <NavItem
+            to="/admin/price-queries"
+            icon={MessagesSquare}
+            label="Price Queries"
+            collapsed={collapsed}
+            badge={<PriceQueryUnreadBadge compact={collapsed} />}
           />
 
           <Section title="Sales" collapsed={collapsed} />
@@ -160,6 +172,30 @@ export default function AdminLayout({ children }) {
             collapsed={collapsed}
           />
           <NavItem
+            to="/admin/ledger"
+            icon={BookOpen}
+            label="Ledgers"
+            collapsed={collapsed}
+          />
+          <NavItem
+            to="/admin/payments"
+            icon={Wallet}
+            label="Payments"
+            collapsed={collapsed}
+          />
+          <NavItem
+            to="/admin/vendor-bills"
+            icon={FileSpreadsheet}
+            label="Vendor Bills"
+            collapsed={collapsed}
+          />
+          <NavItem
+            to="/admin/posting-repair"
+            icon={ShieldAlert}
+            label="Posting Repair"
+            collapsed={collapsed}
+          />
+          <NavItem
             to="/admin/poToVendor"
             icon={FileSpreadsheet}
             label="Purchase Orders"
@@ -194,8 +230,8 @@ export default function AdminLayout({ children }) {
         </nav>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-card border-b border-gray-200 flex items-center justify-between px-6">
+      <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden">
+        <header className="h-16 shrink-0 bg-card border-b border-gray-200 flex items-center justify-between px-6">
           <div>
             <h2 className="text-base font-semibold text-heading tracking-tight">
               Admin Control Panel
@@ -228,7 +264,7 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 p-6 bg-surface overflow-y-auto">{children}</main>
+        <main className="flex-1 min-h-0 p-6 bg-surface overflow-y-auto overflow-x-hidden">{children}</main>
       </div>
     </div>
   );

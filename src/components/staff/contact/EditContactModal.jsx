@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import LookupPicker from "../../lists/LookupPicker";
 
 const EditContactModal = ({ contact, onClose, onSuccess }) => {
   const token = sessionStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [accounts, setAccounts] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState(
+    contact.account && typeof contact.account === "object"
+      ? contact.account
+      : null
+  );
 
   const [formData, setFormData] = useState({
     ...contact,
@@ -17,29 +22,6 @@ const EditContactModal = ({ contact, onClose, onSuccess }) => {
       country: "",
     },
   });
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}account/my`,
-          {
-            headers: { authorization: `Bearer ${token}` },
-          }
-        );
-
-        if (!res.ok) throw new Error("Failed to fetch accounts");
-
-        const data = await res.json();
-
-        setAccounts(data.data || data || []);
-      } catch (err) {
-        console.error("Error fetching accounts:", err);
-      }
-    };
-
-    fetchAccounts();
-  }, [token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,7 +41,10 @@ const EditContactModal = ({ contact, onClose, onSuccess }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            account: selectedAccount?._id || "",
+          }),
         }
       );
 
@@ -155,20 +140,27 @@ const EditContactModal = ({ contact, onClose, onSuccess }) => {
                   className="input"
                 />
 
-                {/* Account Select */}
-                <select
-                  name="account"
-                  value={formData.account || ""}
-                  onChange={handleChange}
-                  className="input"
-                >
-                  <option value="">Select Account</option>
-                  {accounts.map((acc) => (
-                    <option key={acc._id} value={acc._id}>
-                      {acc.accountName}
-                    </option>
-                  ))}
-                </select>
+                <div className="md:col-span-2">
+                  <LookupPicker
+                    label="Account (any team account)"
+                    endpoint="account/lookup"
+                    placeholder="Search any team account..."
+                    value={selectedAccount}
+                    displayValue={selectedAccount?.accountName || ""}
+                    onSelect={setSelectedAccount}
+                    renderItem={(a) => (
+                      <div>
+                        <div className="font-medium">{a.accountName}</div>
+                        <div className="text-xs text-bodyText">
+                          {a.industry || "Account"}
+                          {a.accountOwner?.name
+                            ? ` · ${a.accountOwner.name}`
+                            : ""}
+                        </div>
+                      </div>
+                    )}
+                  />
+                </div>
               </div>
             </div>
 

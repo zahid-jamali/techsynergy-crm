@@ -18,21 +18,17 @@ const CreateInvoiceModal = ({ onClose, onSuccess }) => {
   useEffect(() => {
     const fetchSellOrders = async () => {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}quotes/all`,
+        `${process.env.REACT_APP_BACKEND_URL}quotes/all?stage=Confirmed&limit=100&archived=false&isSOApproved=true`,
         {
           headers: { authorization: `Bearer ${token}` },
         }
       );
 
       const json = await res.json();
-
-      const valid = json.data.filter(
-        (q) =>
-          q.isActive === true &&
-          q.isSOApproved === true &&
-          q.quoteStage === "Confirmed"
+      const rows = Array.isArray(json.data) ? json.data : [];
+      const valid = rows.filter(
+        (q) => q.isActive !== false && q.quoteStage === "Confirmed"
       );
-
       setSellOrders(valid);
     };
 

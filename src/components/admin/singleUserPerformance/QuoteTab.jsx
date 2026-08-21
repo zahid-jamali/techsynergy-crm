@@ -6,6 +6,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import CostingDownloadButton from "../../staff/quote/CostingDownloadButton";
 
 const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
 
@@ -125,6 +126,10 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
                     >
                       PDF
                     </a>
+                    <CostingDownloadButton
+                      quote={q}
+                      className="ml-3 text-sky-700 hover:underline"
+                    />
                   </td>
                 </tr>
               ))}

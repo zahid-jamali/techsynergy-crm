@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PriceQueryUnreadBadge from "../components/PriceQueryUnreadBadge";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,6 +12,7 @@ import {
   Calendar,
   CheckSquare,
   BookOpen,
+  MessagesSquare,
   LogOut,
   Menu,
 } from "lucide-react";
@@ -20,13 +22,13 @@ export default function StaffLayout({ children }) {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   return (
-    <div className="min-h-screen flex bg-surface text-bodyText">
+    <div className="h-screen overflow-hidden flex bg-surface text-bodyText">
       <aside
         className={`${
           collapsed ? "w-[76px]" : "w-72"
-        } bg-brand text-white flex flex-col transition-all duration-300 shrink-0`}
+        } h-full overflow-hidden bg-brand text-white flex flex-col transition-all duration-300 shrink-0 shadow-[4px_0_24px_rgba(2,29,84,0.12)]`}
       >
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+        <div className="h-16 shrink-0 flex items-center justify-between px-4 border-b border-white/10">
           {!collapsed && (
             <div>
               <h1 className="text-lg font-semibold tracking-tight">
@@ -49,7 +51,7 @@ export default function StaffLayout({ children }) {
           )}
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="crm-sidebar-nav flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-3 py-4 space-y-1">
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
@@ -64,6 +66,13 @@ export default function StaffLayout({ children }) {
             to="/staff/dashboard"
             icon={<LayoutDashboard size={18} />}
             label="Dashboard"
+          />
+          <SidebarLink
+            collapsed={collapsed}
+            to="/staff/price-queries"
+            icon={<MessagesSquare size={18} />}
+            label="Price Queries"
+            badge={<PriceQueryUnreadBadge compact={collapsed} />}
           />
           <SidebarLink
             collapsed={collapsed}
@@ -121,7 +130,7 @@ export default function StaffLayout({ children }) {
           />
         </nav>
 
-        <div className="p-3 border-t border-white/10">
+        <div className="p-3 border-t border-white/10 shrink-0">
           <button
             onClick={() => {
               sessionStorage.clear();
@@ -137,8 +146,8 @@ export default function StaffLayout({ children }) {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-card border-b border-gray-200 flex items-center justify-between px-6">
+      <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden">
+        <header className="h-16 shrink-0 bg-card border-b border-gray-200 flex items-center justify-between px-6">
           <div>
             <h2 className="text-base font-semibold tracking-tight text-heading">
               Staff Workspace
@@ -164,19 +173,19 @@ export default function StaffLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 p-6 bg-surface overflow-y-auto">{children}</main>
+        <main className="flex-1 min-h-0 p-6 bg-surface overflow-y-auto overflow-x-hidden">{children}</main>
       </div>
     </div>
   );
 }
 
-const SidebarLink = ({ to, icon, label, collapsed }) => {
+const SidebarLink = ({ to, icon, label, collapsed, badge }) => {
   return (
     <NavLink
       to={to}
       title={label}
       className={({ isActive }) =>
-        `flex items-center ${
+        `relative flex items-center ${
           collapsed ? "justify-center px-2" : "gap-3 px-3"
         } py-2.5 rounded-lg transition-all duration-200 ${
           isActive
@@ -189,6 +198,7 @@ const SidebarLink = ({ to, icon, label, collapsed }) => {
       {!collapsed && (
         <span className="text-sm font-medium truncate">{label}</span>
       )}
+      {badge}
     </NavLink>
   );
 };

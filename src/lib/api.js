@@ -7,10 +7,12 @@ export function authHeaders(json = true) {
 }
 
 export async function api(path, options = {}) {
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
   const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}${path}`, {
     ...options,
     headers: {
-      ...authHeaders(options.body !== undefined),
+      ...authHeaders(!isFormData && options.body !== undefined),
       ...(options.headers || {}),
     },
   });

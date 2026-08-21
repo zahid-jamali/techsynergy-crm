@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import LookupPicker from "../../lists/LookupPicker";
 
 const AddContactModal = ({ onClose, onSuccess }) => {
   const token = sessionStorage.getItem("token");
 
-  /* ---------------- State ---------------- */
   const [loading, setLoading] = useState(false);
-
-  const [allAccounts, setAllAccounts] = useState([]);
-  const [filteredAccounts, setFilteredAccounts] = useState([]);
-  const [accountQuery, setAccountQuery] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -22,50 +17,6 @@ const AddContactModal = ({ onClose, onSuccess }) => {
     designation: "",
   });
 
-  /* ---------------- Fetch accounts ONCE ---------------- */
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}account/my`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) throw new Error("Failed to fetch accounts");
-
-        const data = await res.json();
-        setAllAccounts(data || []);
-      } catch (err) {
-        console.error("Failed to load accounts", err);
-      }
-    };
-
-    if (token) fetchAccounts();
-  }, [token]);
-
-  /* ---------------- Frontend search ---------------- */
-  useEffect(() => {
-    if (!showDropdown) return;
-
-    if (!accountQuery.trim()) {
-      setFilteredAccounts(allAccounts.slice(0, 10)); // show first 10
-      return;
-    }
-
-    const query = accountQuery.toLowerCase();
-
-    const results = allAccounts.filter((acc) =>
-      acc.accountName?.toLowerCase().includes(query)
-    );
-
-    setFilteredAccounts(results);
-  }, [accountQuery, allAccounts, showDropdown]);
-
-  /* ---------------- Handlers ---------------- */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -103,12 +54,10 @@ const AddContactModal = ({ onClose, onSuccess }) => {
     }
   };
 
-  /* ---------------- UI ---------------- */
   return (
     <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-4 py-8">
         <div className="bg-card border border-gray-200 rounded-lg w-full max-w-xl text-heading">
-          {/* Header */}
           <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-brand">
               Add New Contact
@@ -121,12 +70,10 @@ const AddContactModal = ({ onClose, onSuccess }) => {
             </button>
           </div>
 
-          {/* Body */}
           <form
             onSubmit={handleSubmit}
             className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
           >
-            {/* Name */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 name="firstName"
@@ -145,13 +92,6 @@ const AddContactModal = ({ onClose, onSuccess }) => {
             </div>
 
             <input
-                  name="email"
-                  value={formData.email || ""}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  className="input"
-                />
-            <input
               name="email"
               placeholder="Email"
               value={formData.email}
@@ -166,7 +106,6 @@ const AddContactModal = ({ onClose, onSuccess }) => {
               className="input"
             />
 
-            {/* Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 name="phone"
@@ -184,45 +123,24 @@ const AddContactModal = ({ onClose, onSuccess }) => {
               />
             </div>
 
-            {/* Account Search */}
-            <div className="relative">
-              <input
-                placeholder="Search Account..."
-                value={accountQuery}
-                onFocus={() => {
-                  setShowDropdown(true);
-                  setFilteredAccounts(allAccounts.slice(0, 10));
-                }}
-                onChange={(e) => {
-                  setAccountQuery(e.target.value);
-                  setSelectedAccount(null);
-                }}
-                className="input"
-              />
-
-              {showDropdown &&
-                filteredAccounts.length > 0 &&
-                !selectedAccount && (
-                  <div className="absolute z-10 w-full bg-card border border-gray-200 rounded mt-1 max-h-40 overflow-y-auto">
-                    {filteredAccounts.map((acc) => (
-                      <div
-                        key={acc._id}
-                        onClick={() => {
-                          setSelectedAccount(acc);
-                          setAccountQuery(acc.accountName);
-                          setShowDropdown(false);
-                          setFilteredAccounts([]);
-                        }}
-                        className="px-3 py-2 hover:bg-surface cursor-pointer"
-                      >
-                        {acc.accountName}
-                      </div>
-                    ))}
+            <LookupPicker
+              label="Account (any team account)"
+              endpoint="account/lookup"
+              placeholder="Search any team account..."
+              value={selectedAccount}
+              displayValue={selectedAccount?.accountName || ""}
+              onSelect={setSelectedAccount}
+              renderItem={(a) => (
+                <div>
+                  <div className="font-medium">{a.accountName}</div>
+                  <div className="text-xs text-bodyText">
+                    {a.industry || "Account"}
+                    {a.accountOwner?.name ? ` · ${a.accountOwner.name}` : ""}
                   </div>
-                )}
-            </div>
+                </div>
+              )}
+            />
 
-            {/* Description */}
             <textarea
               name="description"
               placeholder="Description"
@@ -232,7 +150,6 @@ const AddContactModal = ({ onClose, onSuccess }) => {
               className="input"
             />
 
-            {/* Actions */}
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
@@ -253,7 +170,6 @@ const AddContactModal = ({ onClose, onSuccess }) => {
         </div>
       </div>
 
-      {/* Shared input style */}
       <style jsx>{`
         .input {
           width: 100%;

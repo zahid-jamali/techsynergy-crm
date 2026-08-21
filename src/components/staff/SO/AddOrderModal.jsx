@@ -30,7 +30,7 @@ const AddOrderModal = ({ onClose, onSuccess }) => {
         setFetching(true);
 
         const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}quotes/my?stage=Confirmed`,
+          `${process.env.REACT_APP_BACKEND_URL}quotes/my?stage=Confirmed&limit=100&archived=false`,
           {
             headers: {
               authorization: `Bearer ${token}`,

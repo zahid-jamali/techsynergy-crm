@@ -61,8 +61,12 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                       <th className="p-2">#</th>
                       <th className="p-2 text-left">Product</th>
                       <th className="p-2">Qty</th>
-                      <th className="p-2 text-right">Price</th>
-                      <th className="p-2 text-right">Total (Incl. Tax)</th>
+                      <th className="p-2 text-right">Vendor</th>
+                      <th className="p-2 text-right">Margin %</th>
+                      <th className="p-2 text-right">After margin</th>
+                      <th className="p-2 text-right">WHT %</th>
+                      <th className="p-2 text-right">List</th>
+                      <th className="p-2 text-right">Total</th>
                     </tr>
                   </thead>
 
@@ -87,12 +91,18 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                           </td>
 
                           <td className="p-2 text-center">{p.quantity}</td>
-
+                          <td className="p-2 text-right">
+                            {currency} {format(p.vendorPrice)}
+                          </td>
+                          <td className="p-2 text-right">{format(p.margin)}%</td>
+                          <td className="p-2 text-right">
+                            {currency} {format(p.priceAfterMargin)}
+                          </td>
+                          <td className="p-2 text-right">{format(p.withHolding)}%</td>
                           <td className="p-2 text-right">
                             {currency} {format(p.listPrice)}
                           </td>
-
-                          <td className="p-2 text-right text-red-400 font-semibold">
+                          <td className="p-2 text-right text-brand font-semibold">
                             {currency} {format(p.total)}
                           </td>
                         </tr>
@@ -101,7 +111,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                         {p.Tax && p.Tax.length > 0 && (
                           <tr className="bg-surface text-xs">
                             <td></td>
-                            <td colSpan={4} className="px-4 pb-2">
+                            <td colSpan={8} className="px-4 pb-2">
                               <div className="flex flex-wrap gap-2 text-bodyText">
                                 {p.Tax.map((t, ti) => (
                                   <span

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Receipt, BarChart3, Calendar, CheckSquare, BookOpen } from "lucide-react";
+import { LayoutDashboard, Inbox, Receipt, BarChart3, BookOpen, Wallet, FileSpreadsheet, ShieldAlert, Calendar, CheckSquare } from "lucide-react";
 import AppShell from "./AppShell";
 
 const navSections = [
@@ -14,6 +14,15 @@ const navSections = [
       { to: "/finance/queue", icon: Inbox, label: "Handoff Queue" },
       { to: "/finance/invoices", icon: Receipt, label: "Invoices" },
       { to: "/finance/reports", icon: BarChart3, label: "Reports" },
+    ],
+  },
+  {
+    title: "Books",
+    items: [
+      { to: "/finance/ledger", icon: BookOpen, label: "Ledgers" },
+      { to: "/finance/payments", icon: Wallet, label: "Payments" },
+      { to: "/finance/vendor-bills", icon: FileSpreadsheet, label: "Vendor Bills" },
+      { to: "/finance/posting-repair", icon: ShieldAlert, label: "Posting Repair" },
     ],
   },
   {

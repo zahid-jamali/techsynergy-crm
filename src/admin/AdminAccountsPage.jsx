@@ -1,292 +1,160 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AddAccountModal from "../components/staff/account/AddAccountModal";
 import EditAccountModal from "../components/staff/account/EditAccountModal";
 import DeleteAccountModal from "../components/staff/account/DeleteAccountModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
-import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import Loading from "../components/Loading";
+import { usePagedList } from "../hooks/usePagedList";
+import ListToolbar from "../components/lists/ListToolbar";
+import PaginationBar from "../components/lists/PaginationBar";
+import ArchiveButton from "../components/lists/ArchiveButton";
+import { ACCOUNT_TYPES, INDUSTRIES, contactName } from "../lib/crm";
+import { api } from "../lib/api";
 
 const AdminAccountsPage = () => {
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [selectedOwner, setSelectedOwner] = useState("all");
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const { ref, inView } = useInView({ threshold: 1 });
-  const token = sessionStorage.getItem("token");
+  const [owners, setOwners] = useState([]);
 
-  const fetchAccounts = useCallback(async () => {
-    if (!hasMore && loading) return;
-    try {
-      setLoading(true);
-      const url = process.env.REACT_APP_BACKEND_URL;
-      const res = await fetch(`${url}account/all?limit=20&page=${page}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.msg || "Failed to fetch users");
-      }
-
-      setAccounts((prev) => [...prev, ...data.accounts]);
-      setHasMore(data.hasMore);
-      setPage((prev) => prev + 1);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-    // hasMore/loading are pagination guards; adding them retriggers fetches.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, page]);
+  const extraFilters = useMemo(
+    () => ({
+      accountType: selectedType,
+      industry: selectedIndustry,
+      owner: selectedOwner,
+    }),
+    [selectedType, selectedIndustry, selectedOwner]
+  );
+  const list = usePagedList("account/all", extraFilters);
 
   useEffect(() => {
-    if (hasMore && inView) {
-      fetchAccounts();
-    }
-  }, [fetchAccounts, hasMore, inView]);
-
-  const View = (account) => {
-    setShowModal("View");
-    setSelectedAccount(account);
-  };
-
-  const uniqueTypes = useMemo(() => {
-    return [...new Set(accounts.map((a) => a.accountType).filter(Boolean))];
-  }, [accounts]);
-
-  const uniqueIndustries = useMemo(() => {
-    return [...new Set(accounts.map((a) => a.industry).filter(Boolean))];
-  }, [accounts]);
-
-  const uniqueOwners = useMemo(() => {
-    return [
-      ...new Map(
-        accounts
-          .filter((a) => a.accountOwner?._id)
-          .map((a) => [a.accountOwner._id, a.accountOwner])
-      ).values(),
-    ];
-  }, [accounts]);
-
-  const filteredAccounts = useMemo(() => {
-    return accounts.filter((account) => {
-      const searchValue = search.toLowerCase().trim();
-
-      if (searchValue) {
-        const searchableText = `
-          ${account.accountName || ""}
-          ${account.accountType || ""}
-          ${account.industry || ""}
-          ${account.phone || ""}
-          ${account.accountOwner?.name || ""}
-        `.toLowerCase();
-
-        if (!searchableText.includes(searchValue)) return false;
-      }
-
-      if (selectedType !== "all" && account.accountType !== selectedType)
-        return false;
-
-      if (selectedIndustry !== "all" && account.industry !== selectedIndustry)
-        return false;
-
-      if (
-        selectedOwner !== "all" &&
-        account.accountOwner?._id !== selectedOwner
-      )
-        return false;
-
-      return true;
-    });
-  }, [accounts, search, selectedType, selectedIndustry, selectedOwner]);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loading />
-      </div>
-    );
-  }
+    api("user/all")
+      .then((data) => setOwners(Array.isArray(data) ? data : data.data || []))
+      .catch(() => setOwners([]));
+  }, []);
 
   return (
     <div className="p-6 text-heading">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-brand">Accounts</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-brand">Accounts</h1>
+          <p className="text-sm text-bodyText mt-1">
+            Team-wide accounts with search, filters, pagination and archive.
+          </p>
+        </div>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold text-white"
         >
           + Add Account
         </button>
       </div>
 
-      <div className="bg-card border border-gray-200 rounded-xl p-5 mb-6 space-y-4">
-        {/* Search Row */}
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            placeholder="Search accounts..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-card border border-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:border-brand"
-          />
+      <ListToolbar
+        search={list.searchInput}
+        onSearch={list.setSearchInput}
+        searchPlaceholder="Search account name, phone or industry..."
+        archived={list.archived}
+        onArchivedChange={list.setArchived}
+        onReset={() => {
+          list.setSearchInput("");
+          setSelectedType("all");
+          setSelectedIndustry("all");
+          setSelectedOwner("all");
+        }}
+        filters={[
+          {
+            name: "type",
+            allLabel: "All types",
+            value: selectedType,
+            onChange: setSelectedType,
+            options: ACCOUNT_TYPES,
+          },
+          {
+            name: "industry",
+            allLabel: "All industries",
+            value: selectedIndustry,
+            onChange: setSelectedIndustry,
+            options: INDUSTRIES,
+          },
+          {
+            name: "owner",
+            allLabel: "All owners",
+            value: selectedOwner,
+            onChange: setSelectedOwner,
+            options: owners.map((u) => ({ value: u._id, label: u.name || u.email })),
+          },
+        ]}
+      />
 
-          <button
-            onClick={() => {
-              setSearch("");
-              setSelectedType("all");
-              setSelectedIndustry("all");
-              setSelectedOwner("all");
-            }}
-            className="text-sm text-bodyText hover:text-brand"
-          >
-            Reset Filters
-          </button>
-        </div>
-
-        {/* Filters Row */}
-        <div className="flex flex-wrap items-center gap-4">
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
-          >
-            <option value="all">All Types</option>
-            {uniqueTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedIndustry}
-            onChange={(e) => setSelectedIndustry(e.target.value)}
-            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
-          >
-            <option value="all">All Industries</option>
-            {uniqueIndustries.map((industry) => (
-              <option key={industry} value={industry}>
-                {industry}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedOwner}
-            onChange={(e) => setSelectedOwner(e.target.value)}
-            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
-          >
-            <option value="all">All Owners</option>
-            {uniqueOwners.map((owner) => (
-              <option key={owner._id} value={owner._id}>
-                {owner.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="text-sm text-bodyText">
-          Showing {filteredAccounts.length} of {accounts.length} accounts
-        </div>
-        <div className="text-sm text-bodyText">
-          Showing {filteredAccounts.length} of {accounts.length} accounts
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="bg-card rounded-lg border border-gray-200 overflow-x-auto">
+      <div className="bg-card border border-gray-200 rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-card text-bodyText">
+          <thead className="bg-surface text-bodyText">
             <tr>
               <th className="px-4 py-3 text-left">Account Name</th>
               <th className="px-4 py-3 text-left">Type</th>
               <th className="px-4 py-3 text-left">Industry</th>
               <th className="px-4 py-3 text-left">Ownership</th>
-
               <th className="px-4 py-3 text-left">POC</th>
               <th className="px-4 py-3 text-left">Phone</th>
               <th className="px-4 py-3 text-left">A/Owner</th>
               <th className="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>
-
           <tbody>
-            {loading ? (
+            {list.loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-bodyText">
+                <td colSpan="8" className="text-center py-6 text-bodyText">
                   Loading accounts...
                 </td>
               </tr>
-            ) : accounts.length === 0 ? (
+            ) : list.items.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-bodyText">
+                <td colSpan="8" className="text-center py-6 text-bodyText">
                   No accounts found
                 </td>
               </tr>
             ) : (
-              filteredAccounts.map((account) => (
-                <tr
-                  key={account._id}
-                  className="border-t border-gray-200 hover:bg-surface"
-                >
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.accountName}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.accountType}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.industry || "-"}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.ownership || "-"}
-                  </td>
-                  <td className="px-4 py-3 ">
-                    {account.contacts.map((c) => (
-                      <span
-                        onClick={() => {
-                          setShowModal("contact");
-                          setSelectedContact(c);
-                        }}
-                        className="px-2 cursor-pointer hover:underline hover:text-blue-600"
-                      >
-                        {c.firstName} {c.lastName}
-                      </span>
-                    )) || "-"}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.phone || "-"}
-                  </td>
+              list.items.map((account) => (
+                <tr key={account._id} className="border-t border-gray-200 hover:bg-surface">
+                  <td className="px-4 py-3">{account.accountName}</td>
+                  <td className="px-4 py-3">{account.accountType}</td>
+                  <td className="px-4 py-3">{account.industry || "-"}</td>
+                  <td className="px-4 py-3">{account.ownership || "-"}</td>
                   <td className="px-4 py-3">
-                    <Link
-                      to={`/admin/singleUserPerformance/${account.accountOwner._id}`}
-                      className={"hover:underline hover:text-blue-600"}
-                    >
-                      {account.accountOwner.name || "-"}
-                    </Link>
+                    {(account.contacts || []).length === 0
+                      ? "-"
+                      : (account.contacts || []).map((c) => (
+                          <span
+                            key={c._id}
+                            onClick={() => {
+                              setShowModal("contact");
+                              setSelectedContact(c);
+                            }}
+                            className="px-2 cursor-pointer hover:underline hover:text-blue-600"
+                          >
+                            {contactName(c)}
+                          </span>
+                        ))}
+                  </td>
+                  <td className="px-4 py-3">{account.phone || "-"}</td>
+                  <td className="px-4 py-3">
+                    {account.accountOwner?._id ? (
+                      <Link
+                        to={`/admin/singleUserPerformance/${account.accountOwner._id}`}
+                        className="hover:underline hover:text-blue-600"
+                      >
+                        {account.accountOwner.name || "-"}
+                      </Link>
+                    ) : (
+                      "-"
+                    )}
                   </td>
                   <td className="px-4 py-3 flex gap-3">
-                    {/* <button
-                      onClick={}}
-                      className="text-brand hover:underline"
-                    >
-                      View
-                    </button> */}
                     <button
                       onClick={() => {
                         setShowModal("Edit");
@@ -296,6 +164,11 @@ const AdminAccountsPage = () => {
                     >
                       Edit
                     </button>
+                    <ArchiveButton
+                      path={`account/${account._id}/archive`}
+                      archived={account.isArchived}
+                      onDone={list.reload}
+                    />
                     <button
                       onClick={() => {
                         setShowModal("Delete");
@@ -311,56 +184,38 @@ const AdminAccountsPage = () => {
             )}
           </tbody>
         </table>
-        <div ref={ref}></div>
+        <PaginationBar
+          page={list.page}
+          pages={list.pagination.pages}
+          total={list.pagination.total}
+          limit={list.limit}
+          onPage={list.setPage}
+          onLimit={list.setLimit}
+        />
       </div>
 
-      {/* Modal */}
       {showModal === "Add" && (
-        <AddAccountModal
-          onClose={() => setShowModal(false)}
-          onSuccess={fetchAccounts}
-        />
+        <AddAccountModal onClose={() => setShowModal("")} onSuccess={list.reload} />
       )}
-
       {showModal === "Edit" && (
         <EditAccountModal
           account={selectedAccount}
-          onClose={() => {
-            setShowModal(null);
-            setSelectedAccount(null);
-          }}
-          onSuccess={fetchAccounts}
+          onClose={() => setShowModal("")}
+          onSuccess={list.reload}
         />
       )}
-
       {showModal === "View" && (
-        <ViewAccountModal
-          account={selectedAccount}
-          onClose={() => {
-            setShowModal(null);
-            setSelectedAccount(null);
-          }}
-        />
+        <ViewAccountModal account={selectedAccount} onClose={() => setShowModal("")} />
       )}
-
       {showModal === "Delete" && (
         <DeleteAccountModal
           account={selectedAccount}
-          onClose={() => {
-            setShowModal(null);
-            setSelectedAccount(null);
-          }}
-          onSuccess={fetchAccounts}
+          onClose={() => setShowModal("")}
+          onSuccess={list.reload}
         />
       )}
       {showModal === "contact" && (
-        <ViewContactModal
-          contact={selectedContact}
-          onClose={() => {
-            setShowModal(null);
-            setSelectedContact(null);
-          }}
-        />
+        <ViewContactModal contact={selectedContact} onClose={() => setShowModal("")} />
       )}
     </div>
   );

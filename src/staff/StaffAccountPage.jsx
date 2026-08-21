@@ -1,69 +1,70 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import AddAccountModal from "../components/staff/account/AddAccountModal";
 import EditAccountModal from "../components/staff/account/EditAccountModal";
 import DeleteAccountModal from "../components/staff/account/DeleteAccountModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
-import Loading from "../components/Loading";
+import { usePagedList } from "../hooks/usePagedList";
+import ListToolbar from "../components/lists/ListToolbar";
+import PaginationBar from "../components/lists/PaginationBar";
+import ArchiveButton from "../components/lists/ArchiveButton";
+import { ACCOUNT_TYPES, INDUSTRIES } from "../lib/crm";
 
 const StaffAccountsPage = () => {
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [showModal, setShowModal] = useState("");
+  const [accountType, setAccountType] = useState("all");
+  const [industry, setIndustry] = useState("all");
+  const extraFilters = useMemo(
+    () => ({ accountType, industry }),
+    [accountType, industry]
+  );
+  const list = usePagedList("account/my", extraFilters);
 
-  const token = sessionStorage.getItem("token");
-
-  const fetchAccounts = useCallback(async () => {
-    try {
-      setLoading(true);
-      const url = process.env.REACT_APP_BACKEND_URL;
-      const res = await fetch(`${url}account/my`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.msg || "Failed to fetch users");
-      }
-
-      setAccounts(data);
-    } catch (err) {
-      // setError(err.message);
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchAccounts();
-  }, [fetchAccounts]);
-
-  const View = (account) => {
-    setShowModal("Edit");
-    setSelectedAccount(account);
-  };
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loading />
-      </div>
-    );
-  }
   return (
     <div className="p-6 text-heading">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-brand">Accounts</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-brand">Accounts</h1>
+          <p className="text-sm text-bodyText mt-1">
+            Search, filter and archive old accounts without deleting them.
+          </p>
+        </div>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold text-white"
         >
           + Add Account
         </button>
       </div>
+
+      <ListToolbar
+        search={list.searchInput}
+        onSearch={list.setSearchInput}
+        searchPlaceholder="Search account name, phone or industry..."
+        archived={list.archived}
+        onArchivedChange={list.setArchived}
+        onReset={() => {
+          list.setSearchInput("");
+          setAccountType("all");
+          setIndustry("all");
+        }}
+        filters={[
+          {
+            name: "type",
+            allLabel: "All types",
+            value: accountType,
+            onChange: setAccountType,
+            options: ACCOUNT_TYPES,
+          },
+          {
+            name: "industry",
+            allLabel: "All industries",
+            value: industry,
+            onChange: setIndustry,
+            options: INDUSTRIES,
+          },
+        ]}
+      />
 
       <div className="bg-card rounded-lg border border-gray-200 overflow-x-auto">
         <table className="w-full text-sm">
@@ -76,38 +77,26 @@ const StaffAccountsPage = () => {
               <th className="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>
-
           <tbody>
-            {loading ? (
+            {list.loading ? (
               <tr>
                 <td colSpan="5" className="text-center py-6 text-bodyText">
                   Loading accounts...
                 </td>
               </tr>
-            ) : accounts.length === 0 ? (
+            ) : list.items.length === 0 ? (
               <tr>
                 <td colSpan="5" className="text-center py-6 text-bodyText">
                   No accounts found
                 </td>
               </tr>
             ) : (
-              accounts.map((account) => (
-                <tr
-                  key={account._id}
-                  className="border-t border-gray-200 hover:bg-surface"
-                >
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.accountName}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.accountType}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.industry || "-"}
-                  </td>
-                  <td onClick={() => View(account)} className="px-4 py-3">
-                    {account.phone || "-"}
-                  </td>
+              list.items.map((account) => (
+                <tr key={account._id} className="border-t border-gray-200 hover:bg-surface">
+                  <td className="px-4 py-3">{account.accountName}</td>
+                  <td className="px-4 py-3">{account.accountType}</td>
+                  <td className="px-4 py-3">{account.industry || "-"}</td>
+                  <td className="px-4 py-3">{account.phone || "-"}</td>
                   <td className="px-4 py-3 flex gap-3">
                     <button
                       onClick={() => {
@@ -118,6 +107,11 @@ const StaffAccountsPage = () => {
                     >
                       Edit
                     </button>
+                    <ArchiveButton
+                      path={`account/${account._id}/archive`}
+                      archived={account.isArchived}
+                      onDone={list.reload}
+                    />
                     <button
                       onClick={() => {
                         setShowModal("Delete");
@@ -133,16 +127,19 @@ const StaffAccountsPage = () => {
             )}
           </tbody>
         </table>
+        <PaginationBar
+          page={list.page}
+          pages={list.pagination.pages}
+          total={list.pagination.total}
+          limit={list.limit}
+          onPage={list.setPage}
+          onLimit={list.setLimit}
+        />
       </div>
 
-      {/* Modal */}
       {showModal === "Add" && (
-        <AddAccountModal
-          onClose={() => setShowModal("")}
-          onSuccess={fetchAccounts}
-        />
+        <AddAccountModal onClose={() => setShowModal("")} onSuccess={list.reload} />
       )}
-
       {showModal === "Edit" && (
         <EditAccountModal
           account={selectedAccount}
@@ -150,10 +147,9 @@ const StaffAccountsPage = () => {
             setShowModal("");
             setSelectedAccount(null);
           }}
-          onSuccess={fetchAccounts}
+          onSuccess={list.reload}
         />
       )}
-
       {showModal === "View" && (
         <ViewAccountModal
           account={selectedAccount}
@@ -163,7 +159,6 @@ const StaffAccountsPage = () => {
           }}
         />
       )}
-
       {showModal === "Delete" && (
         <DeleteAccountModal
           account={selectedAccount}
@@ -171,7 +166,7 @@ const StaffAccountsPage = () => {
             setShowModal("");
             setSelectedAccount(null);
           }}
-          onSuccess={fetchAccounts}
+          onSuccess={list.reload}
         />
       )}
     </div>

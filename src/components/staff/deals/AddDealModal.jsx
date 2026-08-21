@@ -1,19 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import LookupPicker from "../../lists/LookupPicker";
+import { contactName } from "../../../lib/crm";
 
 const AddDealModal = ({ onClose, onSuccess }) => {
   const token = sessionStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-
-  const [accounts, setAccounts] = useState([]);
-  const [contacts, setContacts] = useState([]);
-
-  const [accountQuery, setAccountQuery] = useState("");
-  const [contactQuery, setContactQuery] = useState("");
-
-  const [filteredAccounts, setFilteredAccounts] = useState([]);
-  const [filteredContacts, setFilteredContacts] = useState([]);
-
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
 
@@ -29,52 +21,6 @@ const AddDealModal = ({ onClose, onSuccess }) => {
     description: "",
   });
 
-  /* -------- Fetch accounts & contacts ONCE -------- */
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [accRes, conRes] = await Promise.all([
-          fetch(`${process.env.REACT_APP_BACKEND_URL}account/all`, {
-            headers: { authorization: `Bearer ${token}` },
-          }),
-          fetch(`${process.env.REACT_APP_BACKEND_URL}contact/my`, {
-            headers: { authorization: `Bearer ${token}` },
-          }),
-        ]);
-
-        const accData = await accRes.accounts.json();
-        const conData = await conRes.json();
-
-        setAccounts(accData || []);
-        setContacts(conData || []);
-      } catch (err) {
-        console.error("Failed to load data");
-      }
-    };
-
-    fetchData();
-  }, [token]);
-
-  /* -------- Client-side search -------- */
-  useEffect(() => {
-    setFilteredAccounts(
-      accounts.filter((a) =>
-        a.accountName.toLowerCase().includes(accountQuery.toLowerCase()),
-      ),
-    );
-  }, [accountQuery, accounts]);
-
-  useEffect(() => {
-    setFilteredContacts(
-      contacts.filter((c) =>
-        `${c.firstName} ${c.lastName}`
-          .toLowerCase()
-          .includes(contactQuery.toLowerCase()),
-      ),
-    );
-  }, [contactQuery, contacts]);
-
-  /* -------- Handlers -------- */
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -142,67 +88,50 @@ const AddDealModal = ({ onClose, onSuccess }) => {
               />
             </div>
 
-            {/* ACCOUNT SELECT */}
-            <div className="relative">
-              <label className="label">Account</label>
-              <input
-                placeholder="Search Account..."
-                value={accountQuery}
-                onChange={(e) => setAccountQuery(e.target.value)}
-                className="input focus:border-brand focus:ring-1 focus:ring-brand"
-              />
-
-              {accountQuery && filteredAccounts.length > 0 && (
-                <div className="dropdown">
-                  {filteredAccounts.slice(0, 6).map((a) => (
-                    <div
-                      key={a._id}
-                      onClick={() => {
-                        setSelectedAccount(a);
-                        setAccountQuery(a.accountName);
-                        setFilteredAccounts([]);
-                      }}
-                      className="dropdown-item"
-                    >
-                      <div className="font-medium">{a.accountName}</div>
-                      <div className="text-xs text-bodyText">{a.industry}</div>
-                    </div>
-                  ))}
+            <LookupPicker
+              label="Account (shared across team)"
+              endpoint="account/lookup"
+              placeholder="Search any team account..."
+              value={selectedAccount}
+              displayValue={selectedAccount?.accountName || ""}
+              onSelect={(account) => {
+                setSelectedAccount(account);
+                setSelectedContact(null);
+              }}
+              renderItem={(a) => (
+                <div>
+                  <div className="font-medium">{a.accountName}</div>
+                  <div className="text-xs text-bodyText">
+                    {a.industry || "Account"}
+                    {a.accountOwner?.name ? ` · ${a.accountOwner.name}` : ""}
+                  </div>
                 </div>
               )}
-            </div>
+            />
 
-            {/* CONTACT SELECT */}
-            <div className="relative">
-              <label className="label">POC</label>
-              <input
-                placeholder="Search Contact..."
-                value={contactQuery}
-                onChange={(e) => setContactQuery(e.target.value)}
-                className="input focus:border-brand focus:ring-1 focus:ring-brand"
-              />
-
-              {contactQuery && filteredContacts.length > 0 && (
-                <div className="dropdown">
-                  {filteredContacts.slice(0, 6).map((c) => (
-                    <div
-                      key={c._id}
-                      onClick={() => {
-                        setSelectedContact(c);
-                        setContactQuery(`${c.firstName} ${c.lastName}`);
-                        setFilteredContacts([]);
-                      }}
-                      className="dropdown-item"
-                    >
-                      <div className="font-medium">
-                        {c.firstName} {c.lastName}
-                      </div>
-                      <div className="text-xs text-bodyText">{c.email}</div>
-                    </div>
-                  ))}
+            <LookupPicker
+              label="POC"
+              endpoint="contact/lookup"
+              extraParams={selectedAccount?._id ? { account: selectedAccount._id } : {}}
+              placeholder={
+                selectedAccount
+                  ? "Search contacts on this account..."
+                  : "Select an account first"
+              }
+              disabled={!selectedAccount}
+              value={selectedContact}
+              displayValue={selectedContact ? contactName(selectedContact) : ""}
+              onSelect={setSelectedContact}
+              renderItem={(c) => (
+                <div>
+                  <div className="font-medium">{contactName(c)}</div>
+                  <div className="text-xs text-bodyText">
+                    {c.email || c.phone || "Contact"}
+                    {c.contactOwner?.name ? ` · ${c.contactOwner.name}` : ""}
+                  </div>
                 </div>
               )}
-            </div>
+            />
 
             {/* STAGE + CURRENCY */}
             <div className="grid grid-cols-2 gap-4">

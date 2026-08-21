@@ -15,12 +15,18 @@ import AdminVendorsPage from "../admin/AdminVendorsPage";
 import CalendarPage from "../workspace/CalendarPage";
 import TodosPage from "../workspace/TodosPage";
 import NotebooksPage from "../workspace/NotebooksPage";
+import PriceQueriesPage from "../pages/PriceQueriesPage";
+import FinanceLedgerPage from "../finance/FinanceLedgerPage";
+import FinancePaymentsPage from "../finance/FinancePaymentsPage";
+import FinanceVendorBillsPage from "../finance/FinanceVendorBillsPage";
+import FinancePostingRepairPage from "../finance/FinancePostingRepairPage";
 
 export default function AdminApp() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="dashboard" />} />
       <Route path="dashboard" element={<AdminDashbaord />} />
+      <Route path="price-queries" element={<PriceQueriesPage />} />
       <Route path="users" element={<AdminUsers />} />
       <Route path="contacts" element={<AdminContactsPage />} />
       <Route path="accounts" element={<AdminAccountsPage />} />
@@ -31,6 +37,10 @@ export default function AdminApp() {
       <Route path="vendors" element={<AdminVendorsPage />} />
       <Route path="poToVendor" element={<AdminPOToVendorPage />} />
       <Route path="invoice" element={<AdminInvoicePage />} />
+      <Route path="ledger" element={<FinanceLedgerPage />} />
+      <Route path="payments" element={<FinancePaymentsPage />} />
+      <Route path="vendor-bills" element={<FinanceVendorBillsPage />} />
+      <Route path="posting-repair" element={<FinancePostingRepairPage />} />
       <Route path="sales-target" element={<SalesTargetPage />} />
       <Route path="calendar" element={<CalendarPage />} />
       <Route path="todos" element={<TodosPage />} />

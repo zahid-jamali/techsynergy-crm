@@ -3,43 +3,28 @@ import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal"
 import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
-import { Search, Plus, BarChart3 } from "lucide-react";
+import { Plus, BarChart3 } from "lucide-react";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
-import Loading from "../components/Loading";
+import { usePagedList } from "../hooks/usePagedList";
+import ListToolbar from "../components/lists/ListToolbar";
+import PaginationBar from "../components/lists/PaginationBar";
+import { DEAL_STAGES } from "../lib/crm";
 
 const StaffDealsPage = () => {
-  const token = sessionStorage.getItem("token");
-
-  const [deals, setDeals] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [usdRate, setUsdRate] = useState(0);
-
   const [showModal, setShowModal] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
-
-  const [search, setSearch] = useState("");
-  const [stageFilter, setStageFilter] = useState("ALL");
-  const [currencyFilter, setCurrencyFilter] = useState("ALL");
-
-  /* ================= FETCH DEALS ================= */
-
-  const fetchDeals = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}deals/my`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      setDeals(data || []);
-    } catch (err) {
-      console.error("Failed to fetch deals");
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
-
-  /* ================= FETCH USD RATE ================= */
+  const [stageFilter, setStageFilter] = useState("all");
+  const [currencyFilter, setCurrencyFilter] = useState("all");
+  const extraFilters = useMemo(
+    () => ({
+      stage: stageFilter,
+      currency: currencyFilter,
+    }),
+    [stageFilter, currencyFilter]
+  );
+  const list = usePagedList("deals/my", extraFilters);
+  const deals = list.items;
 
   const fetchUsdRate = useCallback(async () => {
     try {
@@ -52,28 +37,8 @@ const StaffDealsPage = () => {
   }, []);
 
   useEffect(() => {
-    fetchDeals();
     fetchUsdRate();
-  }, [fetchDeals, fetchUsdRate]);
-
-  /* ================= FILTERING ================= */
-
-  const filteredDeals = useMemo(() => {
-    return deals.filter((deal) => {
-      const matchesSearch =
-        deal.dealName?.toLowerCase().includes(search.toLowerCase()) ||
-        deal.account?.accountName?.toLowerCase().includes(search.toLowerCase());
-
-      const matchesStage = stageFilter === "ALL" || deal.stage === stageFilter;
-
-      const matchesCurrency =
-        currencyFilter === "ALL" ||
-        (currencyFilter === "PKR" && (deal.currency || "PKR") === "PKR") ||
-        (currencyFilter === "USD" && deal.currency === "USD");
-
-      return matchesSearch && matchesStage && matchesCurrency;
-    });
-  }, [deals, search, stageFilter, currencyFilter]);
+  }, [fetchUsdRate]);
 
   const convertToPKR = (deal) => {
     if (!deal.amount) return 0;
@@ -83,25 +48,15 @@ const StaffDealsPage = () => {
     return deal.amount;
   };
 
-  /* ================= KPI (PRIMARY CURRENCY PKR) ================= */
-
-  const totalPipeline = filteredDeals.reduce(
-    (acc, d) => acc + convertToPKR(d),
-    0
-  );
-
-  /* ================= HELPERS ================= */
+  const totalPipeline = deals.reduce((acc, d) => acc + convertToPKR(d), 0);
 
   const formatMoney = (deal) => {
     if (currencyFilter === "PKR") {
       return `PKR ${convertToPKR(deal).toLocaleString()}`;
     }
-
     if (currencyFilter === "USD") {
       return `USD ${deal.amount?.toLocaleString()}`;
     }
-
-    // ALL → show original currency
     return `${deal.currency || "PKR"} ${deal.amount?.toLocaleString()}`;
   };
 
@@ -126,14 +81,6 @@ const StaffDealsPage = () => {
   };
 
   /* ================= UI ================= */
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loading />
-      </div>
-    );
-  }
 
   return (
     <div className="p-8 text-heading space-y-8">
@@ -171,7 +118,7 @@ const StaffDealsPage = () => {
         <KpiCard
           label="Total Deals"
           showPKR={false}
-          value={filteredDeals.length}
+          value={deals.length}
         />
         <KpiCard
           label="Pipeline Value (PKR)"
@@ -179,42 +126,33 @@ const StaffDealsPage = () => {
         />
       </div>
 
-      {/* FILTER BAR */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between">
-        <div className="relative w-full md:w-96">
-          <Search size={16} className="absolute left-3 top-3 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search deals or accounts..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-card border border-gray-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-brand"
-          />
-        </div>
-
-        <div className="flex gap-3">
-          <select
-            value={stageFilter}
-            onChange={(e) => setStageFilter(e.target.value)}
-            className="bg-card border border-gray-200 rounded-lg px-4 py-2"
-          >
-            <option value="ALL">All Stages</option>
-            {[...new Set(deals.map((d) => d.stage))].map((stage) => (
-              <option key={stage}>{stage}</option>
-            ))}
-          </select>
-
-          <select
-            value={currencyFilter}
-            onChange={(e) => setCurrencyFilter(e.target.value)}
-            className="bg-card border border-gray-200 rounded-lg px-4 py-2"
-          >
-            <option value="ALL">All Currencies</option>
-            <option value="PKR">PKR</option>
-            <option value="USD">USD</option>
-          </select>
-        </div>
-      </div>
+      <ListToolbar
+        search={list.searchInput}
+        onSearch={list.setSearchInput}
+        searchPlaceholder="Search deals..."
+        showArchive={false}
+        onReset={() => {
+          list.setSearchInput("");
+          setStageFilter("all");
+          setCurrencyFilter("all");
+        }}
+        filters={[
+          {
+            name: "stage",
+            allLabel: "All stages",
+            value: stageFilter,
+            onChange: setStageFilter,
+            options: DEAL_STAGES,
+          },
+          {
+            name: "currency",
+            allLabel: "All currencies",
+            value: currencyFilter,
+            onChange: setCurrencyFilter,
+            options: ["PKR", "USD"],
+          },
+        ]}
+      />
 
       {/* TABLE */}
       <div className="bg-card border border-gray-200 rounded-xl overflow-hidden">
@@ -233,14 +171,20 @@ const StaffDealsPage = () => {
           </thead>
 
           <tbody>
-            {loading ? (
+            {list.loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-10 text-gray-500">
+                <td colSpan="7" className="text-center py-10 text-gray-500">
                   Loading deals...
                 </td>
               </tr>
+            ) : deals.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="text-center py-10 text-gray-500">
+                  No deals found
+                </td>
+              </tr>
             ) : (
-              filteredDeals.map((deal) => (
+              deals.map((deal) => (
                 <tr
                   key={deal._id}
                   className="border-t border-gray-200 hover:bg-surface transition"
@@ -307,11 +251,19 @@ const StaffDealsPage = () => {
             )}
           </tbody>
         </table>
+        <PaginationBar
+          page={list.page}
+          pages={list.pagination.pages}
+          total={list.pagination.total}
+          limit={list.limit}
+          onPage={list.setPage}
+          onLimit={list.setLimit}
+        />
       </div>
 
       {/* MODALS */}
       {showModal === "Add" && (
-        <AddDealModal onClose={() => setShowModal("")} onSuccess={fetchDeals} />
+        <AddDealModal onClose={() => setShowModal("")} onSuccess={list.reload} />
       )}
       {showModal === "View" && (
         <ViewDealModal deal={selectedDeal} onClose={() => setShowModal("")} />
@@ -326,7 +278,7 @@ const StaffDealsPage = () => {
             setShowModal("");
             setSelectedDeal(null);
           }}
-          onSuccess={fetchDeals}
+          onSuccess={list.reload}
         />
       )}
 
@@ -337,7 +289,7 @@ const StaffDealsPage = () => {
             setShowModal("");
             setSelectedDeal(null);
           }}
-          onSuccess={fetchDeals}
+          onSuccess={list.reload}
         />
       )}
     </div>

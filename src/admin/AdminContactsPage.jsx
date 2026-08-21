@@ -1,232 +1,70 @@
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AddContactModal from "../components/staff/contact/AddContactModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
 import EditContactModal from "../components/staff/contact/EditContactModal";
 import DeleteContactModal from "../components/staff/contact/DeleteContactModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
-import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import Loading from "../components/Loading";
+import { usePagedList } from "../hooks/usePagedList";
+import ListToolbar from "../components/lists/ListToolbar";
+import PaginationBar from "../components/lists/PaginationBar";
+import ArchiveButton from "../components/lists/ArchiveButton";
+import { contactName } from "../lib/crm";
+import { api } from "../lib/api";
 
 const AdminContactsPage = () => {
-  const [contacts, setContacts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(null);
+  const [showModal, setShowModal] = useState("");
   const [selectedContact, setSelectedContact] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [search, setSearch] = useState("");
-  const [selectedAccountFilter, setSelectedAccountFilter] = useState("all");
-  const [selectedOwnerFilter, setSelectedOwnerFilter] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("active");
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [total, setTotal] = useState(0);
-
-  const { ref, inView } = useInView();
-  const token = sessionStorage.getItem("token");
-
-  const fetchContacts = useCallback(async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}contact/all?page=${page}&limit=20`,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-
-        setContacts((prev) => [...prev, ...data.contacts]);
-        setHasMore(data.hasMore);
-        setTotal(data.total);
-        setPage((prev) => prev + 1);
-      }
-    } catch (err) {
-      console.error("Failed to load contacts");
-    } finally {
-      setLoading(false);
-    }
-    // hasMore/loading are pagination guards; adding them retriggers fetches.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, token]);
+  const [owner, setOwner] = useState("all");
+  const [owners, setOwners] = useState([]);
+  const extraFilters = useMemo(() => ({ owner }), [owner]);
+  const list = usePagedList("contact/all", extraFilters);
 
   useEffect(() => {
-    if (hasMore && inView) {
-      fetchContacts();
-    }
-  }, [fetchContacts, inView, hasMore]);
-
-  const uniqueAccounts = useMemo(() => {
-    return [
-      ...new Map(
-        contacts
-          .filter((c) => c.account?._id)
-          .map((c) => [c.account._id, c.account])
-      ).values(),
-    ];
-  }, [contacts]);
-
-  const uniqueOwners = useMemo(() => {
-    return [
-      ...new Map(
-        contacts
-          .filter((c) => c.contactOwner?._id)
-          .map((c) => [c.contactOwner._id, c.contactOwner])
-      ).values(),
-    ];
-  }, [contacts]);
-
-  const filteredContacts = useMemo(() => {
-    return contacts.filter((c) => {
-      const searchValue = search.toLowerCase().trim();
-
-      if (searchValue) {
-        const searchableText = `
-          ${c.firstName || ""}
-          ${c.lastName || ""}
-          ${c.email || ""}
-          ${c.phone || ""}
-          ${c.account?.accountName || ""}
-          ${c.contactOwner?.name || ""}
-        `.toLowerCase();
-
-        if (!searchableText.includes(searchValue)) return false;
-      }
-
-      if (
-        selectedAccountFilter !== "all" &&
-        c.account?._id !== selectedAccountFilter
-      ) {
-        return false;
-      }
-
-      if (
-        selectedOwnerFilter !== "all" &&
-        c.contactOwner?._id !== selectedOwnerFilter
-      ) {
-        return false;
-      }
-
-      if (selectedStatus === "active" && !c.isActive) return false;
-      if (selectedStatus === "inactive" && c.isActive) return false;
-
-      return true;
-    });
-  }, [
-    contacts,
-    search,
-    selectedAccountFilter,
-    selectedOwnerFilter,
-    selectedStatus,
-  ]);
-
-  const View = (contact) => {
-    setShowModal("View");
-    setSelectedContact(contact);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loading />
-      </div>
-    );
-  }
+    api("user/all")
+      .then((data) => setOwners(Array.isArray(data) ? data : data.data || []))
+      .catch(() => setOwners([]));
+  }, []);
 
   return (
     <div className="p-6 text-heading">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-brand">Contacts</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-brand">Contacts</h1>
+          <p className="text-sm text-bodyText mt-1">
+            Search across the team, then archive contacts you no longer need day to day.
+          </p>
+        </div>
         <button
           onClick={() => setShowModal("Add")}
-          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold"
+          className="bg-brand hover:bg-brand/90 px-4 py-2 rounded text-sm font-semibold text-white"
         >
           + Add Contact
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-card border border-gray-200 rounded-xl p-5 mb-6 space-y-4">
-        {/* Search */}
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            placeholder="Search contacts..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-card border border-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:border-brand"
-          />
+      <ListToolbar
+        search={list.searchInput}
+        onSearch={list.setSearchInput}
+        searchPlaceholder="Search name, email or phone..."
+        archived={list.archived}
+        onArchivedChange={list.setArchived}
+        onReset={() => {
+          list.setSearchInput("");
+          setOwner("all");
+        }}
+        filters={[
+          {
+            name: "owner",
+            allLabel: "All owners",
+            value: owner,
+            onChange: setOwner,
+            options: owners.map((u) => ({ value: u._id, label: u.name || u.email })),
+          },
+        ]}
+      />
 
-          <button
-            onClick={() => {
-              setSearch("");
-              setSelectedAccountFilter("all");
-              setSelectedOwnerFilter("all");
-              setSelectedStatus("active");
-            }}
-            className="text-sm text-bodyText hover:text-brand"
-          >
-            Reset Filters
-          </button>
-        </div>
-
-        {/* Filters Row */}
-        <div className="flex flex-wrap items-center gap-4">
-          {/* Account */}
-          <select
-            value={selectedAccountFilter}
-            onChange={(e) => setSelectedAccountFilter(e.target.value)}
-            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
-          >
-            <option value="all">All Accounts</option>
-            {uniqueAccounts.map((acc) => (
-              <option key={acc._id} value={acc._id}>
-                {acc.accountName}
-              </option>
-            ))}
-          </select>
-
-          {/* Owner */}
-          <select
-            value={selectedOwnerFilter}
-            onChange={(e) => setSelectedOwnerFilter(e.target.value)}
-            className="bg-card border border-gray-200 px-4 py-2 rounded-lg"
-          >
-            <option value="all">All Owners</option>
-            {uniqueOwners.map((owner) => (
-              <option key={owner._id} value={owner._id}>
-                {owner.name}
-              </option>
-            ))}
-          </select>
-
-          {/* Status Pills */}
-          <div className="flex bg-card border border-gray-200 rounded-lg overflow-hidden">
-            {["active", "inactive", "all"].map((status) => (
-              <button
-                key={status}
-                onClick={() => setSelectedStatus(status)}
-                className={`px-4 py-2 text-sm capitalize transition ${
-                  selectedStatus === status
-                    ? "bg-brand text-white"
-                    : "text-bodyText hover:bg-surface"
-                }`}
-              >
-                {status}
-              </button>
-            ))}
-          </div>
-          <div>{`Total accounts: ${total}`}</div>
-        </div>
-      </div>
-
-      {/* Table */}
       <div className="bg-card border border-gray-200 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-card text-bodyText">
@@ -239,35 +77,27 @@ const AdminContactsPage = () => {
               <th className="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>
-
           <tbody>
-            {loading ? (
+            {list.loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-bodyText">
+                <td colSpan="6" className="text-center py-6 text-bodyText">
                   Loading contacts...
                 </td>
               </tr>
-            ) : contacts.length === 0 ? (
+            ) : list.items.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-bodyText">
+                <td colSpan="6" className="text-center py-6 text-bodyText">
                   No contacts found
                 </td>
               </tr>
             ) : (
-              filteredContacts.map((c) => (
-                <tr
-                  key={c._id}
-                  className="border-t border-gray-200 hover:bg-surface"
-                >
-                  <td onClick={() => View(c)} className="px-4 py-3">
-                    {c.firstName || ""} {c.lastName || ""}
-                  </td>
-                  <td onClick={() => View(c)} className="px-4 py-3">
-                    {c.email || "-"}
-                  </td>
-
+              list.items.map((c) => (
+                <tr key={c._id} className="border-t border-gray-200 hover:bg-surface">
+                  <td className="px-4 py-3">{contactName(c)}</td>
+                  <td className="px-4 py-3">{c.email || "-"}</td>
                   <td
                     onClick={() => {
+                      if (!c.account) return;
                       setSelectedAccount(c.account);
                       setShowModal("account");
                     }}
@@ -275,15 +105,18 @@ const AdminContactsPage = () => {
                   >
                     {c.account?.accountName || "-"}
                   </td>
-                  <td onClick={() => View(c)} className="px-4 py-3">
-                    {c.phone || "-"}
-                  </td>
-                  <td className="px-4 py-3 hover:underline hover:text-blue-600">
-                    <Link
-                      to={`/admin/singleUserPerformance/${c.contactOwner?._id}`}
-                    >
-                      {c.contactOwner?.name || "-"}
-                    </Link>
+                  <td className="px-4 py-3">{c.phone || "-"}</td>
+                  <td className="px-4 py-3">
+                    {c.contactOwner?._id ? (
+                      <Link
+                        to={`/admin/singleUserPerformance/${c.contactOwner._id}`}
+                        className="hover:underline hover:text-blue-600"
+                      >
+                        {c.contactOwner?.name || "-"}
+                      </Link>
+                    ) : (
+                      "-"
+                    )}
                   </td>
                   <td className="px-4 py-3 flex gap-3">
                     <button
@@ -295,6 +128,11 @@ const AdminContactsPage = () => {
                     >
                       Edit
                     </button>
+                    <ArchiveButton
+                      path={`contact/${c._id}/archive`}
+                      archived={c.isArchived}
+                      onDone={list.reload}
+                    />
                     <button
                       onClick={() => {
                         setShowModal("Delete");
@@ -310,56 +148,38 @@ const AdminContactsPage = () => {
             )}
           </tbody>
         </table>
-        <div ref={ref}></div>
+        <PaginationBar
+          page={list.page}
+          pages={list.pagination.pages}
+          total={list.pagination.total}
+          limit={list.limit}
+          onPage={list.setPage}
+          onLimit={list.setLimit}
+        />
       </div>
 
       {showModal === "Add" && (
-        <AddContactModal
-          onClose={() => setShowModal(false)}
-          onSuccess={fetchContacts}
-        />
+        <AddContactModal onClose={() => setShowModal("")} onSuccess={list.reload} />
       )}
-
       {showModal === "Edit" && (
         <EditContactModal
           contact={selectedContact}
-          onClose={() => {
-            setSelectedContact(null);
-            setShowModal(null);
-          }}
-          onSuccess={fetchContacts}
+          onClose={() => setShowModal("")}
+          onSuccess={list.reload}
         />
       )}
-
       {showModal === "Delete" && (
         <DeleteContactModal
           contact={selectedContact}
-          onClose={() => {
-            setSelectedContact(null);
-            setShowModal(null);
-          }}
-          onSuccess={fetchContacts}
+          onClose={() => setShowModal("")}
+          onSuccess={list.reload}
         />
       )}
-
       {showModal === "View" && (
-        <ViewContactModal
-          contact={selectedContact}
-          onClose={() => {
-            setSelectedContact(null);
-            setShowModal(null);
-          }}
-        />
+        <ViewContactModal contact={selectedContact} onClose={() => setShowModal("")} />
       )}
-
       {showModal === "account" && (
-        <ViewAccountModal
-          account={selectedAccount}
-          onClose={() => {
-            setSelectedContact(null);
-            setShowModal(null);
-          }}
-        />
+        <ViewAccountModal account={selectedAccount} onClose={() => setShowModal("")} />
       )}
     </div>
   );

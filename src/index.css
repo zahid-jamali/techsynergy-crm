@@ -152,6 +152,24 @@
     @apply px-3.5 py-2.5 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-surface transition-colors;
   }
 
+  .crm-sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .crm-sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .crm-sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+  }
+
+  .crm-sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+  }
+
   button.bg-brand {
     color: #ffffff;
   }

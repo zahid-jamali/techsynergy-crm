@@ -7,8 +7,10 @@ import {
   Calendar,
   CheckSquare,
   BookOpen,
+  MessagesSquare,
 } from "lucide-react";
 import AppShell from "./AppShell";
+import PriceQueryUnreadBadge from "../components/PriceQueryUnreadBadge";
 
 const navSections = [
   {
@@ -18,6 +20,12 @@ const navSections = [
         to: "/operations/dashboard",
         icon: LayoutDashboard,
         label: "Dashboard",
+      },
+      {
+        to: "/operations/price-queries",
+        icon: MessagesSquare,
+        label: "Price Queries",
+        badge: <PriceQueryUnreadBadge />,
       },
     ],
   },

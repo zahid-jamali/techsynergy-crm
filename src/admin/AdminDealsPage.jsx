@@ -1,149 +1,48 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AddDealModal from "../components/staff/deals/AddDealModal";
 import EditDealModal from "../components/staff/deals/EditDealModal";
 import StageUpdateModal from "../components/staff/deals/StageUpdateModal";
 import ViewDealModal from "../components/staff/deals/ViewDealModal";
-import { BarChart3 } from "lucide-react";
-import { Plus } from "lucide-react";
+import { BarChart3, Plus } from "lucide-react";
 import DealsAnalyticsModal from "../components/staff/charts/DealsAnalyticsModal";
 import ViewAccountModal from "../components/staff/account/ViewAccountModal";
 import ViewContactModal from "../components/staff/contact/ViewContactModal";
-import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-
-const TableSkeleton = ({ rows = 8 }) => {
-  return (
-    <>
-      {Array.from({ length: rows }).map((_, i) => (
-        <tr key={i} className="animate-pulse border-t border-gray-200">
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-40"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-28"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-20"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-20"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-20"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-24"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-24"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-24"></div>
-          </td>
-
-          <td className="px-4 py-3">
-            <div className="h-3 bg-gray-100 rounded w-28"></div>
-          </td>
-        </tr>
-      ))}
-    </>
-  );
-};
+import { usePagedList } from "../hooks/usePagedList";
+import ListToolbar from "../components/lists/ListToolbar";
+import PaginationBar from "../components/lists/PaginationBar";
+import { DEAL_STAGES, contactName } from "../lib/crm";
+import { api } from "../lib/api";
 
 const AdminDealsPage = () => {
-  const [deals, setDeals] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
-  const [search, setSearch] = useState("");
-  const [stageFilter, setStageFilter] = useState("all");
-  const [ownerFilter, setOwnerFilter] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [total, setTotal] = useState(0);
-
-  const { ref, inView } = useInView();
-  const token = sessionStorage.getItem("token");
-
-  const fetchDeals = useCallback(
-    async (pageNumber = 1, reset = false) => {
-      if (!hasMore && !reset) return;
-
-      try {
-        setLoading(true);
-
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}deals/all?limit=20&page=${pageNumber}`,
-          {
-            headers: { authorization: `Bearer ${token}` },
-          }
-        );
-
-        const data = await res.json();
-
-        setDeals((prev) =>
-          reset ? data.data || [] : [...prev, ...(data.data || [])]
-        );
-
-        setHasMore(data.hasMore);
-        setTotal(data.total);
-        setPage(pageNumber);
-      } catch (err) {
-        console.error("Failed to fetch deals");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [token, hasMore]
+  const [stageFilter, setStageFilter] = useState("all");
+  const [ownerFilter, setOwnerFilter] = useState("all");
+  const [owners, setOwners] = useState([]);
+  const extraFilters = useMemo(
+    () => ({ stage: stageFilter, owner: ownerFilter }),
+    [stageFilter, ownerFilter]
   );
+  const list = usePagedList("deals/all", extraFilters);
 
   useEffect(() => {
-    if (inView && hasMore && !loading) {
-      fetchDeals(page + 1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView]);
-
-  useEffect(() => {
-    fetchDeals(1, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    api("user/all")
+      .then((data) => setOwners(Array.isArray(data) ? data : data.data || []))
+      .catch(() => setOwners([]));
   }, []);
-
-  const filteredDeals = deals.filter((deal) => {
-    const matchesSearch =
-      deal.dealName?.toLowerCase().includes(search.toLowerCase()) ||
-      deal.account?.accountName?.toLowerCase().includes(search.toLowerCase()) ||
-      `${deal.contact?.firstName} ${deal.contact?.lastName}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-    const matchesStage = stageFilter === "all" || deal.stage === stageFilter;
-
-    const matchesOwner =
-      ownerFilter === "all" || deal.dealOwner?._id === ownerFilter;
-
-    return matchesSearch && matchesStage && matchesOwner;
-  });
-
-  const View = (deal) => {
-    setSelectedDeal(deal);
-    setShowModal("View");
-  };
 
   return (
     <div className="p-6 text-heading">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-brand">Deals</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-brand">Deals</h1>
+          <p className="text-sm text-bodyText mt-1">
+            Search and filter the full pipeline. Staff can also create deals on shared accounts.
+          </p>
+        </div>
         <div className="flex gap-3">
           <button
             onClick={() => setShowModal("Analytics")}
@@ -152,10 +51,9 @@ const AdminDealsPage = () => {
             <BarChart3 size={16} />
             Analytics
           </button>
-
           <button
             onClick={() => setShowModal("Add")}
-            className="flex items-center gap-2 bg-brand hover:bg-brand/90 px-4 py-2 rounded-lg font-semibold"
+            className="flex items-center gap-2 bg-brand hover:bg-brand/90 px-4 py-2 rounded-lg font-semibold text-white"
           >
             <Plus size={16} />
             Add Deal
@@ -163,66 +61,34 @@ const AdminDealsPage = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-card border border-gray-200 rounded-lg p-4 mb-6 flex flex-wrap gap-4">
-        <input
-          type="text"
-          placeholder="Search deal, account or contact..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm text-heading w-64 focus:outline-none focus:border-brand"
-        />
+      <ListToolbar
+        search={list.searchInput}
+        onSearch={list.setSearchInput}
+        searchPlaceholder="Search deal name..."
+        showArchive={false}
+        onReset={() => {
+          list.setSearchInput("");
+          setStageFilter("all");
+          setOwnerFilter("all");
+        }}
+        filters={[
+          {
+            name: "stage",
+            allLabel: "All stages",
+            value: stageFilter,
+            onChange: setStageFilter,
+            options: DEAL_STAGES,
+          },
+          {
+            name: "owner",
+            allLabel: "All owners",
+            value: ownerFilter,
+            onChange: setOwnerFilter,
+            options: owners.map((u) => ({ value: u._id, label: u.name || u.email })),
+          },
+        ]}
+      />
 
-        <select
-          value={stageFilter}
-          onChange={(e) => setStageFilter(e.target.value)}
-          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
-        >
-          <option value="all">All Stages</option>
-          <option value="Prospecting">Prospecting</option>
-          <option value="Qualification">Qualification</option>
-          <option value="Proposal">Proposal</option>
-          <option value="Negotiation">Negotiation</option>
-          <option value="Closed Won">Closed Won</option>
-          <option value="Closed Lost">Closed Lost</option>
-        </select>
-
-        <select
-          value={ownerFilter}
-          onChange={(e) => setOwnerFilter(e.target.value)}
-          className="bg-card border border-gray-200 rounded px-3 py-2 text-sm"
-        >
-          <option value="all">All Owners</option>
-          {[
-            ...new Map(
-              deals.map((d) => [d.dealOwner?._id, d.dealOwner])
-            ).values(),
-          ]
-            .filter(Boolean)
-            .map((owner) => (
-              <option key={owner._id} value={owner._id}>
-                {owner.name}
-              </option>
-            ))}
-        </select>
-
-        <button
-          onClick={() => {
-            setSearch("");
-            setStageFilter("all");
-            setOwnerFilter("all");
-          }}
-          className="text-sm text-bodyText hover:text-brand"
-        >
-          Reset
-        </button>
-      </div>
-
-      <div className="text-sm text-bodyText mb-3">
-        Showing {deals.length} of {total} deals
-      </div>
-
-      {/* Table */}
       <div className="bg-card border border-gray-200 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-card text-bodyText">
@@ -239,193 +105,133 @@ const AdminDealsPage = () => {
               <th className="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>
-
           <tbody>
-            {deals.length === 0 && loading ? (
-              <TableSkeleton />
-            ) : filteredDeals.length === 0 ? (
+            {list.loading ? (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-bodyText">
+                <td colSpan="10" className="text-center py-6 text-bodyText">
+                  Loading deals...
+                </td>
+              </tr>
+            ) : list.items.length === 0 ? (
+              <tr>
+                <td colSpan="10" className="text-center py-6 text-bodyText">
                   No deals found
                 </td>
               </tr>
             ) : (
-              filteredDeals.map((deal) => (
-                <tr
-                  key={deal._id}
-                  className="border-t border-gray-200 hover:bg-surface group"
-                >
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.dealName}
-                  </td>
+              list.items.map((deal) => (
+                <tr key={deal._id} className="border-t border-gray-200 hover:bg-surface group">
+                  <td className="px-4 py-3">{deal.dealName}</td>
                   <td
                     onClick={() => {
                       setShowModal("account");
                       setSelectedAccount(deal.account);
                     }}
-                    className="px-4 py-3 hover:underline cursor-pointer hover:text-brand"
+                    className="px-4 py-3 hover:underline cursor-pointer"
                   >
                     {deal.account?.accountName || "-"}
                   </td>
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.stage}
-                  </td>
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.amount?.toLocaleString()}
-                  </td>
-
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.currency || "-"}
-                  </td>
-
+                  <td className="px-4 py-3">{deal.stage}</td>
+                  <td className="px-4 py-3">{deal.amount?.toLocaleString()}</td>
+                  <td className="px-4 py-3">{deal.currency || "-"}</td>
                   <td
                     onClick={() => {
+                      if (!deal.contact) return;
                       setShowModal("contact");
                       setSelectedContact(deal.contact);
                     }}
-                    className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-600"
+                    className="px-4 py-3 hover:underline cursor-pointer"
                   >
-                    {deal.contact?.firstName || ""}{" "}
-                    {deal.contact?.lastName || ""}
-                  </td>
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    {deal.closingDate
-                      ? new Date(deal.closingDate).toLocaleDateString()
-                      : "-"}
-                  </td>
-                  <td onClick={() => View(deal)} className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-surface rounded">
-                        <div
-                          className="h-2 bg-green-500 rounded"
-                          style={{ width: `${deal.probability}%` }}
-                        />
-                      </div>
-                      <span className="text-xs text-bodyText">
-                        {deal.probability}%
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-3 hover:underline cursor-pointer hover:text-blue-600">
-                    <Link
-                      to={`/admin/singleUserPerformance/${deal.dealOwner._id}`}
-                    >
-                      {deal.dealOwner.name}
-                    </Link>
+                    {contactName(deal.contact)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-3 text-xs opacity-0 group-hover:opacity-100 transition">
-                      <button
-                        onClick={() => View(deal)}
-                        className="text-brand hover:text-blue-300"
+                    {deal.closingDate ? new Date(deal.closingDate).toLocaleDateString() : "-"}
+                  </td>
+                  <td className="px-4 py-3">{deal.probability || 0}%</td>
+                  <td className="px-4 py-3">
+                    {deal.dealOwner?._id ? (
+                      <Link
+                        to={`/admin/singleUserPerformance/${deal.dealOwner._id}`}
+                        className="hover:underline hover:text-blue-600"
                       >
-                        View
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setShowModal("Pipeline");
-                          setSelectedDeal(deal);
-                        }}
-                        className="text-bodyText hover:text-purple-300"
-                      >
-                        Pipeline
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setShowModal("Edit");
-                          setSelectedDeal(deal);
-                        }}
-                        className="text-amber-700 hover:text-yellow-300"
-                      >
-                        Edit
-                      </button>
-                    </div>
+                        {deal.dealOwner?.name}
+                      </Link>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td className="px-4 py-3 flex gap-3 text-xs">
+                    <button
+                      onClick={() => {
+                        setSelectedDeal(deal);
+                        setShowModal("View");
+                      }}
+                      className="text-brand hover:underline"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowModal("Pipeline");
+                        setSelectedDeal(deal);
+                      }}
+                      className="text-bodyText hover:underline"
+                    >
+                      Pipeline
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowModal("Edit");
+                        setSelectedDeal(deal);
+                      }}
+                      className="text-amber-700 hover:underline"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
-        <div
-          ref={ref}
-          className="flex justify-center py-6 text-bodyText text-sm"
-        >
-          {loading && deals.length > 0 && <span>Loading more deals...</span>}
-
-          {!hasMore && deals.length > 0 && (
-            <span className="text-gray-600">No more deals</span>
-          )}
-        </div>
+        <PaginationBar
+          page={list.page}
+          pages={list.pagination.pages}
+          total={list.pagination.total}
+          limit={list.limit}
+          onPage={list.setPage}
+          onLimit={list.setLimit}
+        />
       </div>
 
       {showModal === "Add" && (
-        <AddDealModal
-          onClose={() => {
-            setShowModal(false);
-          }}
-          onSuccess={fetchDeals}
-        />
+        <AddDealModal onClose={() => setShowModal("")} onSuccess={list.reload} />
       )}
-
       {showModal === "Analytics" && (
-        <DealsAnalyticsModal
-          deals={filteredDeals}
-          onClose={() => setShowModal("")}
-        />
+        <DealsAnalyticsModal deals={list.items} onClose={() => setShowModal("")} />
       )}
       {showModal === "View" && (
-        <ViewDealModal
-          deal={selectedDeal}
-          onClose={() => {
-            setSelectedDeal(null);
-            setShowModal("");
-          }}
-        />
+        <ViewDealModal deal={selectedDeal} onClose={() => setShowModal("")} />
       )}
-
       {showModal === "Edit" && (
         <EditDealModal
           deal={selectedDeal}
-          onClose={() => {
-            setSelectedDeal(null);
-            setShowModal("");
-          }}
-          onSuccess={fetchDeals}
+          onClose={() => setShowModal("")}
+          onSuccess={list.reload}
         />
       )}
       {showModal === "Pipeline" && (
         <StageUpdateModal
           deal={selectedDeal}
-          onClose={() => {
-            setSelectedDeal(null);
-            setShowModal("");
-          }}
-          onSuccess={() => {
-            fetchDeals();
-          }}
+          onClose={() => setShowModal("")}
+          onSuccess={list.reload}
         />
       )}
-
       {showModal === "account" && (
-        <ViewAccountModal
-          account={selectedAccount}
-          onClose={() => {
-            setSelectedAccount(null);
-            setShowModal(null);
-          }}
-        />
+        <ViewAccountModal account={selectedAccount} onClose={() => setShowModal("")} />
       )}
       {showModal === "contact" && (
-        <ViewContactModal
-          contact={selectedContact}
-          onClose={() => {
-            setShowModal(null);
-            setSelectedContact(null);
-          }}
-        />
+        <ViewContactModal contact={selectedContact} onClose={() => setShowModal("")} />
       )}
     </div>
   );

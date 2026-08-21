@@ -9,12 +9,14 @@ import StaffUpdateProfile from "../staff/StaffUpdateProfile";
 import CalendarPage from "../workspace/CalendarPage";
 import TodosPage from "../workspace/TodosPage";
 import NotebooksPage from "../workspace/NotebooksPage";
+import PriceQueriesPage from "../pages/PriceQueriesPage";
 
 export default function StaffApp() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="dashboard" />} />
       <Route path="dashboard" element={<StaffDashbaord />} />
+      <Route path="price-queries" element={<PriceQueriesPage />} />
       <Route path="profile" element={<StaffUpdateProfile />} />
       <Route path="account" element={<StaffAccountsPage />} />
       <Route path="contacts" element={<StaffContactsPage />} />
