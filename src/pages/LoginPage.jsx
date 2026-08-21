@@ -63,6 +63,7 @@ export default function LoginPage() {
           <p className="text-sm font-medium tracking-[0.2em] uppercase text-white/60">
             TechSynergy
           </p>
+          <p>CRM Version 2.O</p>
           <h1 className="mt-6 text-4xl font-semibold leading-tight max-w-md">
             Operate sales, quotes and finance from one workspace.
           </h1>
