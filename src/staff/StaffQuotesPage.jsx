@@ -61,17 +61,17 @@ const StaffQuotePage = () => {
         ]}
       />
 
-      <div className="bg-card border border-gray-200 rounded">
-        <table className="w-full text-sm">
-          <thead className="bg-card text-bodyText">
+      <div className="bg-card border border-gray-300 rounded overflow-x-auto">
+        <table className="pro-table">
+          <thead>
             <tr>
-              <th className="p-3 text-left">Subject</th>
-              <th className="p-3">Deal</th>
-              <th className="p-3">Account</th>
-              <th className="p-3">Stage</th>
-              <th className="p-3">Total</th>
-              <th className="p-3">Valid Until</th>
-              <th className="p-3">Actions</th>
+              <th>Subject</th>
+              <th>Deal</th>
+              <th>Account</th>
+              <th>Stage</th>
+              <th>Total</th>
+              <th>Valid Until</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -89,18 +89,19 @@ const StaffQuotePage = () => {
               </tr>
             ) : (
               list.items.map((q) => (
-                <tr key={q._id} className="border-t border-gray-200 hover:bg-surface">
-                  <td className="p-3">{q.subject}</td>
-                  <td className="p-3">{q.deal?.dealName || "-"}</td>
-                  <td className="p-3">{q.account?.accountName}</td>
-                  <td className="p-3">{q.quoteStage}</td>
-                  <td className="p-3">
+                <tr key={q._id} className="hover:bg-surface">
+                  <td>{q.subject}</td>
+                  <td>{q.deal?.dealName || "-"}</td>
+                  <td>{q.account?.accountName}</td>
+                  <td>{q.quoteStage}</td>
+                  <td>
                     {q.currency || "PKR"} {q.grandTotal?.toLocaleString()}
                   </td>
-                  <td className="p-3">
+                  <td>
                     {q.validUntil ? new Date(q.validUntil).toLocaleDateString() : "-"}
                   </td>
-                  <td className="p-3 flex gap-2">
+                  <td>
+                    <div className="flex flex-wrap gap-2">
                     {q.quoteStage !== "On Hold" && (
                       <>
                         <button
@@ -135,6 +136,7 @@ const StaffQuotePage = () => {
                       PDF
                     </a>
                     <CostingDownloadButton quote={q} />
+                    </div>
                   </td>
                 </tr>
               ))

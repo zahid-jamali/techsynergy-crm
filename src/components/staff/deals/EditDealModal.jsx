@@ -101,7 +101,6 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                 displayValue={selectedAccount?.accountName || ""}
                 onSelect={(account) => {
                   setSelectedAccount(account);
-                  setSelectedContact(null);
                 }}
                 renderItem={(a) => (
                   <div>
@@ -115,12 +114,10 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
               />
 
               <LookupPicker
-                label="POC (any teammate's contact)"
+                label="POC (global — any teammate)"
                 endpoint="contact/lookup"
-                extraParams={
-                  selectedAccount?._id ? { account: selectedAccount._id } : {}
-                }
-                placeholder="Search any team contact..."
+                extraParams={{ global: true }}
+                placeholder="Search any contact on the team..."
                 value={selectedContact}
                 displayValue={selectedContact ? contactName(selectedContact) : ""}
                 onSelect={(contact) => {

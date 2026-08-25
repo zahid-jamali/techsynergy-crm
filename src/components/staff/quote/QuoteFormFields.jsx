@@ -104,7 +104,9 @@ export function QuoteFormFields({
   const removeTerm = (index) =>
     setFormData({
       ...formData,
-      termsAndConditions: formData.termsAndConditions.filter((_, i) => i !== index),
+      termsAndConditions: formData.termsAndConditions.filter(
+        (_, i) => i !== index,
+      ),
     });
 
   const lines = useMemo(
@@ -120,7 +122,11 @@ export function QuoteFormFields({
     ),
   );
   const vendorTotal = round(
-    lines.reduce((sum, line) => sum + line.vendorPrice * (Number(line.product.quantity) || 0), 0),
+    lines.reduce(
+      (sum, line) =>
+        sum + line.vendorPrice * (Number(line.product.quantity) || 0),
+      0,
+    ),
   );
   const whtTotal = round(
     lines.reduce(
@@ -139,7 +145,9 @@ export function QuoteFormFields({
           <input
             required
             value={formData.subject}
-            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, subject: e.target.value })
+            }
             className="input"
             placeholder="Quote subject"
           />
@@ -190,7 +198,9 @@ export function QuoteFormFields({
                 ? { account: selectedDeal.account._id || selectedDeal.account }
                 : {}
             }
-            placeholder={selectedDeal ? "Search contacts..." : "Select a deal first"}
+            placeholder={
+              selectedDeal ? "Search contacts..." : "Select a deal first"
+            }
             disabled={!selectedDeal}
             value={selectedContact}
             displayValue={selectedContact ? contactName(selectedContact) : ""}
@@ -198,7 +208,9 @@ export function QuoteFormFields({
             renderItem={(c) => (
               <div>
                 <div className="font-medium">{contactName(c)}</div>
-                <div className="text-xs text-bodyText">{c.email || "Contact"}</div>
+                <div className="text-xs text-bodyText">
+                  {c.email || "Contact"}
+                </div>
               </div>
             )}
           />
@@ -208,7 +220,9 @@ export function QuoteFormFields({
           <input
             type="date"
             value={formData.validUntil}
-            onChange={(e) => setFormData({ ...formData, validUntil: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, validUntil: e.target.value })
+            }
             className="input"
           />
         </label>
@@ -216,7 +230,9 @@ export function QuoteFormFields({
           <span className="label">Currency</span>
           <select
             value={formData.currency}
-            onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, currency: e.target.value })
+            }
             className="input"
           >
             <option value="USD">USD</option>
@@ -228,34 +244,42 @@ export function QuoteFormFields({
       <div>
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h3 className="text-sm font-semibold text-heading">Costing sheet</h3>
+            <h3 className="text-sm font-semibold text-heading">
+              Costing sheet
+            </h3>
             <p className="text-xs text-bodyText">
-              Vendor price → margin → withholding tax. WHT is applied after margin.
+              Vendor price → margin → withholding tax. WHT is applied after
+              margin.
             </p>
           </div>
-          <button type="button" onClick={addProduct} className="btn-primary text-sm py-1.5">
+          <button
+            type="button"
+            onClick={addProduct}
+            className="btn-primary text-sm py-1.5"
+          >
             + Line
           </button>
         </div>
-        <div className="border border-gray-200 rounded-xl overflow-x-auto">
-          <table className="w-full text-xs min-w-[1100px]">
-            <thead className="bg-surface text-bodyText">
+        <div className="border border-gray-300 rounded-xl overflow-x-auto">
+          <table className="pro-table text-xs min-w-[1200px]">
+            <thead>
               <tr>
                 {[
                   "#",
                   "Product",
                   "Description",
                   "Qty",
-                  "Vendor",
+                  "Vendor Cost",
                   "Margin %",
                   "After margin",
                   "WHT %",
                   "WHT",
-                  "List",
-                  "Line",
+                  "Unit / List",
+                  "Amount",
+                  "Line Total",
                   "",
                 ].map((label) => (
-                  <th key={label} className="px-2 py-2 text-left font-semibold whitespace-nowrap">
+                  <th key={label || "actions"} className="whitespace-nowrap">
                     {label}
                   </th>
                 ))}
@@ -265,82 +289,98 @@ export function QuoteFormFields({
               {formData.products.map((p, i) => {
                 const line = lines[i];
                 return (
-                  <tr key={i} className="border-t border-gray-100 align-top">
-                    <td className="px-2 py-2 text-bodyText">{i + 1}</td>
-                    <td className="px-2 py-2 min-w-[160px]">
+                  <tr key={i}>
+                    <td className="text-bodyText">{i + 1}</td>
+                    <td className="min-w-[160px]">
                       <input
                         value={p.productName}
-                        onChange={(e) => handleProductNameChange(i, e.target.value)}
+                        onChange={(e) =>
+                          handleProductNameChange(i, e.target.value)
+                        }
                         placeholder="Product"
                         className="input py-1.5 text-xs"
                         required
                       />
                       {p.suggestedPrice != null && (
                         <p className="text-[10px] text-bodyText mt-1">
-                          Last quoted {currency} {Number(p.suggestedPrice).toFixed(2)}
+                          Last quoted {currency}{" "}
+                          {Number(p.suggestedPrice).toFixed(2)}
                         </p>
                       )}
                     </td>
-                    <td className="px-2 py-2 min-w-[160px]">
+                    <td className="min-w-[160px]">
                       <input
                         value={p.description || ""}
-                        onChange={(e) => updateProduct(i, "description", e.target.value)}
+                        onChange={(e) =>
+                          updateProduct(i, "description", e.target.value)
+                        }
                         placeholder="Description"
                         className="input py-1.5 text-xs"
                       />
                     </td>
-                    <td className="px-2 py-2 w-20">
+                    <td className="w-20">
                       <input
                         type="number"
                         min="1"
                         value={p.quantity}
-                        onChange={(e) => updateProduct(i, "quantity", e.target.value)}
+                        onChange={(e) =>
+                          updateProduct(i, "quantity", e.target.value)
+                        }
                         className="input py-1.5 text-xs text-center"
                       />
                     </td>
-                    <td className="px-2 py-2 w-28">
+                    <td className="w-28">
                       <input
                         type="number"
                         min="0"
                         step="0.01"
                         value={p.vendorPrice}
-                        onChange={(e) => updateProduct(i, "vendorPrice", e.target.value)}
+                        onChange={(e) =>
+                          updateProduct(i, "vendorPrice", e.target.value)
+                        }
                         className="input py-1.5 text-xs"
                       />
                     </td>
-                    <td className="px-2 py-2 w-24">
+                    <td className="w-24">
                       <input
                         type="number"
                         min="0"
                         step="0.01"
                         value={p.margin}
-                        onChange={(e) => updateProduct(i, "margin", e.target.value)}
+                        onChange={(e) =>
+                          updateProduct(i, "margin", e.target.value)
+                        }
                         className="input py-1.5 text-xs"
                       />
                     </td>
-                    <td className="px-2 py-2 whitespace-nowrap text-heading">
+                    <td className="whitespace-nowrap text-heading">
                       {currency} {line.priceAfterMargin.toFixed(2)}
                     </td>
-                    <td className="px-2 py-2 w-24">
+                    <td className="w-24">
                       <input
                         type="number"
                         min="0"
                         step="0.01"
                         value={p.withHolding}
-                        onChange={(e) => updateProduct(i, "withHolding", e.target.value)}
+                        onChange={(e) =>
+                          updateProduct(i, "withHolding", e.target.value)
+                        }
                         className="input py-1.5 text-xs"
                       />
                     </td>
-                    <td className="px-2 py-2 whitespace-nowrap text-bodyText">
+                    <td className="whitespace-nowrap text-bodyText">
                       {currency} {line.withHoldingAmount.toFixed(2)}
                     </td>
-                    <td className="px-2 py-2 whitespace-nowrap font-semibold">
+                    <td className="whitespace-nowrap font-semibold">
                       {currency} {line.listPrice.toFixed(2)}
                     </td>
-                    <td className="px-2 py-2 whitespace-nowrap text-brand font-semibold">
+                    <td className="whitespace-nowrap font-medium">
+                      {currency} {line.amount.toFixed(2)}
+                    </td>
+                    <td className="whitespace-nowrap text-brand font-semibold">
                       {currency} {line.total.toFixed(2)}
                     </td>
-                    <td className="px-2 py-2">
+                    <td>
                       <button
                         type="button"
                         onClick={() => removeProduct(i)}
@@ -354,12 +394,41 @@ export function QuoteFormFields({
                 );
               })}
             </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan={3}>Totals</td>
+                <td className="text-center">
+                  {lines.reduce(
+                    (sum, line) => sum + (Number(line.product.quantity) || 0),
+                    0,
+                  )}
+                </td>
+                <td colSpan={5} />
+                <td />
+                <td className="whitespace-nowrap">
+                  {currency}{" "}
+                  {round(
+                    lines.reduce((sum, line) => sum + line.amount, 0),
+                  ).toFixed(2)}
+                </td>
+                <td className="whitespace-nowrap text-brand">
+                  {currency} {subtotal.toFixed(2)}
+                </td>
+                <td />
+              </tr>
+            </tfoot>
           </table>
         </div>
+        <p className="text-[11px] text-bodyText mt-2">
+          Amount = Unit / List × Qty · Line Total = Amount + product tax
+        </p>
 
         <div className="mt-3 space-y-2">
           {formData.products.map((p, i) => (
-            <div key={`tax-${i}`} className="bg-surface border border-gray-200 rounded-lg px-3 py-2">
+            <div
+              key={`tax-${i}`}
+              className="bg-surface border border-gray-200 rounded-lg px-3 py-2"
+            >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-bodyText">
                   Product tax · {p.productName || `Line ${i + 1}`}
@@ -380,7 +449,9 @@ export function QuoteFormFields({
                 </button>
               </div>
               {(p.Tax || []).length === 0 && (
-                <p className="text-[11px] text-bodyText">No product tax on this line.</p>
+                <p className="text-[11px] text-bodyText">
+                  No product tax on this line.
+                </p>
               )}
               <div className="flex flex-wrap gap-2">
                 {(p.Tax || []).map((t, ti) => (
@@ -388,12 +459,15 @@ export function QuoteFormFields({
                     <select
                       value={t.tax}
                       onChange={(e) => {
-                        const selected = TAX_OPTIONS.find((opt) => opt.label === e.target.value);
+                        const selected = TAX_OPTIONS.find(
+                          (opt) => opt.label === e.target.value,
+                        );
                         if (!selected) return;
                         const products = [...formData.products];
                         products[i].Tax[ti] = {
                           tax: selected.label,
-                          percent: selected.label === "Custom" ? 0 : selected.percent,
+                          percent:
+                            selected.label === "Custom" ? 0 : selected.percent,
                           customName: "",
                         };
                         setFormData({ ...formData, products });
@@ -434,7 +508,9 @@ export function QuoteFormFields({
                       type="button"
                       onClick={() => {
                         const products = [...formData.products];
-                        products[i].Tax = products[i].Tax.filter((_, idx) => idx !== ti);
+                        products[i].Tax = products[i].Tax.filter(
+                          (_, idx) => idx !== ti,
+                        );
                         setFormData({ ...formData, products });
                       }}
                       className="text-red-600 text-xs"
@@ -452,24 +528,41 @@ export function QuoteFormFields({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-heading">Quote-level tax</h3>
-            <button type="button" onClick={addOtherTax} className="text-xs text-brand">
+            <h3 className="text-sm font-semibold text-heading">
+              Quote-level tax
+            </h3>
+            <button
+              type="button"
+              onClick={addOtherTax}
+              className="text-xs text-brand"
+            >
               + Add tax
             </button>
           </div>
           {(formData.otherTax || []).map((t, i) => (
             <div key={i} className="flex gap-2 items-center">
               <select
-                value={TAX_OPTIONS.some((opt) => opt.label === t.tax) ? t.tax : t.tax ? "Custom" : ""}
+                value={
+                  TAX_OPTIONS.some((opt) => opt.label === t.tax)
+                    ? t.tax
+                    : t.tax
+                      ? "Custom"
+                      : ""
+                }
                 onChange={(e) => {
-                  const selected = TAX_OPTIONS.find((opt) => opt.label === e.target.value);
+                  const selected = TAX_OPTIONS.find(
+                    (opt) => opt.label === e.target.value,
+                  );
                   if (!selected) return;
                   const otherTax = [...formData.otherTax];
                   otherTax[i] = {
                     ...otherTax[i],
                     tax: selected.label,
                     percent: selected.label === "Custom" ? 0 : selected.percent,
-                    customName: selected.label === "Custom" ? otherTax[i].customName || "" : "",
+                    customName:
+                      selected.label === "Custom"
+                        ? otherTax[i].customName || ""
+                        : "",
                   };
                   setFormData({ ...formData, otherTax });
                 }}
@@ -486,7 +579,9 @@ export function QuoteFormFields({
                 <input
                   placeholder="Name"
                   value={t.customName || t.tax || ""}
-                  onChange={(e) => updateOtherTax(i, "customName", e.target.value)}
+                  onChange={(e) =>
+                    updateOtherTax(i, "customName", e.target.value)
+                  }
                   className="input text-xs"
                 />
               )}
@@ -497,7 +592,11 @@ export function QuoteFormFields({
                 onChange={(e) => updateOtherTax(i, "percent", e.target.value)}
                 className="input text-xs w-20 text-center"
               />
-              <button type="button" onClick={() => removeOtherTax(i)} className="text-red-600 text-xs">
+              <button
+                type="button"
+                onClick={() => removeOtherTax(i)}
+                className="text-red-600 text-xs"
+              >
                 ✕
               </button>
             </div>
@@ -506,7 +605,11 @@ export function QuoteFormFields({
           <div>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-heading">Terms</h3>
-              <button type="button" onClick={addTerm} className="text-xs text-brand">
+              <button
+                type="button"
+                onClick={addTerm}
+                className="text-xs text-brand"
+              >
                 + Add term
               </button>
             </div>
@@ -518,7 +621,11 @@ export function QuoteFormFields({
                   className="input flex-1 text-sm"
                   rows={2}
                 />
-                <button type="button" onClick={() => removeTerm(i)} className="text-red-600 text-xs">
+                <button
+                  type="button"
+                  onClick={() => removeTerm(i)}
+                  className="text-red-600 text-xs"
+                >
                   ✕
                 </button>
               </div>
@@ -526,7 +633,7 @@ export function QuoteFormFields({
           </div>
         </div>
 
-        <div className="bg-card border border-gray-200 rounded-xl p-4 space-y-2 h-fit">
+        <div className="bg-card border border-gray-300 rounded-xl p-4 space-y-2 h-fit">
           <div className="flex justify-between text-sm text-bodyText">
             <span>Vendor total</span>
             <span>
@@ -540,7 +647,16 @@ export function QuoteFormFields({
             </span>
           </div>
           <div className="flex justify-between text-sm text-bodyText">
-            <span>Subtotal</span>
+            <span>Goods amount (Unit × Qty)</span>
+            <span>
+              {currency}{" "}
+              {round(lines.reduce((sum, line) => sum + line.amount, 0)).toFixed(
+                2,
+              )}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm text-bodyText">
+            <span>Subtotal (with product tax)</span>
             <span>
               {currency} {subtotal.toFixed(2)}
             </span>
@@ -560,7 +676,8 @@ export function QuoteFormFields({
             </span>
           </div>
           <p className="text-[11px] text-bodyText">
-            Default WHT is {DEFAULT_WHT}%. Customer PDF uses list price only.
+            Default WHT is {DEFAULT_WHT}%. Customer PDF shows list prices only
+            (Unit × Qty).
           </p>
         </div>
       </div>

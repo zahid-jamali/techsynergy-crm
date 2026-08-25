@@ -93,11 +93,11 @@
   }
 
   .table-wrap {
-    @apply bg-card rounded-xl border border-gray-200 overflow-x-auto shadow-card;
+    @apply bg-card rounded-xl border border-gray-300 overflow-x-auto shadow-card;
   }
 
   .data-table {
-    @apply w-full text-sm text-left;
+    @apply w-full text-sm text-left border-collapse;
   }
 
   .data-table thead {
@@ -105,15 +105,35 @@
   }
 
   .data-table th {
-    @apply px-4 py-3 font-semibold whitespace-nowrap;
+    @apply px-3 py-2.5 font-semibold whitespace-nowrap border border-gray-300 bg-surface;
   }
 
   .data-table td {
-    @apply px-4 py-3 text-heading;
+    @apply px-3 py-2.5 text-heading border border-gray-200;
   }
 
   .data-table tbody tr {
-    @apply border-t border-gray-100 hover:bg-surface/80 transition-colors;
+    @apply hover:bg-surface/80 transition-colors;
+  }
+
+  .data-table tfoot td {
+    @apply px-3 py-2.5 font-semibold border border-gray-300 bg-surface;
+  }
+
+  .pro-table {
+    @apply w-full text-sm border-collapse;
+  }
+
+  .pro-table th {
+    @apply px-3 py-2.5 text-left font-semibold text-bodyText bg-surface border border-gray-300 whitespace-nowrap;
+  }
+
+  .pro-table td {
+    @apply px-3 py-2 border border-gray-200 text-heading align-top;
+  }
+
+  .pro-table tfoot td {
+    @apply px-3 py-2.5 font-semibold border border-gray-300 bg-surface;
   }
 
   .modal-overlay {

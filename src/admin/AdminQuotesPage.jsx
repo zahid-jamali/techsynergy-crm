@@ -86,20 +86,20 @@ const AdminQuotesPage = () => {
         ]}
       />
 
-      <div className="bg-card border border-gray-200 rounded overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-card text-bodyText">
+      <div className="bg-card border border-gray-300 rounded overflow-x-auto">
+        <table className="pro-table">
+          <thead>
             <tr>
-              <th className="p-3 text-left">No.</th>
-              <th className="p-3 text-left">Subject</th>
-              <th className="p-3">Deal</th>
-              <th className="p-3">Account</th>
-              <th className="p-3">Stage</th>
-              <th className="p-3">POC</th>
-              <th className="p-3">Total</th>
-              <th className="p-3">Valid Until</th>
-              <th className="p-3">Owner</th>
-              <th className="p-3">Actions</th>
+              <th>No.</th>
+              <th>Subject</th>
+              <th>Deal</th>
+              <th>Account</th>
+              <th>Stage</th>
+              <th>POC</th>
+              <th>Total</th>
+              <th>Valid Until</th>
+              <th>Owner</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -117,15 +117,15 @@ const AdminQuotesPage = () => {
               </tr>
             ) : (
               list.items.map((q) => (
-                <tr key={q._id} className="border-t border-gray-200 hover:bg-surface">
-                  <td className="p-3">{q.quoteNumber || "-"}</td>
-                  <td className="p-3">{q.subject}</td>
+                <tr key={q._id} className="hover:bg-surface">
+                  <td>{q.quoteNumber || "-"}</td>
+                  <td>{q.subject}</td>
                   <td
                     onClick={() => {
                       setShowModal("viewDeal");
                       setSelectedDeal(q.deal);
                     }}
-                    className="p-3 hover:underline cursor-pointer"
+                    className="hover:underline cursor-pointer"
                   >
                     {q.deal?.dealName || "-"}
                   </td>
@@ -134,25 +134,25 @@ const AdminQuotesPage = () => {
                       setSelectedAccount(q.account);
                       setShowModal("viewAccount");
                     }}
-                    className="p-3 hover:underline cursor-pointer"
+                    className="hover:underline cursor-pointer"
                   >
                     {q.account?.accountName || "-"}
                   </td>
-                  <td className="p-3">{q.quoteStage}</td>
+                  <td>{q.quoteStage}</td>
                   <td
                     onClick={() => {
                       setSelectedContact(q.contact);
                       setShowModal("viewContact");
                     }}
-                    className={`p-3 ${q.contact ? "hover:underline cursor-pointer" : ""}`}
+                    className={q.contact ? "hover:underline cursor-pointer" : ""}
                   >
                     {contactName(q.contact)}
                   </td>
-                  <td className="p-3">{q.grandTotal?.toLocaleString()}</td>
-                  <td className="p-3">
+                  <td>{q.grandTotal?.toLocaleString()}</td>
+                  <td>
                     {q.validUntil ? new Date(q.validUntil).toLocaleDateString() : "-"}
                   </td>
-                  <td className="p-3">
+                  <td>
                     {q.quoteOwner?._id ? (
                       <Link
                         to={`/admin/singleUserPerformance/${q.quoteOwner._id}`}
@@ -164,7 +164,8 @@ const AdminQuotesPage = () => {
                       "-"
                     )}
                   </td>
-                  <td className="p-3 flex gap-2 text-sm">
+                  <td>
+                    <div className="flex flex-wrap gap-2 text-sm">
                     <button
                       onClick={() => {
                         setShowModal("edit");
@@ -195,6 +196,7 @@ const AdminQuotesPage = () => {
                       PDF
                     </a>
                     <CostingDownloadButton quote={q} />
+                    </div>
                   </td>
                 </tr>
               ))
