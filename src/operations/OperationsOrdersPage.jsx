@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import StatusBadge from "../components/StatusBadge";
 import DeliveryManageModal from "../components/operations/DeliveryManageModal";
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
+import OrderDocumentDownload from "../components/documents/OrderDocumentDownload";
 
 const OperationsOrdersPage = () => {
   const token = sessionStorage.getItem("token");
@@ -94,6 +95,18 @@ const OperationsOrdersPage = () => {
                   </td>
                   <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td className="space-x-3 whitespace-nowrap">
+                    <OrderDocumentDownload
+                      orderId={order._id}
+                      type="invoice"
+                      label="Invoice"
+                      fileName={`Invoice-${order.orderNumber || order._id}.pdf`}
+                    />
+                    <OrderDocumentDownload
+                      orderId={order._id}
+                      type="deliveryNote"
+                      label="D-Note"
+                      fileName={`Delivery-Note-${order.orderNumber || order._id}.pdf`}
+                    />
                     <button
                       onClick={() => navigate("/operations/purchase-orders")}
                       className="text-brand hover:underline text-sm"

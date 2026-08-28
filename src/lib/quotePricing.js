@@ -53,6 +53,22 @@ export function calculateLine(p = {}) {
   };
 }
 
+export function quoteDownloadName(quote, ext = "pdf", prefix = "") {
+  const clean = (value, max = 56) =>
+    String(value || "")
+      .trim()
+      .replace(/[<>:"/\\|?*]/g, "")
+      .slice(0, max);
+  const parts = [
+    quote?.quoteNumber ? `Q-${quote.quoteNumber}` : null,
+    clean(quote?.subject),
+    clean(quote?.account?.accountName),
+  ].filter(Boolean);
+  let base = parts.join(" - ") || "quotation";
+  if (prefix) base = `${prefix} - ${base}`;
+  return `${base}.${ext}`;
+}
+
 export async function downloadQuoteCosting(quoteId, filename) {
   const token = sessionStorage.getItem("token");
   const res = await fetch(

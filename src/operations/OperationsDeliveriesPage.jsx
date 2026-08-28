@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import StatusBadge from "../components/StatusBadge";
 import DeliveryManageModal from "../components/operations/DeliveryManageModal";
+import OrderDocumentDownload from "../components/documents/OrderDocumentDownload";
 
 const OperationsDeliveriesPage = () => {
   const token = sessionStorage.getItem("token");
@@ -73,7 +74,13 @@ const OperationsDeliveriesPage = () => {
                     <StatusBadge value={item.status} />
                   </td>
                   <td>{new Date(item.updatedAt).toLocaleDateString()}</td>
-                  <td>
+                  <td className="space-x-3 whitespace-nowrap">
+                    <OrderDocumentDownload
+                      orderId={item.order?._id}
+                      type="deliveryNote"
+                      label="D-Note"
+                      fileName={`Delivery-Note-${item.order?.orderNumber || item._id}.pdf`}
+                    />
                     <button
                       onClick={() => setSelected(item)}
                       className="text-brand hover:underline text-sm"

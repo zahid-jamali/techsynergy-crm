@@ -7,6 +7,7 @@ import {
   Legend,
 } from "recharts";
 import CostingDownloadButton from "../../staff/quote/CostingDownloadButton";
+import QuotePdfLink from "../../staff/quote/QuotePdfLink";
 
 const COLORS = ["#021d54", "#1e4a8a", "#3b6fb6", "#93c5fd"];
 
@@ -120,12 +121,10 @@ const QuoteTab = ({ filteredQuotes, quotesData }) => {
                   </td>
 
                   <td className="px-6 py-4 text-right">
-                    <a
-                      href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
+                    <QuotePdfLink
+                      quote={q}
                       className="text-emerald-700 hover:text-green-300"
-                    >
-                      PDF
-                    </a>
+                    />
                     <CostingDownloadButton
                       quote={q}
                       className="ml-3 text-sky-700 hover:underline"

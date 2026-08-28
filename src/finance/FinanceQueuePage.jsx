@@ -107,16 +107,11 @@ const FinanceQueuePage = () => {
                     {item.order?.currency}{" "}
                     {item.order?.grandTotal?.toLocaleString()}
                   </td>
-                  <td className="space-y-1">
-                    {item.deliveryNote?.url && (
-                      <a
-                        href={fileUrl(item.deliveryNote.url)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block text-xs text-brand hover:underline"
-                      >
-                        Delivery note
-                      </a>
+                  <td className="space-y-1 text-xs text-bodyText">
+                    {item.deliveryNote?.url ? (
+                      <span className="block">Delivery note attached</span>
+                    ) : (
+                      <span className="block">No delivery note</span>
                     )}
                     {(item.supportingDocuments || []).map((doc, i) => (
                       <a

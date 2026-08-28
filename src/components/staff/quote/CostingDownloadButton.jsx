@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { downloadQuoteCosting } from "../../../lib/quotePricing";
+import { downloadQuoteCosting, quoteDownloadName } from "../../../lib/quotePricing";
 
 export default function CostingDownloadButton({ quote, className = "" }) {
   const [busy, setBusy] = useState(false);
@@ -11,7 +11,7 @@ export default function CostingDownloadButton({ quote, className = "" }) {
     try {
       await downloadQuoteCosting(
         quote._id,
-        `Costing-${quote.quoteNumber || quote.subject || quote._id}.xlsx`,
+        quoteDownloadName(quote, "xlsx", "Costing"),
       );
     } catch (err) {
       window.alert(err.message || "Failed to download costing sheet");

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import StatusBadge from "../components/StatusBadge";
+import OrderDocumentDownload from "../components/documents/OrderDocumentDownload";
 
 const FinanceInvoicesPage = () => {
   const token = sessionStorage.getItem("token");
@@ -97,12 +98,13 @@ const FinanceInvoicesPage = () => {
                   </td>
                   <td className="space-x-3 whitespace-nowrap">
                     {inv.order?._id && (
-                      <a
-                        href={`${process.env.REACT_APP_BACKEND_URL}invoice/${inv.order._id}/pdf`}
+                      <OrderDocumentDownload
+                        orderId={inv.order._id}
+                        type="invoice"
+                        label="PDF"
+                        fileName={`Invoice-${inv.invoiceNumber || inv.order.orderNumber}.pdf`}
                         className="text-brand hover:underline text-sm"
-                      >
-                        PDF
-                      </a>
+                      />
                     )}
                     {inv.status === "Draft" && (
                       <button

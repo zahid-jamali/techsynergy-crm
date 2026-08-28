@@ -5,6 +5,7 @@ import ViewSOModal from "../components/staff/SO/ViewSOModal";
 import ApproveSOModal from "../components/admin/ApproveSOModal";
 import PdfViewersModal from "../components/staff/SO/PdfViewersModal";
 import InvoiceTermsModal from "../components/admin/InvoiceTermsModal";
+import OrderDocumentDownload from "../components/documents/OrderDocumentDownload";
 
 const AdminSellOrderPage = () => {
   const token = sessionStorage.getItem("token");
@@ -201,18 +202,19 @@ const AdminSellOrderPage = () => {
                     >
                       Invoice-Terms
                     </button>
-                    <a
-                      href={`${process.env.REACT_APP_BACKEND_URL}invoice/${order._id}/pdf`}
-                      className="text-emerald-700 hover:underline"
-                    >
-                      Invoice
-                    </a>
-                    <a
-                      href={`${process.env.REACT_APP_BACKEND_URL}invoice/${order._id}/deliveryNote`}
-                      className="text-emerald-700 hover:underline"
-                    >
-                      D-Note
-                    </a>
+                    <OrderDocumentDownload
+                      orderId={order._id}
+                      type="invoice"
+                      label="Invoice"
+                      fileName={`Invoice-${order.orderNumber || order._id}.pdf`}
+                    />
+                    <span className="text-bodyText">|</span>
+                    <OrderDocumentDownload
+                      orderId={order._id}
+                      type="deliveryNote"
+                      label="D-Note"
+                      fileName={`Delivery-Note-${order.orderNumber || order._id}.pdf`}
+                    />
                   </td>
                 </tr>
               ))

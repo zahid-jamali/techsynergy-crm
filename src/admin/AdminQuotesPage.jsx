@@ -12,6 +12,7 @@ import ListToolbar from "../components/lists/ListToolbar";
 import PaginationBar from "../components/lists/PaginationBar";
 import ArchiveButton from "../components/lists/ArchiveButton";
 import CostingDownloadButton from "../components/staff/quote/CostingDownloadButton";
+import QuotePdfLink from "../components/staff/quote/QuotePdfLink";
 import { QUOTE_STAGES, contactName } from "../lib/crm";
 import { api } from "../lib/api";
 
@@ -119,7 +120,15 @@ const AdminQuotesPage = () => {
               list.items.map((q) => (
                 <tr key={q._id} className="hover:bg-surface">
                   <td>{q.quoteNumber || "-"}</td>
-                  <td>{q.subject}</td>
+                  <td
+                    onClick={() => {
+                      setSelectedQuote(q);
+                      setShowModal("viewQuote");
+                    }}
+                    className="hover:underline cursor-pointer font-medium"
+                  >
+                    {q.subject}
+                  </td>
                   <td
                     onClick={() => {
                       setShowModal("viewDeal");
@@ -189,12 +198,7 @@ const AdminQuotesPage = () => {
                       archived={q.isArchived}
                       onDone={list.reload}
                     />
-                    <a
-                      href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
-                      className="text-emerald-700 hover:underline"
-                    >
-                      PDF
-                    </a>
+                    <QuotePdfLink quote={q} />
                     <CostingDownloadButton quote={q} />
                     </div>
                   </td>

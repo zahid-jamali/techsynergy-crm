@@ -118,7 +118,7 @@ const StaffDealsPage = () => {
         <KpiCard
           label="Total Deals"
           showPKR={false}
-          value={deals.length}
+          value={list.pagination.total}
         />
         <KpiCard
           label="Pipeline Value (PKR)"

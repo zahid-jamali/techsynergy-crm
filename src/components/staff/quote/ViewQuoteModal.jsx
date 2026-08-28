@@ -1,11 +1,38 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { api } from "../../../lib/api";
 
 const ViewQuoteModal = ({ quote, onClose }) => {
+  const [details, setDetails] = useState(quote);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!quote?._id) return;
+
+    let cancelled = false;
+    setDetails(quote);
+    setLoading(true);
+    api(`quotes/${quote._id}`)
+      .then((data) => {
+        if (!cancelled) setDetails(data.data || data);
+      })
+      .catch(() => {
+        if (!cancelled) setDetails(quote);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [quote]);
+
   if (!quote) return null;
 
-  const currency = quote.currency || "USD";
+  const view = details || quote;
+  const currency = view.currency || "USD";
   const format = (n) => Number(n || 0).toFixed(2);
-  const products = quote.products || [];
+  const products = view.products || [];
 
   const qtySum = products.reduce((sum, p) => sum + (Number(p.quantity) || 0), 0);
   const amountSum = products.reduce((sum, p) => {
@@ -22,26 +49,54 @@ const ViewQuoteModal = ({ quote, onClose }) => {
     <div className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="flex justify-center px-4 py-8">
         <div className="bg-card border border-gray-200 rounded-xl w-full max-w-5xl text-heading shadow-2xl">
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-brand">Quote Details</h2>
-            <button
-              onClick={onClose}
-              className="text-bodyText hover:text-heading"
-            >
-              ✕
-            </button>
+          <div className="px-6 py-5 border-b border-gray-200 bg-surface">
+            <div className="flex justify-between items-start gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-bodyText">
+                  {view.quoteNumber ? `Quote #${view.quoteNumber}` : "Quotation"}
+                </p>
+                <h2 className="text-xl font-semibold text-heading mt-1">
+                  {view.subject || "Quote Details"}
+                </h2>
+                <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-bodyText">
+                  <span>{view.account?.accountName || "No account"}</span>
+                  {view.deal?.dealName && (
+                    <>
+                      <span>•</span>
+                      <span>{view.deal.dealName}</span>
+                    </>
+                  )}
+                  {view.quoteStage && (
+                    <span className="px-2.5 py-0.5 rounded-full bg-brand/10 text-brand text-xs font-medium">
+                      {view.quoteStage}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-bodyText hover:text-heading text-lg"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
           <div className="p-6 space-y-6 text-sm">
+            {loading ? (
+              <p className="text-center text-bodyText py-8">Loading quote details...</p>
+            ) : (
+              <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Info label="Subject" value={quote.subject} />
-              <Info label="Stage" value={quote.quoteStage} />
-              <Info label="Account" value={quote.account?.accountName || "-"} />
+              <Info label="Subject" value={view.subject} />
+              <Info label="Stage" value={view.quoteStage} />
+              <Info label="Account" value={view.account?.accountName || "-"} />
+              <Info label="Deal" value={view.deal?.dealName || "-"} />
               <Info
                 label="Contact"
                 value={
-                  quote.contact
-                    ? `${quote.contact.firstName || ""} ${quote.contact.lastName || ""}`.trim() ||
+                  view.contact
+                    ? `${view.contact.firstName || ""} ${view.contact.lastName || ""}`.trim() ||
                       "-"
                     : "-"
                 }
@@ -49,8 +104,8 @@ const ViewQuoteModal = ({ quote, onClose }) => {
               <Info
                 label="Valid Until"
                 value={
-                  quote.validUntil
-                    ? new Date(quote.validUntil).toLocaleDateString()
+                  view.validUntil
+                    ? new Date(view.validUntil).toLocaleDateString()
                     : "-"
                 }
               />
@@ -66,7 +121,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
               />
               <Snapshot
                 label="Grand Total"
-                value={`${currency} ${format(quote.grandTotal)}`}
+                value={`${currency} ${format(view.grandTotal)}`}
                 highlight
               />
             </div>
@@ -180,13 +235,13 @@ const ViewQuoteModal = ({ quote, onClose }) => {
               )}
               <Info
                 label="Sub Total"
-                value={`${currency} ${format(quote.subTotal)}`}
+                value={`${currency} ${format(view.subTotal)}`}
               />
 
-              {quote.otherTax?.length > 0 && (
+              {view.otherTax?.length > 0 && (
                 <>
                   <div className="border-t border-gray-200 my-2" />
-                  {quote.otherTax.map((t, i) => (
+                  {view.otherTax.map((t, i) => (
                     <div
                       key={i}
                       className="flex justify-between text-xs text-bodyText"
@@ -196,7 +251,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                       </span>
                       <span>
                         {currency}{" "}
-                        {format((Number(quote.subTotal || 0) * Number(t.percent || 0)) / 100)}
+                        {format((Number(view.subTotal || 0) * Number(t.percent || 0)) / 100)}
                       </span>
                     </div>
                   ))}
@@ -206,24 +261,24 @@ const ViewQuoteModal = ({ quote, onClose }) => {
               <div className="border-t border-gray-200 pt-3">
                 <Info
                   label="Grand Total"
-                  value={`${currency} ${format(quote.grandTotal)}`}
+                  value={`${currency} ${format(view.grandTotal)}`}
                   highlight
                 />
               </div>
             </div>
 
-            {quote.description && (
+            {view.description && (
               <div>
                 <h3 className="text-bodyText mb-1">Notes</h3>
-                <p className="text-bodyText">{quote.description}</p>
+                <p className="text-bodyText">{view.description}</p>
               </div>
             )}
 
-            {quote.termsAndConditions?.length > 0 && (
+            {view.termsAndConditions?.length > 0 && (
               <div>
                 <h3 className="text-bodyText mb-2">Terms & Conditions</h3>
                 <div className="space-y-2">
-                  {quote.termsAndConditions.map((term, i) => (
+                  {view.termsAndConditions.map((term, i) => (
                     <div
                       key={i}
                       className="bg-card border border-gray-200 rounded p-3 text-bodyText"
@@ -233,6 +288,8 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                   ))}
                 </div>
               </div>
+            )}
+              </>
             )}
           </div>
         </div>

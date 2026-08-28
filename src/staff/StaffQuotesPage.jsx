@@ -8,6 +8,7 @@ import ListToolbar from "../components/lists/ListToolbar";
 import PaginationBar from "../components/lists/PaginationBar";
 import ArchiveButton from "../components/lists/ArchiveButton";
 import CostingDownloadButton from "../components/staff/quote/CostingDownloadButton";
+import QuotePdfLink from "../components/staff/quote/QuotePdfLink";
 import { QUOTE_STAGES } from "../lib/crm";
 
 const StaffQuotePage = () => {
@@ -22,6 +23,11 @@ const StaffQuotePage = () => {
     [stageFilter]
   );
   const list = usePagedList("quotes/my", extraFilters);
+
+  const openView = (quote) => {
+    setSelectedQuote(quote);
+    setShowModal("View");
+  };
 
   return (
     <div className="p-6 text-heading">
@@ -90,18 +96,35 @@ const StaffQuotePage = () => {
             ) : (
               list.items.map((q) => (
                 <tr key={q._id} className="hover:bg-surface">
-                  <td>{q.subject}</td>
-                  <td>{q.deal?.dealName || "-"}</td>
-                  <td>{q.account?.accountName}</td>
-                  <td>{q.quoteStage}</td>
-                  <td>
+                  <td
+                    onClick={() => openView(q)}
+                    className="cursor-pointer hover:text-brand font-medium"
+                  >
+                    {q.subject}
+                  </td>
+                  <td onClick={() => openView(q)} className="cursor-pointer">
+                    {q.deal?.dealName || "-"}
+                  </td>
+                  <td onClick={() => openView(q)} className="cursor-pointer">
+                    {q.account?.accountName}
+                  </td>
+                  <td onClick={() => openView(q)} className="cursor-pointer">
+                    {q.quoteStage}
+                  </td>
+                  <td onClick={() => openView(q)} className="cursor-pointer">
                     {q.currency || "PKR"} {q.grandTotal?.toLocaleString()}
                   </td>
-                  <td>
+                  <td onClick={() => openView(q)} className="cursor-pointer">
                     {q.validUntil ? new Date(q.validUntil).toLocaleDateString() : "-"}
                   </td>
                   <td>
                     <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => openView(q)}
+                      className="text-brand hover:underline"
+                    >
+                      View
+                    </button>
                     {q.quoteStage !== "On Hold" && (
                       <>
                         <button
@@ -129,12 +152,7 @@ const StaffQuotePage = () => {
                       archived={q.isArchived}
                       onDone={list.reload}
                     />
-                    <a
-                      href={`${process.env.REACT_APP_BACKEND_URL}quotes/${q._id}/pdf`}
-                      className="text-emerald-700 hover:underline"
-                    >
-                      PDF
-                    </a>
+                    <QuotePdfLink quote={q} />
                     <CostingDownloadButton quote={q} />
                     </div>
                   </td>

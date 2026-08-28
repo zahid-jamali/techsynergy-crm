@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import StatusBadge from "../StatusBadge";
+import OrderDocumentDownload from "../documents/OrderDocumentDownload";
 import { fileUrl } from "../../lib/roles";
 
 const DeliveryManageModal = ({ order, delivery: existing, onClose, onSuccess }) => {
@@ -218,6 +219,15 @@ const DeliveryManageModal = ({ order, delivery: existing, onClose, onSuccess }) 
 
             <div>
               <label className="label">Delivery note copy</label>
+              <div className="mb-2">
+                <OrderDocumentDownload
+                  orderId={order?._id}
+                  type="deliveryNote"
+                  label="Download D-Note PDF"
+                  fileName={`Delivery-Note-${order?.orderNumber || order?._id}.pdf`}
+                  className="text-sm text-brand hover:underline"
+                />
+              </div>
               {delivery?.deliveryNote?.url && (
                 <a
                   href={fileUrl(delivery.deliveryNote.url)}

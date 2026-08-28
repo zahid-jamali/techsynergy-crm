@@ -260,164 +260,188 @@ export function QuoteFormFields({
             + Line
           </button>
         </div>
-        <div className="border border-gray-300 rounded-xl overflow-x-auto">
-          <table className="pro-table text-xs min-w-[1200px]">
-            <thead>
-              <tr>
-                {[
-                  "#",
-                  "Product",
-                  "Description",
-                  "Qty",
-                  "Vendor Cost",
-                  "Margin %",
-                  "After margin",
-                  "WHT %",
-                  "WHT",
-                  "Unit / List",
-                  "Amount",
-                  "Line Total",
-                  "",
-                ].map((label) => (
-                  <th key={label || "actions"} className="whitespace-nowrap">
-                    {label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {formData.products.map((p, i) => {
-                const line = lines[i];
-                return (
-                  <tr key={i}>
-                    <td className="text-bodyText">{i + 1}</td>
-                    <td className="min-w-[160px]">
-                      <input
-                        value={p.productName}
-                        onChange={(e) =>
-                          handleProductNameChange(i, e.target.value)
-                        }
-                        placeholder="Product"
-                        className="input py-1.5 text-xs"
-                        required
-                      />
-                      {p.suggestedPrice != null && (
-                        <p className="text-[10px] text-bodyText mt-1">
-                          Last quoted {currency}{" "}
-                          {Number(p.suggestedPrice).toFixed(2)}
-                        </p>
-                      )}
-                    </td>
-                    <td className="min-w-[160px]">
-                      <input
-                        value={p.description || ""}
-                        onChange={(e) =>
-                          updateProduct(i, "description", e.target.value)
-                        }
-                        placeholder="Description"
-                        className="input py-1.5 text-xs"
-                      />
-                    </td>
-                    <td className="w-20">
-                      <input
-                        type="number"
-                        min="1"
-                        value={p.quantity}
-                        onChange={(e) =>
-                          updateProduct(i, "quantity", e.target.value)
-                        }
-                        className="input py-1.5 text-xs text-center"
-                      />
-                    </td>
-                    <td className="w-28">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={p.vendorPrice}
-                        onChange={(e) =>
-                          updateProduct(i, "vendorPrice", e.target.value)
-                        }
-                        className="input py-1.5 text-xs"
-                      />
-                    </td>
-                    <td className="w-24">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={p.margin}
-                        onChange={(e) =>
-                          updateProduct(i, "margin", e.target.value)
-                        }
-                        className="input py-1.5 text-xs"
-                      />
-                    </td>
-                    <td className="whitespace-nowrap text-heading">
+        <div className="space-y-4">
+          {formData.products.map((p, i) => {
+            const line = lines[i];
+            return (
+              <div
+                key={i}
+                className="border border-gray-300 rounded-xl p-4 bg-card shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <span className="text-sm font-semibold text-heading">
+                    Line {i + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeProduct(i)}
+                    className="text-red-600 text-xs hover:underline"
+                    disabled={formData.products.length === 1}
+                  >
+                    Remove line
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
+                  <label className="block min-w-0">
+                    <span className="label">Product *</span>
+                    <input
+                      value={p.productName}
+                      onChange={(e) => handleProductNameChange(i, e.target.value)}
+                      placeholder="Product name"
+                      className="input w-full min-w-0"
+                      required
+                    />
+                    {p.suggestedPrice != null && (
+                      <p className="text-[10px] text-bodyText mt-1">
+                        Last quoted {currency}{" "}
+                        {Number(p.suggestedPrice).toFixed(2)}
+                      </p>
+                    )}
+                  </label>
+                  <label className="block min-w-0">
+                    <span className="label">Description</span>
+                    <input
+                      value={p.description || ""}
+                      onChange={(e) =>
+                        updateProduct(i, "description", e.target.value)
+                      }
+                      placeholder="Specs, part number, notes..."
+                      className="input w-full min-w-0"
+                    />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+                  <label className="block min-w-[5.5rem]">
+                    <span className="label">Qty</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={p.quantity}
+                      onChange={(e) =>
+                        updateProduct(i, "quantity", e.target.value)
+                      }
+                      className="input w-full min-w-[5.5rem] text-center"
+                    />
+                  </label>
+                  <label className="block min-w-0">
+                    <span className="label">Vendor cost</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={p.vendorPrice}
+                      onChange={(e) =>
+                        updateProduct(i, "vendorPrice", e.target.value)
+                      }
+                      className="input w-full min-w-0"
+                    />
+                  </label>
+                  <label className="block min-w-0">
+                    <span className="label">Margin %</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={p.margin}
+                      onChange={(e) =>
+                        updateProduct(i, "margin", e.target.value)
+                      }
+                      className="input w-full min-w-0"
+                    />
+                  </label>
+                  <label className="block min-w-[5.5rem]">
+                    <span className="label">WHT %</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={p.withHolding}
+                      onChange={(e) =>
+                        updateProduct(i, "withHolding", e.target.value)
+                      }
+                      className="input w-full min-w-[5.5rem]"
+                    />
+                  </label>
+                  <div className="rounded-lg border border-gray-200 bg-surface px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-bodyText">
+                      After margin
+                    </p>
+                    <p className="text-sm font-medium text-heading mt-1 whitespace-nowrap">
                       {currency} {line.priceAfterMargin.toFixed(2)}
-                    </td>
-                    <td className="w-24">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={p.withHolding}
-                        onChange={(e) =>
-                          updateProduct(i, "withHolding", e.target.value)
-                        }
-                        className="input py-1.5 text-xs"
-                      />
-                    </td>
-                    <td className="whitespace-nowrap text-bodyText">
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-gray-200 bg-surface px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-bodyText">
+                      WHT amount
+                    </p>
+                    <p className="text-sm font-medium text-heading mt-1 whitespace-nowrap">
                       {currency} {line.withHoldingAmount.toFixed(2)}
-                    </td>
-                    <td className="whitespace-nowrap font-semibold">
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="rounded-lg border border-gray-200 bg-surface px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-bodyText">
+                      Unit / List
+                    </p>
+                    <p className="text-sm font-semibold text-heading mt-1">
                       {currency} {line.listPrice.toFixed(2)}
-                    </td>
-                    <td className="whitespace-nowrap font-medium">
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-gray-200 bg-surface px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-bodyText">
+                      Amount (Unit × Qty)
+                    </p>
+                    <p className="text-sm font-semibold text-heading mt-1">
                       {currency} {line.amount.toFixed(2)}
-                    </td>
-                    <td className="whitespace-nowrap text-brand font-semibold">
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-brand/20 bg-brand/5 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-brand">
+                      Line total
+                    </p>
+                    <p className="text-sm font-semibold text-brand mt-1">
                       {currency} {line.total.toFixed(2)}
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        onClick={() => removeProduct(i)}
-                        className="text-red-600 text-xs"
-                        disabled={formData.products.length === 1}
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={3}>Totals</td>
-                <td className="text-center">
-                  {lines.reduce(
-                    (sum, line) => sum + (Number(line.product.quantity) || 0),
-                    0,
-                  )}
-                </td>
-                <td colSpan={5} />
-                <td />
-                <td className="whitespace-nowrap">
-                  {currency}{" "}
-                  {round(
-                    lines.reduce((sum, line) => sum + line.amount, 0),
-                  ).toFixed(2)}
-                </td>
-                <td className="whitespace-nowrap text-brand">
-                  {currency} {subtotal.toFixed(2)}
-                </td>
-                <td />
-              </tr>
-            </tfoot>
-          </table>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 rounded-xl border border-gray-300 bg-surface px-4 py-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <div>
+            <p className="text-[11px] text-bodyText uppercase">Total qty</p>
+            <p className="font-semibold text-heading">
+              {lines.reduce(
+                (sum, line) => sum + (Number(line.product.quantity) || 0),
+                0,
+              )}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-bodyText uppercase">Goods amount</p>
+            <p className="font-semibold text-heading">
+              {currency}{" "}
+              {round(lines.reduce((sum, line) => sum + line.amount, 0)).toFixed(2)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-bodyText uppercase">Subtotal</p>
+            <p className="font-semibold text-brand">
+              {currency} {subtotal.toFixed(2)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-bodyText uppercase">Grand total</p>
+            <p className="font-semibold text-brand">
+              {currency} {grandTotal.toFixed(2)}
+            </p>
+          </div>
         </div>
         <p className="text-[11px] text-bodyText mt-2">
           Amount = Unit / List × Qty · Line Total = Amount + product tax
