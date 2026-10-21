@@ -1,4 +1,4 @@
-export const DEFAULT_WHT = 5.5;
+export const DEFAULT_WHT = 6;
 
 export const round = (n) => Math.round((Number(n) || 0) * 100) / 100;
 

@@ -1,9 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LookupPicker from "../../lists/LookupPicker";
 import { contactName, DEAL_STAGES } from "../../../lib/crm";
+import { api } from "../../../lib/api";
+import { getUserRole } from "../../../lib/roles";
 
 const EditDealModal = ({ deal, onClose, onSuccess }) => {
   const token = sessionStorage.getItem("token");
+  const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const isAdmin = getUserRole(currentUser) === "admin";
+  const [users, setUsers] = useState([]);
+  const [selectedOwner, setSelectedOwner] = useState(
+    deal.dealOwner?._id || deal.dealOwner || ""
+  );
+
+  useEffect(() => {
+    if (isAdmin) {
+      api("user/all")
+        .then((data) => setUsers(Array.isArray(data) ? data : data.data || []))
+        .catch(() => setUsers([]));
+    }
+  }, [isAdmin]);
 
   const [formData, setFormData] = useState({
     dealName: deal.dealName || "",
@@ -30,6 +46,7 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
       amount: Number(formData.amount || 0),
       account: selectedAccount?._id,
       contact: selectedContact?._id,
+      ...(isAdmin && selectedOwner ? { dealOwner: selectedOwner } : {}),
     };
 
     try {
@@ -92,6 +109,29 @@ const EditDealModal = ({ deal, onClose, onSuccess }) => {
                 className="input"
                 placeholder="Deal Name"
               />
+
+              {isAdmin && (
+                <div className="space-y-1.5 p-3.5 bg-brand/5 border border-brand/20 rounded-xl">
+                  <label className="text-xs uppercase tracking-wider text-brand font-semibold block">
+                    Deal Owner (Admin Reassign)
+                  </label>
+                  <select
+                    value={selectedOwner}
+                    onChange={(e) => setSelectedOwner(e.target.value)}
+                    className="input w-full bg-card"
+                  >
+                    <option value="">Select Deal Owner</option>
+                    {users.map((u) => (
+                      <option key={u._id} value={u._id}>
+                        {u.name || u.email} ({u.role || (u.isSuperUser ? "Admin" : "Staff")})
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-bodyText">
+                    Changing the owner will automatically reassign all affiliated quotes and sales orders, and append a transfer audit note.
+                  </p>
+                </div>
+              )}
 
               <LookupPicker
                 label="Account (shared across team)"

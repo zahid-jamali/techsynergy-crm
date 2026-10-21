@@ -61,7 +61,7 @@ const AdminQuotesPage = () => {
       <ListToolbar
         search={list.searchInput}
         onSearch={list.setSearchInput}
-        searchPlaceholder="Search subject or quote number..."
+        searchPlaceholder="Search quote #, subject, account, POC, email, industry..."
         archived={list.archived}
         onArchivedChange={list.setArchived}
         onReset={() => {

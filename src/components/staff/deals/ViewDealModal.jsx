@@ -64,7 +64,20 @@ const ViewDealModal = ({ deal, onClose }) => {
           </div>
 
           {/* ================= BODY ================= */}
-          <div className="p-8 space-y-10">
+          <div className="p-8 space-y-8">
+            {/* OWNERSHIP TRANSFER MESSAGE */}
+            {deal.ownershipMessage && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 flex items-start gap-3 text-sm shadow-sm">
+                <span className="text-xl leading-none">ℹ️</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-amber-950">Ownership Handover Record</p>
+                  <p className="mt-1 text-amber-800 leading-relaxed font-medium">
+                    {deal.ownershipMessage}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* KPI SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <KpiCard
@@ -122,6 +135,9 @@ const ViewDealModal = ({ deal, onClose }) => {
                   {deal.currency || ""} {deal.expectedRevenue?.toLocaleString()}
                 </InfoBlock>
 
+                <InfoBlock label="Deal Owner">
+                  {deal.dealOwner?.name || deal.dealOwner?.email || "Unassigned"}
+                </InfoBlock>
                 <InfoBlock label="Stage">{deal.stage}</InfoBlock>
               </div>
             </div>
@@ -134,6 +150,39 @@ const ViewDealModal = ({ deal, onClose }) => {
                 {deal.description || "No additional details provided."}
               </div>
             </div>
+
+            {/* OWNERSHIP HISTORY */}
+            {deal.ownershipHistory?.length > 0 && (
+              <div>
+                <SectionTitle title="Ownership Handover Log" />
+                <div className="space-y-2 mt-4">
+                  {deal.ownershipHistory.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-surface border border-gray-200 rounded-xl p-3.5 text-xs flex justify-between items-start gap-4"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-heading">
+                            {item.fromUserName || "Staff"}
+                          </span>
+                          <span className="text-bodyText">→</span>
+                          <span className="font-semibold text-brand">
+                            {item.toUserName || "Staff"}
+                          </span>
+                        </div>
+                        <p className="text-bodyText mt-1 text-[13px] leading-relaxed">
+                          {item.message}
+                        </p>
+                      </div>
+                      <span className="text-bodyText text-[11px] whitespace-nowrap bg-card px-2 py-1 rounded border border-gray-200">
+                        {item.transferredAt ? new Date(item.transferredAt).toLocaleDateString() : "-"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

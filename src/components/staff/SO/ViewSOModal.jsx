@@ -49,6 +49,13 @@ const ViewSOModal = ({ order, onClose }) => {
           {/* BODY */}
 
           <div className="p-6 space-y-6 text-sm">
+            {order.ownershipMessage && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg p-3 text-xs flex items-center gap-2.5">
+                <span className="text-base">ℹ️</span>
+                <span>{order.ownershipMessage}</span>
+              </div>
+            )}
+
             {/* BASIC INFO */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

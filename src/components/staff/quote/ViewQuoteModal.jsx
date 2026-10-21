@@ -87,6 +87,13 @@ const ViewQuoteModal = ({ quote, onClose }) => {
               <p className="text-center text-bodyText py-8">Loading quote details...</p>
             ) : (
               <>
+                {view.ownershipMessage && (
+                  <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg p-3 text-xs flex items-center gap-2.5">
+                    <span className="text-base">ℹ️</span>
+                    <span>{view.ownershipMessage}</span>
+                  </div>
+                )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Info label="Subject" value={view.subject} />
               <Info label="Stage" value={view.quoteStage} />
@@ -205,7 +212,7 @@ const ViewQuoteModal = ({ quote, onClose }) => {
                   </tbody>
                   <tfoot>
                     <tr>
-                      <td colSpan={3}>Totals</td>
+                      <td colSpan={3}>Total</td>
                       <td className="text-right">{qtySum}</td>
                       <td className="text-right whitespace-nowrap">
                         {currency} {format(amountSum)}

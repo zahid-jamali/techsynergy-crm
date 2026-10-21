@@ -179,14 +179,19 @@ const AdminSellOrderPage = () => {
                     </a>
                     |{/* PURCHASE ORDER */}
                     {order.purchaseOrder?.url && (
-                      <a
-                        href={fileUrl(order.purchaseOrder.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-emerald-700 hover:underline"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedPdf({
+                            url: fileUrl(order.purchaseOrder.url),
+                            title: `Purchase Order — ${order.orderNumber || "Sell Order"}`,
+                          })
+                        }
+                        className="text-emerald-700 hover:underline cursor-pointer font-medium"
+                        title="Click to view PO document online"
                       >
                         PO
-                      </a>
+                      </button>
                     )}
                   </td>
                 </tr>

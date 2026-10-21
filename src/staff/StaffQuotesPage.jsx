@@ -9,7 +9,7 @@ import PaginationBar from "../components/lists/PaginationBar";
 import ArchiveButton from "../components/lists/ArchiveButton";
 import CostingDownloadButton from "../components/staff/quote/CostingDownloadButton";
 import QuotePdfLink from "../components/staff/quote/QuotePdfLink";
-import { QUOTE_STAGES } from "../lib/crm";
+import { QUOTE_STAGES, contactName } from "../lib/crm";
 
 const StaffQuotePage = () => {
   const [showModal, setShowModal] = useState("");
@@ -49,7 +49,7 @@ const StaffQuotePage = () => {
       <ListToolbar
         search={list.searchInput}
         onSearch={list.setSearchInput}
-        searchPlaceholder="Search subject or quote number..."
+        searchPlaceholder="Search quote #, subject, account, POC, email, industry..."
         archived={list.archived}
         onArchivedChange={list.setArchived}
         onReset={() => {
@@ -75,6 +75,7 @@ const StaffQuotePage = () => {
               <th>Deal</th>
               <th>Account</th>
               <th>Stage</th>
+              <th>POC</th>
               <th>Total</th>
               <th>Valid Until</th>
               <th>Actions</th>
@@ -83,13 +84,13 @@ const StaffQuotePage = () => {
           <tbody>
             {list.loading ? (
               <tr>
-                <td colSpan="7" className="p-6 text-center text-bodyText">
+                <td colSpan="8" className="p-6 text-center text-bodyText">
                   Loading...
                 </td>
               </tr>
             ) : list.items.length === 0 ? (
               <tr>
-                <td colSpan="7" className="p-6 text-center text-bodyText">
+                <td colSpan="8" className="p-6 text-center text-bodyText">
                   No quotes found
                 </td>
               </tr>
@@ -110,6 +111,9 @@ const StaffQuotePage = () => {
                   </td>
                   <td onClick={() => openView(q)} className="cursor-pointer">
                     {q.quoteStage}
+                  </td>
+                  <td onClick={() => openView(q)} className="cursor-pointer">
+                    {contactName(q.contact)}
                   </td>
                   <td onClick={() => openView(q)} className="cursor-pointer">
                     {q.currency || "PKR"} {q.grandTotal?.toLocaleString()}
