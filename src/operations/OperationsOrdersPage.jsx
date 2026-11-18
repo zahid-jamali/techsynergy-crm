@@ -1,47 +1,91 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Download, FileSpreadsheet, Search, ShoppingCart, Truck } from "lucide-react";
+import { api } from "../lib/api";
+import { downloadFile } from "../lib/download";
+import { fmtDate, fmtMoney } from "../lib/format";
 import StatusBadge from "../components/StatusBadge";
 import DeliveryManageModal from "../components/operations/DeliveryManageModal";
 import ViewSOModal from "../components/staff/SO/ViewSOModal";
-import OrderDocumentDownload from "../components/documents/OrderDocumentDownload";
+import { Alert, EmptyState, PageHeader, Tabs, TableSkeleton } from "../components/desk/ui";
 
-const OperationsOrdersPage = () => {
-  const token = sessionStorage.getItem("token");
+const FILTERS = {
+  open: (o) => !["forwarded_to_finance", "invoiced"].includes(o.fulfillmentStatus),
+  ready_for_operations: (o) => o.fulfillmentStatus === "ready_for_operations",
+  in_delivery: (o) => ["po_created", "in_delivery"].includes(o.fulfillmentStatus),
+  delivered: (o) => o.fulfillmentStatus === "delivered",
+  closed: (o) => ["forwarded_to_finance", "invoiced"].includes(o.fulfillmentStatus),
+};
+
+export default function OperationsOrdersPage() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [viewOrder, setViewOrder] = useState(null);
   const [deliveryOrder, setDeliveryOrder] = useState(null);
+  const [tab, setTab] = useState("open");
+  const [q, setQ] = useState("");
 
-  const fetchOrders = useCallback(async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}orders/all?isSOApproved=true&limit=100`,
-        { headers: { authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
-      setOrders(data.data || []);
+      const d = await api("orders/all?isSOApproved=true&limit=200");
+      setOrders((d.data || []).filter((o) => o.status === "Accepted"));
+    } catch (e) {
+      setError(e.message);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    load();
+  }, [load]);
 
-  const accepted = orders.filter((o) => o.status === "Accepted");
+  const rows = useMemo(() => {
+    const n = q.trim().toLowerCase();
+    return orders.filter(FILTERS[tab]).filter((o) =>
+      !n
+        ? true
+        : [o.orderNumber, o.finalQuote?.account?.accountName, o.finalQuote?.deal?.dealName]
+            .filter(Boolean)
+            .some((v) => String(v).toLowerCase().includes(n))
+    );
+  }, [orders, tab, q]);
+
+  const count = (k) => orders.filter(FILTERS[k]).length;
 
   return (
     <div className="page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Approved Sell Orders</h1>
-          <p className="page-subtitle">
-            Create vendor POs, manage deliveries, then forward completed work to
-            finance
-          </p>
+      <PageHeader
+        eyebrow="Fulfillment"
+        title="Approved sell orders"
+        subtitle="Procure from vendors, dispatch with a delivery challan, then forward to finance for invoicing"
+        actions={
+          <button className="btn-secondary" onClick={() => navigate("/operations/purchase-orders")}>
+            <FileSpreadsheet size={16} /> Vendor POs
+          </button>
+        }
+      />
+
+      {error && <Alert type="error" onClose={() => setError("")}>{error}</Alert>}
+
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:justify-between">
+        <Tabs
+          value={tab}
+          onChange={setTab}
+          items={[
+            { value: "open", label: "Open", count: count("open") },
+            { value: "ready_for_operations", label: "Ready", count: count("ready_for_operations") },
+            { value: "in_delivery", label: "In progress", count: count("in_delivery") },
+            { value: "delivered", label: "Delivered", count: count("delivered") },
+            { value: "closed", label: "With finance", count: count("closed") },
+          ]}
+        />
+        <div className="relative w-full lg:w-80">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-bodyText" />
+          <input className="input pl-9" placeholder="Search order, customer, deal…" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
       </div>
 
@@ -50,74 +94,55 @@ const OperationsOrdersPage = () => {
           <thead>
             <tr>
               <th>Order</th>
-              <th>Account / Deal</th>
-              <th>Total</th>
+              <th>Customer / deal</th>
+              <th className="text-right">Value</th>
+              <th>Items</th>
               <th>Fulfillment</th>
-              <th>Date</th>
-              <th>Actions</th>
+              <th>Confirmed</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
+              <TableSkeleton cols={7} />
+            ) : rows.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-bodyText">
-                  Loading orders...
-                </td>
-              </tr>
-            ) : accepted.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center py-8 text-bodyText">
-                  No approved sell orders yet
+                <td colSpan="7">
+                  <EmptyState icon={ShoppingCart} title="No orders in this view" />
                 </td>
               </tr>
             ) : (
-              accepted.map((order) => (
-                <tr key={order._id}>
-                  <td
-                    className="cursor-pointer font-medium"
-                    onClick={() => setViewOrder(order)}
-                  >
-                    {order.orderNumber}
+              rows.map((o) => (
+                <tr key={o._id}>
+                  <td>
+                    <button className="font-medium text-brand hover:underline" onClick={() => setViewOrder(o)}>
+                      {o.orderNumber}
+                    </button>
                   </td>
                   <td>
-                    <div className="font-medium">
-                      {order.finalQuote?.account?.accountName || "-"}
-                    </div>
-                    <div className="text-xs text-bodyText">
-                      {order.finalQuote?.deal?.dealName || "-"}
-                    </div>
+                    <div className="font-medium">{o.finalQuote?.account?.accountName || "-"}</div>
+                    <div className="text-xs text-bodyText">{o.finalQuote?.deal?.dealName || "-"}</div>
                   </td>
-                  <td>
-                    {order.currency} {order.grandTotal?.toLocaleString()}
+                  <td className="text-right tabular-nums whitespace-nowrap">{fmtMoney(o.grandTotal, o.currency)}</td>
+                  <td className="text-xs text-bodyText">
+                    {(o.products || []).length} line{(o.products || []).length === 1 ? "" : "s"} ·{" "}
+                    {(o.products || []).reduce((a, p) => a + (Number(p.quantity) || 0), 0)} qty
                   </td>
-                  <td>
-                    <StatusBadge value={order.fulfillmentStatus} />
-                  </td>
-                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td className="space-x-3 whitespace-nowrap">
-                    <OrderDocumentDownload
-                      orderId={order._id}
-                      type="invoice"
-                      label="Invoice"
-                      fileName={`Invoice-${order.orderNumber || order._id}.pdf`}
-                    />
-                    <OrderDocumentDownload
-                      orderId={order._id}
-                      type="deliveryNote"
-                      label="D-Note"
-                      fileName={`Delivery-Note-${order.orderNumber || order._id}.pdf`}
-                    />
-                    <button
-                      onClick={() => navigate("/operations/purchase-orders")}
-                      className="text-brand hover:underline text-sm"
-                    >
-                      Vendor PO
+                  <td><StatusBadge value={o.fulfillmentStatus} /></td>
+                  <td className="whitespace-nowrap">{fmtDate(o.confirmedDate || o.createdAt)}</td>
+                  <td className="text-right whitespace-nowrap">
+                    <button className="btn-secondary text-xs px-3 py-1.5" onClick={() => setDeliveryOrder(o)}>
+                      <Truck size={14} /> {["ready_for_operations", "po_created"].includes(o.fulfillmentStatus) ? "Create delivery" : "Delivery"}
                     </button>
                     <button
-                      onClick={() => setDeliveryOrder(order)}
-                      className="text-brand hover:underline text-sm"
+                      className="btn-secondary text-xs px-3 py-1.5 ml-1.5"
+                      title="Download delivery note"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        downloadFile(`invoice/${o._id}/deliveryNote`, `Delivery-Note-${o.orderNumber || o._id}.pdf`).catch((err) => setError(err.message));
+                      }}
                     >
-                      Delivery
+                      <Download size={14} /> D-Note
                     </button>
                   </td>
                 </tr>
@@ -127,21 +152,20 @@ const OperationsOrdersPage = () => {
         </table>
       </div>
 
-      {viewOrder && (
-        <ViewSOModal order={viewOrder} onClose={() => setViewOrder(null)} />
-      )}
+      {viewOrder && <ViewSOModal order={viewOrder} onClose={() => setViewOrder(null)} />}
       {deliveryOrder && (
         <DeliveryManageModal
           order={deliveryOrder}
-          onClose={() => setDeliveryOrder(null)}
+          onClose={() => {
+            setDeliveryOrder(null);
+            load();
+          }}
           onSuccess={() => {
             setDeliveryOrder(null);
-            fetchOrders();
+            load();
           }}
         />
       )}
     </div>
   );
-};
-
-export default OperationsOrdersPage;
+}

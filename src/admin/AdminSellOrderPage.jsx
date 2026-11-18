@@ -74,7 +74,7 @@ const AdminSellOrderPage = () => {
 
               <th className="p-3">Status</th>
 
-              <th className="p-3">Admin Approval</th>
+              <th className="p-3">Approval</th>
 
               <th className="p-3">Total (PKR)</th>
 

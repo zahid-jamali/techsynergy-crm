@@ -8,6 +8,7 @@ import CalendarPage from "../workspace/CalendarPage";
 import TodosPage from "../workspace/TodosPage";
 import NotebooksPage from "../workspace/NotebooksPage";
 import PriceQueriesPage from "../pages/PriceQueriesPage";
+import ProfilePage from "../pages/ProfilePage";
 
 export default function OperationsApp() {
   return (
@@ -22,6 +23,8 @@ export default function OperationsApp() {
       <Route path="calendar" element={<CalendarPage />} />
       <Route path="todos" element={<TodosPage />} />
       <Route path="notebooks" element={<NotebooksPage />} />
+      <Route path="profile" element={<ProfilePage />} />
+      <Route path="*" element={<Navigate to="dashboard" replace />} />
     </Routes>
   );
 }

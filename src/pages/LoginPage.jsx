@@ -1,17 +1,25 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getHomePath } from "../lib/roles";
+import HumanCheck from "../components/HumanCheck";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [human, setHuman] = useState({ captchaToken: "", captchaAnswer: "" });
+  const humanRef = useRef(null);
+  const onHuman = useCallback((v) => setHuman((prev) => ({ ...prev, ...v })), []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
       setError("Email and password are required");
+      return;
+    }
+    if (!human.captchaToken) {
+      setError('Please complete the "I am not a robot" check');
       return;
     }
 
@@ -25,7 +33,7 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, ...human }),
       });
 
       const data = await res.json();
@@ -39,6 +47,7 @@ export default function LoginPage() {
       window.location.href = getHomePath(data.user);
     } catch (err) {
       setError(err.message);
+      humanRef.current?.reset();
     } finally {
       setLoading(false);
     }
@@ -106,6 +115,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="you@techsynergy.com"
+                autoComplete="username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input"
@@ -117,11 +127,14 @@ export default function LoginPage() {
               <input
                 type="password"
                 placeholder="••••••••"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input"
               />
             </div>
+
+            <HumanCheck ref={humanRef} onChange={onHuman} />
 
             <button
               type="submit"

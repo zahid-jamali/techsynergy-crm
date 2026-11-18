@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Receipt, BarChart3, BookOpen, Wallet, FileSpreadsheet, ShieldAlert, Calendar, CheckSquare } from "lucide-react";
+import { LayoutDashboard, Inbox, Receipt, BarChart3, BookOpen, Wallet, FileSpreadsheet, ShieldAlert, Calendar, CheckSquare, BadgeCheck, UserRound, ShoppingCart } from "lucide-react";
 import AppShell from "./AppShell";
 
 const navSections = [
@@ -11,8 +11,10 @@ const navSections = [
   {
     title: "Billing",
     items: [
+      { to: "/finance/orders", icon: ShoppingCart, label: "Sales Orders" },
       { to: "/finance/queue", icon: Inbox, label: "Handoff Queue" },
       { to: "/finance/invoices", icon: Receipt, label: "Invoices" },
+      { to: "/finance/fbr", icon: BadgeCheck, label: "FBR Digital Invoicing" },
       { to: "/finance/reports", icon: BarChart3, label: "Reports" },
     ],
   },
@@ -33,6 +35,10 @@ const navSections = [
       { to: "/finance/notebooks", icon: BookOpen, label: "Notebooks" },
     ],
   },
+  {
+    title: "Account",
+    items: [{ to: "/finance/profile", icon: UserRound, label: "My profile" }],
+  },
 ];
 
 export default function FinanceLayout({ children }) {
@@ -40,7 +46,8 @@ export default function FinanceLayout({ children }) {
     <AppShell
       panelLabel="Finance Desk"
       headerTitle="Finance Workspace"
-      headerSubtitle="Invoices, collections and period reports"
+      headerSubtitle="Tax invoicing, FBR reporting, collections and books"
+      profilePath="/finance/profile"
       navSections={navSections}
     >
       {children}

@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
-import { LogOut, Menu } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import { LogOut, Menu, UserRound } from "lucide-react";
 import { cloneElement, isValidElement, useState } from "react";
 import { getUserRole, ROLE_LABELS } from "../lib/roles";
 
@@ -37,6 +37,7 @@ export default function AppShell({
   headerTitle,
   headerSubtitle,
   navSections,
+  profilePath,
   children,
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -111,15 +112,32 @@ export default function AppShell({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-heading capitalize">
-                {user?.name || ROLE_LABELS[role]}
-              </p>
-              <p className="text-xs text-bodyText">{ROLE_LABELS[role]}</p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center text-sm font-semibold">
-              {(user?.name?.[0] || "U").toUpperCase()}
-            </div>
+            <Link
+              to={profilePath || "#"}
+              title="My profile"
+              className="flex items-center gap-3 rounded-lg px-2 py-1 hover:bg-surface transition"
+            >
+              <div className="hidden sm:block text-right">
+                <p className="text-sm font-medium text-heading capitalize">
+                  {user?.name || ROLE_LABELS[role]}
+                </p>
+                <p className="text-xs text-bodyText">
+                  {user?.designation || ROLE_LABELS[role]}
+                </p>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center text-sm font-semibold">
+                {(user?.name?.[0] || "U").toUpperCase()}
+              </div>
+            </Link>
+            {profilePath && (
+              <Link
+                to={profilePath}
+                className="hidden md:inline-flex btn-secondary px-3"
+                title="My profile"
+              >
+                <UserRound size={16} />
+              </Link>
+            )}
             <button
               onClick={() => {
                 sessionStorage.clear();

@@ -8,6 +8,7 @@ import {
   CheckSquare,
   BookOpen,
   MessagesSquare,
+  UserRound,
 } from "lucide-react";
 import AppShell from "./AppShell";
 import PriceQueryUnreadBadge from "../components/PriceQueryUnreadBadge";
@@ -62,6 +63,10 @@ const navSections = [
       { to: "/operations/notebooks", icon: BookOpen, label: "Notebooks" },
     ],
   },
+  {
+    title: "Account",
+    items: [{ to: "/operations/profile", icon: UserRound, label: "My profile" }],
+  },
 ];
 
 export default function OperationsLayout({ children }) {
@@ -70,6 +75,7 @@ export default function OperationsLayout({ children }) {
       panelLabel="Operations Desk"
       headerTitle="Operations Workspace"
       headerSubtitle="Purchase orders, deliveries and finance handoff"
+      profilePath="/operations/profile"
       navSections={navSections}
     >
       {children}
